@@ -56,8 +56,11 @@ The tool is launched as follows:
 
 The options are:
 * `--printer (-p)`: Simulate a printer. The tool launches, and displays all output onto the console. Terminate the tool with `Ctrl-C`.
-* `--load`: Load a file onto the PC-1600. Before launching the tool, enter `LOAD "COM1:"` on the PC-1600.
-* `--save`: Save a file from the PC-1600 to the PC. Lanuch the tool, and then enter `SAVE "COM1:"` on the PC-1600.
+* `--load (-l)`: Load a file onto the PC-1600. Before launching the tool, enter `LOAD "COM1:"` on the PC-1600.
+* `--save (-s)`: Save a file from the PC-1600 to the PC. Launch the tool, and then enter `SAVE "COM1:"` on the PC-1600.
+
+A file with the extension `.bas` will be automatically converted into the proper PC-1600 format, and no manual work is required.
+Any other extension (e.g. `.img`) is sent to the PC-1600 unchanged.
 
 ### Settings for the Sharp PC-1600 serial port
 After a reset / power loss of the PC-1600, these commands need to be entered
@@ -84,7 +87,7 @@ Sets the receive buffer size. Default is 40 bytes after power on.
 `INIT "COM1:" <buffer>`
 * buffer: Size of the buffer in bytes.
 
-Example: `INIT 4096`
+Example: `INIT "COM1:",4096`
 
 #### SETCOM
 Sets the protocol settings for the serial port.

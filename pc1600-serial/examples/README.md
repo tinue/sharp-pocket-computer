@@ -7,3 +7,10 @@ The purpose of this program is to simplify testing of the SharpCommunicator tool
 * DEF-S Saves the program (first launch the SharpCommunicator, then press DEF-S)
 * DEF-L Loads the program (first press DEF-L, then launch the SharpCommunicator)
 * DEF-A launches a very simple test program which prints to the printer.
+
+## biorhythm.bas
+The program prints the biorhythm for a specific month, based on the birth date.
+It is taken from the manual of the CE-125 printer. While originally intended by Sharp for the
+PC-1250/60, it works unchanged on the PC-1600. For the application to work,
+the print output must be redirected using `SETDEV "COM1:",PO`, and the `SharpCommunicator`
+must be running in printer mode.

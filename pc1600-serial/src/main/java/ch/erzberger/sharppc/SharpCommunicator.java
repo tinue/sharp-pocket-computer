@@ -6,13 +6,11 @@ import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 
-@Log public class SharpCommunicator {
+@Log
+public class SharpCommunicator {
     static {
         // Load the logging properties from the jar file
         try (InputStream is = SharpCommunicator.class.getClassLoader().
@@ -22,7 +20,8 @@ import java.util.logging.LogManager;
             log.log(Level.SEVERE, "Cannot load log properties from jar file");
         }
     }
-    public static void main(String[] args) throws Exception {
+
+    public static void main(String[] args) {
         String operation = new CmdLineArgsChecker().checkArgs(args);
         if (operation == null) {
             System.exit(-1);
@@ -37,9 +36,8 @@ import java.util.logging.LogManager;
             return;
         }
         String loadSave = operation.substring(0, 1);
-        String filename = operation.substring(2, operation.length()-1);
+        String filename = operation.substring(2, operation.length() - 1);
         wrapper.openPort();
-        Path path = Paths.get(filename);
         if ("s".equals(loadSave)) {
             // Save, PC-1600 -> Disk
             ByteProcessor byteProcessor = new ProcessFiles(filename);
@@ -48,7 +46,7 @@ import java.util.logging.LogManager;
         }
         if ("l".equals(loadSave)) {
             // Load, Disk -> PC-1600
-            byte[] buffer = Files.readAllBytes(path);
+            byte[] buffer = SharpFileLoader.loadFile(filename);
             log.log(Level.INFO, "Read {0} bytes from buffer", buffer.length);
             int bytesWritten = wrapper.writeBytes(buffer);
             log.log(Level.FINE, "Written {0} bytes", bytesWritten);
