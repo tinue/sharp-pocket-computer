@@ -14,3 +14,7 @@ It is taken from the manual of the CE-125 printer. While originally intended by 
 PC-1250/60, it works unchanged on the PC-1600. For the application to work,
 the print output must be redirected using `SETDEV "COM1:",PO`, and the `SharpCommunicator`
 must be running in printer mode.
+
+## 39zeich.bas
+Downloaded from [sharp-pc-1600](https://www.sharp-pc-1600.de/Down_Anwender.html).
+This is to test a mixed Basic / Assembly application.

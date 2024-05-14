@@ -44,9 +44,9 @@ public class SharpCommunicator {
             wrapper.openPort(byteProcessor);
             return;
         }
-        if ("l".equals(loadSave)) {
+        if ("l".equals(loadSave) || "u".equals(loadSave)) {
             // Load, Disk -> PC-1600
-            byte[] buffer = SharpFileLoader.loadFile(filename);
+            byte[] buffer = SharpFileLoader.loadFile(filename, "u".equals(loadSave));
             log.log(Level.INFO, "Read {0} bytes from buffer", buffer.length);
             int bytesWritten = wrapper.writeBytes(buffer);
             log.log(Level.FINE, "Written {0} bytes", bytesWritten);

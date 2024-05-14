@@ -145,7 +145,6 @@ public class SerialPortWrapper {
         port.setNumDataBits(8);
         port.setBaudRate(9600);
         port.setFlowControl(FLOW_CONTROL_RTS_ENABLED | FLOW_CONTROL_CTS_ENABLED);
-        //port.setFlowControl(FLOW_CONTROL_XONXOFF_OUT_ENABLED);
         log.log(Level.FINEST, "Opening port");
         return port.openPort();
     }

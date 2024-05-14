@@ -220,5 +220,7 @@ This should be cheaper than an USB / UART adapter, and it would work on a Mac as
 
 Signal level adaption (3.3V vs. TTL) and signal inversion needs to be solved.
 ### Additional features
+* Allow to specify the serial port. Important if the port can't be autodetected.
 * Support `INPUT` from the PC to the PC-1600 (probably add to printer simulator)
 * Print simulator: Support both codepages correctly (`MODE 0` and `MODE 1`)
+* LOAD: Check for label or line number conflicts when adding the serial utils

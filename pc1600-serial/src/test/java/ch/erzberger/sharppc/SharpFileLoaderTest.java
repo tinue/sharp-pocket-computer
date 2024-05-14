@@ -21,37 +21,49 @@ class SharpFileLoaderTest {
 
     @Test
     void crlf() {
-        byte[] result = SharpFileLoader.loadFile("src/test/resources/crlf.bas");
+        byte[] result = SharpFileLoader.loadFile("src/test/resources/crlf.bas", false);
         assertEquals(50, result.length);
+        result = SharpFileLoader.loadFile("src/test/resources/crlf.bas", true);
+        assertEquals(400, result.length);
     }
 
     @Test
     void cr() {
-        byte[] result = SharpFileLoader.loadFile("src/test/resources/cr.bas");
+        byte[] result = SharpFileLoader.loadFile("src/test/resources/cr.bas", false);
         assertEquals(50, result.length);
+        result = SharpFileLoader.loadFile("src/test/resources/cr.bas", true);
+        assertEquals(400, result.length);
     }
 
     @Test
     void lf() {
-        byte[] result = SharpFileLoader.loadFile("src/test/resources/lf.bas");
+        byte[] result = SharpFileLoader.loadFile("src/test/resources/lf.bas", false);
         assertEquals(50, result.length);
+        result = SharpFileLoader.loadFile("src/test/resources/lf.bas", true);
+        assertEquals(400, result.length);
     }
 
     @Test
     void lfandeof() {
-        byte[] result = SharpFileLoader.loadFile("src/test/resources/lfandeof.bas");
+        byte[] result = SharpFileLoader.loadFile("src/test/resources/lfandeof.bas", false);
         assertEquals(50, result.length);
+        result = SharpFileLoader.loadFile("src/test/resources/lfandeof.bas", true);
+        assertEquals(400, result.length);
     }
 
     @Test
     void eofatendoflastline() {
-        byte[] result = SharpFileLoader.loadFile("src/test/resources/eofatendoflastline.bas");
+        byte[] result = SharpFileLoader.loadFile("src/test/resources/eofatendoflastline.bas", false);
         assertEquals(50, result.length);
+        result = SharpFileLoader.loadFile("src/test/resources/eofatendoflastline.bas", true);
+        assertEquals(400, result.length);
     }
 
     @Test
     void binary() {
-        byte[] result = SharpFileLoader.loadFile("src/test/resources/binary.img");
+        byte[] result = SharpFileLoader.loadFile("src/test/resources/binary.img", false);
         assertEquals(46, result.length); // Misses three CR and the EOF
+        result = SharpFileLoader.loadFile("src/test/resources/binary.img", true);
+        assertEquals(46, result.length); // On binary files the addon gets ignored
     }
 }

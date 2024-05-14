@@ -8,6 +8,7 @@ public class CmdLineArgsChecker {
     public static final String PRINTARG = "printer";
     public static final String SAVEARG = "save";
     public static final String LOADARG = "load";
+    public static final String UTILARG = "addutil";
     public static final String FILEARG = "filename";
     public static final String TOOLNAME = "SharpCommunicator";
 
@@ -15,10 +16,12 @@ public class CmdLineArgsChecker {
         boolean print = false;
         boolean save = false;
         boolean load = false;
+        boolean util = false;
         String fileName = null;
         // Set up the command line parameters
         Options options = new Options();
         options.addOption(new Option("h", "help", false, "Print usage."));
+        options.addOption(new Option("u", UTILARG, false, "Add the serial utilities when loading the Basic program."));
         options.addOption(new Option("p", PRINTARG, false, "Simulate a printer."));
         options.addOption(Option.builder("s").longOpt(SAVEARG)
                 .desc(String.format("Save the file received from the PC-1600 to disk. Note: Start %s first, then launch SAVE on the PC-1600.", TOOLNAME))
@@ -45,6 +48,9 @@ public class CmdLineArgsChecker {
             if (line.hasOption(LOADARG)) {
                 load = true;
                 fileName = line.getOptionValue(LOADARG);
+                if (line.hasOption(UTILARG)) {
+                    util = true;
+                }
             }
             if (line.hasOption("help")) {
                 formatter.printHelp(TOOLNAME, options);
@@ -73,6 +79,9 @@ public class CmdLineArgsChecker {
         }
         if (save) {
             return String.format("s(%s)", fileName);
+        }
+        if (util) {
+            return String.format("u(%s)", fileName);
         }
         return String.format("l(%s)", fileName);
     }

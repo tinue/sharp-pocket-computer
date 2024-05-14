@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 
 /**
  * This class will load a text file into a byte array. Any sole CR or LF will be converted into CR/LF,
@@ -19,7 +20,7 @@ public class SharpFileLoader {
         // Prevent instantiation
     }
 
-    public static byte[] loadFile(String fileName) {
+    public static byte[] loadFile(String fileName, boolean addUtils) {
         byte[] buffer = new byte[0];
         if (fileName == null) {
             log.log(Level.SEVERE, "File name is null");
@@ -29,6 +30,11 @@ public class SharpFileLoader {
         if (fileName.toLowerCase().contains(".bas")) {
             try {
                 List<String> lines = Files.readAllLines(path);
+                if (addUtils) {
+                    List<String> util = Pc1600SerialUtils.getSerialUtilBasicApp();
+                    List<String> combinedList = Stream.concat(lines.stream(), util.stream()).toList();
+                    return convertLinesIntoByteArray(combinedList);
+                }
                 return convertLinesIntoByteArray(lines);
             } catch (IOException ex) {
                 logException(ex);
