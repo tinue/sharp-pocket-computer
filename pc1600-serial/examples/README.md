@@ -18,3 +18,9 @@ must be running in printer mode.
 ## 39zeich.bas
 Downloaded from [sharp-pc-1600](https://www.sharp-pc-1600.de/Down_Anwender.html).
 This is to test a mixed Basic / Assembly application.
+
+## worldclock.bas
+Downloaded from the Facebook group "80's-90's Sharp & Casio World of Computing".
+I tweaked the program slightly, to allow for a non-GMT city to be the "home base".
+The program does not support cities in India, because they differ by a fraction
+of a full hour from GMT (5:30 hours).

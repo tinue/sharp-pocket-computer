@@ -3,6 +3,8 @@ package ch.erzberger.sharppc;
 import lombok.extern.java.Log;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -66,7 +68,7 @@ public class SharpFileLoader {
                 line = line.substring(0, line.length() - 1);
             }
             // Read the current line into a byte array
-            byte[] lineBytes = line.getBytes();
+            byte[] lineBytes = line.getBytes(Charset.forName("Cp437")); // The line is in UTF-8, but we need the Sharp Charset
             // Allocate a new buffer. Size is old buffer plus the line plus two for CR/LF
             byte[] newBuffer = new byte[buffer.length + lineBytes.length + 2];
             // First copy the buffer into the new buffer
