@@ -1,22 +1,23 @@
-10 "BIO":CLEAR :INPUT "DATE ? YEAR = ";L,"MONTH = ";M
-15 TEXT :COLOR 0
-20 LPRINT "DATE";USING "#####";L;",";USING "###";M
-30 N=0
-35 GOSUB 700
-40 GOSUB 600:O=A
-50 INPUT "NAME ? ";A$
-60 LPRINT "NAME ";A$
-70 INPUT "BIRTHDAY ? YEAR = ";L,"MONTH = ";M,"DAY = ";N
-80 LPRINT "B-DAY";USING "#####";L;",";USING "###";M;",";USING "###";N
-90 GOSUB 600:P=A
+10 "BIO":CLEAR :INPUT "Biorhythm, Year? ";L, "Month?";M
+20 TEXT :COLOR 0
+30 LPRINT "Month";M;" /";L
+40 N=0
+50 GOSUB 700
+60 GOSUB 600: O=A
+70 INPUT "Your name? ";A$
+80 INPUT "Birthday? Year = ";L,"Month = ";M,"Day = ";N
+90 LPRINT A$
+95 LPRINT N;".";M;".";L
+96 CLS:WAIT0:PRINT"Plotting..."
+98 GOSUB 600:P=A
 100 A=O-P:O=0:P=0
 110 LF 2
 120 COLOR 2
-130 LPRINT " -- PHYSICAL"
+130 LPRINT " -- Physical"
 140 COLOR 3
-150 LPRINT " -- EMOTIONAL"
+150 LPRINT " -- Emotional"
 160 COLOR 1
-170 LPRINT " -- INTELLECTUAL"
+170 LPRINT " -- Intellectual"
 180 LF 1
 190 COLOR 0
 200 LPRINT "  (-)      (+)"
