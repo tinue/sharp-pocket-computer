@@ -1,15 +1,19 @@
-10 PRINT "Bank:"; PEEK&D4
+10 PRINT "Bank:"; PEEK&E2
 20 K$="off": IF PEEK&79D4=&55 LET K$="on"
 30 PRINT "Keyboard intercept ";K$
 40 D=PEEK&7865: GOSUB "DECHEX": T$=H$
 50 D=PEEK&7866: GOSUB "DECHEX": T$=T$+H$
-60 PRINT "Basic start: &"; T$
+55 DIM PR$(1)*30
+60 PR$(1)= "Basic: &": PR$(1) = PR$(1) + T$ + " &"
 70 D=PEEK&7867: GOSUB "DECHEX": T$=H$
 80 D=PEEK&7868: GOSUB "DECHEX": T$=T$+H$
-90 PRINT "Basic end: &"; T$
+90 PR$(1) = PR$(1) + T$ + " &"
 100 D=PEEK&7869: GOSUB "DECHEX": T$=H$
 110 D=PEEK&786A: GOSUB "DECHEX": T$=T$+H$
-120 PRINT "Basic head: &"; T$
+120 PR$(1) = PR$(1) + T$: PRINT PR$(1)
+122 D=PEEK&7899: GOSUB "DECHEX": T$=H$
+123 D=PEEK&789A: GOSUB "DECHEX": T$=T$+H$
+124 PRINT "Var start: &"; T$
 130 K$="low": IF PEEK&79F1=0 LET K$="good"
 140 PRINT "Battery ";K$
 150 END
