@@ -8,6 +8,8 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Stream;
@@ -22,42 +24,28 @@ public class SharpFileLoader {
         // Prevent instantiation
     }
 
-    public static byte[] loadFile(String fileName, boolean addUtils, PocketPcDevice device) {
-        byte[] buffer = new byte[0];
+    public static List<String> loadAsciiFile(String fileName, boolean addUtils, PocketPcDevice device) {
+        List<String> lines;
         if (fileName == null) {
             log.log(Level.SEVERE, "File name is null");
-            return buffer;
+            return Collections.emptyList();
         }
         Path path = Paths.get(fileName);
-        if (fileName.toLowerCase().contains(".bas")) {
-            try {
-                List<String> lines = Files.readAllLines(path);
-                if (addUtils) {
-                    List<String> util = Pc1600SerialUtils.getSerialUtilBasicApp(device);
-                    List<String> combinedList = Stream.concat(lines.stream(), util.stream()).toList();
-                    return convertLinesIntoByteArray(combinedList);
-                }
-                return convertLinesIntoByteArray(lines);
-            } catch (IOException ex) {
-                logException(ex);
-                return buffer;
+        try {
+            lines = normalizeLines(Files.readAllLines(path));
+            if (addUtils) {
+                List<String> util = Pc1600SerialUtils.getSerialUtilBasicApp(device);
+                return Stream.concat(lines.stream(), util.stream()).toList();
             }
-        } else {
-            try {
-                buffer = Files.readAllBytes(path);
-            } catch (IOException ex) {
-                logException(ex);
-            }
-            return buffer;
+            return lines;
+        } catch (IOException ex) {
+            logException(ex);
+            return Collections.emptyList();
         }
     }
 
-    static byte[] convertLinesIntoByteArray(List<String> lines) {
-        if (lines == null || lines.isEmpty()) {
-            log.log(Level.SEVERE, "Lines is null or empty");
-            return new byte[0];
-        }
-        byte[] buffer = new byte[0];
+    static List<String> normalizeLines(List<String> lines) {
+        List<String> normalizedLines = new ArrayList<>();
         for (String line : lines) {
             // Ignore empty lines, and the last line with only an EOF character
             if (line.isEmpty() || (line.length() == 1 && 0x1A == line.charAt(0))) {
@@ -67,25 +55,30 @@ public class SharpFileLoader {
             if (0x1A == line.charAt(line.length() - 1)) {
                 line = line.substring(0, line.length() - 1);
             }
-            // Read the current line into a byte array
-            byte[] lineBytes = line.getBytes(Charset.forName("Cp437")); // The line is in UTF-8, but we need the Sharp Charset
-            // Allocate a new buffer. Size is old buffer plus the line plus two for CR/LF
-            byte[] newBuffer = new byte[buffer.length + lineBytes.length + 2];
-            // First copy the buffer into the new buffer
-            System.arraycopy(buffer, 0, newBuffer, 0, buffer.length);
-            // Next, append the current line to the new buffer
-            System.arraycopy(lineBytes, 0, newBuffer, buffer.length, lineBytes.length);
-            // Last, add CR / LF at the end
-            newBuffer[newBuffer.length - 2] = 0x0D;
-            newBuffer[newBuffer.length - 1] = 0x0A;
-            // Then replace the retval with the new array
-            buffer = newBuffer;
+            normalizedLines.add(line);
         }
-        // Add the EOF marker to the very end of the array
-        byte[] retVal = new byte[buffer.length + 1]; // Make room
-        System.arraycopy(buffer, 0, retVal, 0, buffer.length);
-        retVal[retVal.length - 1] = 0x1A; // Add EOF marker
-        return retVal;
+        return normalizedLines;
+    }
+
+    static byte[] convertStringIntoByteArray(String line, PocketPcDevice device) {
+        boolean isPc1600 = PocketPcDevice.PC1600.equals(device);
+        if (line == null || line.isEmpty()) {
+            log.log(Level.SEVERE, "Line is null or empty");
+            return new byte[0];
+        }
+        // Java Strings are UTF-8, but we need the Sharp Charset. CP437 is close enough for Basic programs.
+        byte[] lineBytes = line.getBytes(Charset.forName("Cp437"));
+        // Allocate a new buffer. Size is old buffer plus room for the end of line char(s)
+        int sizeOfEol = isPc1600 ? 2 : 1;
+        byte[] newlineBytes = new byte[lineBytes.length + sizeOfEol];
+        // Copy the buffer into the new buffer
+        System.arraycopy(lineBytes, 0, newlineBytes, 0, lineBytes.length);
+        // Add the carriage return
+        newlineBytes[lineBytes.length] = 0x0D;
+        if (isPc1600) {
+            newlineBytes[lineBytes.length+1] = 0x0A;
+        }
+        return newlineBytes;
     }
 
     static void logException(Throwable e) {

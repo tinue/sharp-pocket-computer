@@ -10,6 +10,7 @@ import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 
@@ -44,14 +45,37 @@ public class SharpCommunicator {
         wrapper.openPort(baudRate, handShake);
         if (Direction.FROMPOCKETOPC.equals(direction)) {
             // Save, PC-1600 -> Disk
-            ByteProcessor byteProcessor = new ProcessFiles(filename);
+            ByteProcessor byteProcessor = new ProcessFiles(filename, cmdLineArgs.device());
             wrapper.openPort(baudRate, handShake, byteProcessor);
         } else {
-            // Load, Disk -> PC-1600
-            byte[] buffer = SharpFileLoader.loadFile(filename, cmdLineArgs.addUtil(), cmdLineArgs.device());
-            log.log(Level.INFO, "Read {0} bytes from buffer", buffer.length);
-            int bytesWritten = wrapper.writeBytes(buffer);
-            log.log(Level.FINE, "Written {0} bytes", bytesWritten);
+            // Load the file into a list fo Strings. The helper will normalize the file, i.e. remove extra end of file markers etc.
+            List<String> lines = SharpFileLoader.loadAsciiFile(filename, cmdLineArgs.addUtil(), cmdLineArgs.device());
+            // Send each line individually to the PocketPC. This gives the device time to process the line
+            for (String line : lines) {
+                byte[] lineBytes = SharpFileLoader.convertStringIntoByteArray(line, cmdLineArgs.device());
+                wrapper.writeBytes(lineBytes);
+                // The PC-1500 needs more time to handle one line. Add some wait.
+                if (PocketPcDevice.PC1500.equals(cmdLineArgs.device())) {
+                    try {
+                        Thread.sleep(500L);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+            // To finalize, send an End-Of-File marker
+            if (PocketPcDevice.PC1500.equals(cmdLineArgs.device())) {
+                // The PC-1500 stops receiving when two CRs are received in a row
+                wrapper.writeBytes(new byte[]{0x0D});
+            } else {
+                // The PC-1600 stops on an EOF ASCII code
+                wrapper.writeBytes(new byte[]{0x1A});
+            }
+            try {
+                Thread.sleep(500L);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
             wrapper.closePort();
         }
     }

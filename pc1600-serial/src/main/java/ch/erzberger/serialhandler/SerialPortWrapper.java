@@ -112,7 +112,7 @@ public class SerialPortWrapper {
     public void openPort(int baudRate, boolean handShake) {
         boolean success = openPort(baudRate, handShake, port);
         if (success) {
-            log.log(Level.FINEST, "Port {0} opened successfully for writing", port.getSystemPortName());
+            log.log(Level.FINEST, "Port {0} opened successfully for writing. Baudrate: {1}, Flow Control: {2}", new Object[]{port.getSystemPortName(), port.getBaudRate(), port.getFlowControlSettings()});
         } else {
             log.log(Level.SEVERE, "Port open for writing failed on port {0}", port.getSystemPortName());
         }
@@ -141,7 +141,7 @@ public class SerialPortWrapper {
 
     private boolean openPort(int baudRate, boolean handShake, SerialPort port) {
         log.log(Level.FINE, "Found port: {0}", port.getSystemPortName());
-        // Setup comm parameters (115200, 8N1)
+        // Setup comm parameters
         port.setParity(SerialPort.NO_PARITY);
         port.setNumStopBits(SerialPort.ONE_STOP_BIT);
         port.setNumDataBits(8);

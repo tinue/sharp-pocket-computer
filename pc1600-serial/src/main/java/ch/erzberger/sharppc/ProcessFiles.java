@@ -1,5 +1,6 @@
 package ch.erzberger.sharppc;
 
+import ch.erzberger.commandline.PocketPcDevice;
 import ch.erzberger.serialhandler.ByteProcessor;
 import ch.erzberger.serialhandler.Watchdog;
 import lombok.extern.java.Log;
@@ -16,10 +17,18 @@ import java.util.logging.Level;
 public class ProcessFiles implements ByteProcessor {
     private final ByteArrayOutputStream buffer;
     private final String filename;
+    private final long timeout;
     private Watchdog watchdog;
 
-    public ProcessFiles(String filename) {
+    public ProcessFiles(String filename, PocketPcDevice device) {
         this.filename = filename;
+        if (PocketPcDevice.PC1500.equals(device)) {
+            // Through trial and error, it looks line 3 Seconds is enough to write even a long line
+            timeout = 3000L;
+        } else {
+            // The PC-1600 is much faster. Even 0.5 Seconds is probably too much.
+            timeout = 500L;
+        }
         buffer = new ByteArrayOutputStream();
     }
 
@@ -37,7 +46,7 @@ public class ProcessFiles implements ByteProcessor {
                 log.log(Level.FINE, "Timer fired, writing file");
                 persistBytes(filename);
                 System.exit(0);
-            }, 200L);
+            }, timeout);
             watchdog.start();
         } else {
             log.log(Level.FINEST, "Data received, resetting watchdog.");
