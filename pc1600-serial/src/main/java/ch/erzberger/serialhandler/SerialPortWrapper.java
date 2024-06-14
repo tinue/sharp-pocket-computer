@@ -1,4 +1,5 @@
 package ch.erzberger.serialhandler;
+
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
@@ -6,7 +7,8 @@ import lombok.extern.java.Log;
 
 import java.util.logging.Level;
 
-import static com.fazecast.jSerialComm.SerialPort.*;
+import static com.fazecast.jSerialComm.SerialPort.FLOW_CONTROL_CTS_ENABLED;
+import static com.fazecast.jSerialComm.SerialPort.FLOW_CONTROL_RTS_ENABLED;
 
 /**
  * Helper class for serial ports. Will (auto) detect ports, depending on operating system.
@@ -96,10 +98,10 @@ public class SerialPortWrapper {
         }
     }
 
-    public void openPort(ByteProcessor byteProcessor) {
+    public void openPort(int baudRate, boolean handShake, ByteProcessor byteProcessor) {
         this.byteProcessor = byteProcessor;
         port.addDataListener(new Listener());
-        boolean success = openPort(port);
+        boolean success = openPort(baudRate, handShake, port);
         if (success) {
             log.log(Level.FINEST, "Port {0} opened successfully for reading", port.getSystemPortName());
         } else {
@@ -107,8 +109,8 @@ public class SerialPortWrapper {
         }
     }
 
-    public void openPort() {
-        boolean success = openPort(port);
+    public void openPort(int baudRate, boolean handShake) {
+        boolean success = openPort(baudRate, handShake, port);
         if (success) {
             log.log(Level.FINEST, "Port {0} opened successfully for writing", port.getSystemPortName());
         } else {
@@ -137,14 +139,16 @@ public class SerialPortWrapper {
         return port.getSystemPortName();
     }
 
-    private boolean openPort(SerialPort port) {
+    private boolean openPort(int baudRate, boolean handShake, SerialPort port) {
         log.log(Level.FINE, "Found port: {0}", port.getSystemPortName());
         // Setup comm parameters (115200, 8N1)
         port.setParity(SerialPort.NO_PARITY);
         port.setNumStopBits(SerialPort.ONE_STOP_BIT);
         port.setNumDataBits(8);
-        port.setBaudRate(9600);
-        port.setFlowControl(FLOW_CONTROL_RTS_ENABLED | FLOW_CONTROL_CTS_ENABLED);
+        port.setBaudRate(baudRate);
+        if (handShake) {
+            port.setFlowControl(FLOW_CONTROL_RTS_ENABLED | FLOW_CONTROL_CTS_ENABLED);
+        }
         log.log(Level.FINEST, "Opening port");
         return port.openPort();
     }

@@ -1,10 +1,10 @@
 package ch.erzberger.sharppc;
 
+import ch.erzberger.commandline.PocketPcDevice;
 import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,7 +22,7 @@ public class SharpFileLoader {
         // Prevent instantiation
     }
 
-    public static byte[] loadFile(String fileName, boolean addUtils) {
+    public static byte[] loadFile(String fileName, boolean addUtils, PocketPcDevice device) {
         byte[] buffer = new byte[0];
         if (fileName == null) {
             log.log(Level.SEVERE, "File name is null");
@@ -33,7 +33,7 @@ public class SharpFileLoader {
             try {
                 List<String> lines = Files.readAllLines(path);
                 if (addUtils) {
-                    List<String> util = Pc1600SerialUtils.getSerialUtilBasicApp();
+                    List<String> util = Pc1600SerialUtils.getSerialUtilBasicApp(device);
                     List<String> combinedList = Stream.concat(lines.stream(), util.stream()).toList();
                     return convertLinesIntoByteArray(combinedList);
                 }

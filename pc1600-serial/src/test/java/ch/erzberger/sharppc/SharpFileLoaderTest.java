@@ -1,5 +1,6 @@
 package ch.erzberger.sharppc;
 
+import ch.erzberger.commandline.PocketPcDevice;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -21,49 +22,49 @@ class SharpFileLoaderTest {
 
     @Test
     void crlf() {
-        byte[] result = SharpFileLoader.loadFile("src/test/resources/crlf.bas", false);
+        byte[] result = SharpFileLoader.loadFile("src/test/resources/crlf.bas", false, PocketPcDevice.PC1600);
         assertEquals(50, result.length);
-        result = SharpFileLoader.loadFile("src/test/resources/crlf.bas", true);
+        result = SharpFileLoader.loadFile("src/test/resources/crlf.bas", true, PocketPcDevice.PC1600);
         assertEquals(400, result.length);
     }
 
     @Test
     void cr() {
-        byte[] result = SharpFileLoader.loadFile("src/test/resources/cr.bas", false);
+        byte[] result = SharpFileLoader.loadFile("src/test/resources/cr.bas", false, PocketPcDevice.PC1600);
         assertEquals(50, result.length);
-        result = SharpFileLoader.loadFile("src/test/resources/cr.bas", true);
+        result = SharpFileLoader.loadFile("src/test/resources/cr.bas", true, PocketPcDevice.PC1600);
         assertEquals(400, result.length);
     }
 
     @Test
     void lf() {
-        byte[] result = SharpFileLoader.loadFile("src/test/resources/lf.bas", false);
+        byte[] result = SharpFileLoader.loadFile("src/test/resources/lf.bas", false, PocketPcDevice.PC1600);
         assertEquals(50, result.length);
-        result = SharpFileLoader.loadFile("src/test/resources/lf.bas", true);
+        result = SharpFileLoader.loadFile("src/test/resources/lf.bas", true, PocketPcDevice.PC1600);
         assertEquals(400, result.length);
     }
 
     @Test
     void lfandeof() {
-        byte[] result = SharpFileLoader.loadFile("src/test/resources/lfandeof.bas", false);
+        byte[] result = SharpFileLoader.loadFile("src/test/resources/lfandeof.bas", false, PocketPcDevice.PC1600);
         assertEquals(50, result.length);
-        result = SharpFileLoader.loadFile("src/test/resources/lfandeof.bas", true);
+        result = SharpFileLoader.loadFile("src/test/resources/lfandeof.bas", true, PocketPcDevice.PC1600);
         assertEquals(400, result.length);
     }
 
     @Test
     void eofatendoflastline() {
-        byte[] result = SharpFileLoader.loadFile("src/test/resources/eofatendoflastline.bas", false);
+        byte[] result = SharpFileLoader.loadFile("src/test/resources/eofatendoflastline.bas", false, PocketPcDevice.PC1600);
         assertEquals(50, result.length);
-        result = SharpFileLoader.loadFile("src/test/resources/eofatendoflastline.bas", true);
+        result = SharpFileLoader.loadFile("src/test/resources/eofatendoflastline.bas", true, PocketPcDevice.PC1600);
         assertEquals(400, result.length);
     }
 
     @Test
     void binary() {
-        byte[] result = SharpFileLoader.loadFile("src/test/resources/binary.img", false);
+        byte[] result = SharpFileLoader.loadFile("src/test/resources/binary.img", false, PocketPcDevice.PC1600);
         assertEquals(46, result.length); // Misses three CR and the EOF
-        result = SharpFileLoader.loadFile("src/test/resources/binary.img", true);
+        result = SharpFileLoader.loadFile("src/test/resources/binary.img", true, PocketPcDevice.PC1600);
         assertEquals(46, result.length); // On binary files the addon gets ignored
     }
 }

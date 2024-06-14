@@ -1,5 +1,6 @@
 package ch.erzberger.sharppc;
 
+import ch.erzberger.commandline.PocketPcDevice;
 import lombok.extern.java.Log;
 
 import java.io.BufferedReader;
@@ -17,8 +18,9 @@ public class Pc1600SerialUtils {
         // Prevent instantiation
     }
 
-    public static List<String> getSerialUtilBasicApp() {
-        try (InputStream in = Pc1600SerialUtils.class.getResourceAsStream("/setcom.bas")) {
+    public static List<String> getSerialUtilBasicApp(PocketPcDevice device) {
+        String utilName = PocketPcDevice.PC1500.equals(device) ? "setcom1500.bas" : "setcom1600.bas";
+        try (InputStream in = Pc1600SerialUtils.class.getResourceAsStream("/" + utilName)) {
             if (in == null) {
                 log.log(Level.SEVERE, "Could not find the setcom.bas resource");
                 return Collections.emptyList();
