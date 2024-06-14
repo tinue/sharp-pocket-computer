@@ -1,12 +1,22 @@
 # Sharp Pocket Computer Communicator
-## Hardware
-### USB Serial Adapter for the PC-1600
+The purpose of this program is to safe and load Basic programs that are stored on your computer in
+human readable format from and to Sharp PC-1500 and PC-1600 devices through a serial interface.
 
-The simplest approach is to use a serial to usb adapter. If the adapter uses an 
-original FTDI chip, then no additional logic chips are required. These are the
-components that I used:
+The program takes care of the peculiarities of the two Pocket Computer devices, such as the different line
+ending formats used, or the end of file marker. It also slows down communication if necessary
+for the PC-1500, so that it can keep up.
+
+## Hardware
+### PC-1600: USB Serial Adapter
+
+The Sharp PC-1600 has a serial device built in. It uses fairly standard 5V logic, and can be interfaced
+with currently available FTDI adapters. hen using the original FTDI adapter, no additional
+logic chips or inverters are required.
+
+These are the components that I used:
 * 1mm pins, bent 90 degrees
-* A small board for soldering the pins. Search for "1.27mm 2.54mm Adapter Board" on the merchant site of your choice. I found no 15 pin boards, but 12 pins are enough.
+* A small board for soldering the pins. Search for "1.27mm 2.54mm Adapter Board" on the merchant site of your choice.
+While I found no 15 pin boards, 12 pins are enough for the signals that are required.
 * USB/UART cable, I used this one: "FTDI TTL-232R-5V-WE", i.e. 5V logic and wire ends.
 
 Before the USB / UART adapter can be used, it needs to be reprogrammed using a Windows
@@ -45,15 +55,17 @@ As a workaround, I build the jar on the Mac and send it to a Raspberry Pi via `s
 The PC-1600 is connected to the Raspberry Pi, and sending / receiving happens
 on the Raspberry Pi via a remote `ssh` session from the Mac.
 
-### CE-158X for the PC-1500/A
+### PC-1500/A: CE-158X
 
 The PC-1500 does not have a serial port built in. There was an add-on from Sharp
-called "CE-158" which provided a serial and a parallel port. Jeff Birt built a
-modern equivalent of this add-on, and sells it under the name [CE-158X](https://www.soigeneris.com/ce-158x-serial-parallel-interface-for-sharp-pc-1500).
-This software works with the USB port of this device. By default, the PC-1500
-uses the serial port of the CE-158X. In order to switch to the USB Port, enter
-`SETDEV U1,CI,CO`. Then you can use e.g. `CLOADa` and use this application
-to send a .bas file to the PC-1500.
+called "CE-158" which provided a serial and a parallel port. The software is not currently
+compatible with the original device, but it would not be difficult to change this.
+
+[Jeff Birt](https://github.com/Jeff-Birt) built a modern equivalent of this add-on,
+and sells it under the name
+[CE-158X](https://www.soigeneris.com/ce-158x-serial-parallel-interface-for-sharp-pc-1500).
+This software works with the USB port of the CE-158X. See below on how to set-up the
+PC-1500 to use the correct port.
 
 ## Software
 ### SharpCommunicator
@@ -66,12 +78,11 @@ The tool is launched as follows:
 
 The options are:
 * `--load (-l)`: Load a file onto the PC-1500/1600. Before launching the tool, enter `LOAD "COM1:"` on the PC-1600, or `CLOADa` on the PC-1500.
-* `--save (-s)`: Save a file from the PC-1500/1600 to the PC. Launch the tool, and then enter `SAVE "COM1:"` on the PC-1600, or `CSAVEa`on the PC-1500.
+* `--save (-s)`: Save a file from the PC-1500/1600 to the PC. Launch the tool, and then enter `SAVE "COM1:",A` on the PC-1600, or `CSAVEa`on the PC-1500.
 * `--1500 (-5)`: Setup the tool to communicate with the PC-1500 (default is the PC-1600)
 * `--addutil (-u)`: Adds some shortcuts starting with line 61000 (Def-J: Init serial; Def-S: Save, Def-L: Load)
 
-A file with the extension `.bas` will be automatically converted into the proper PC-1600 format, and no manual work is required.
-Any other extension (e.g. `.img`) is sent to the PC-1600 unchanged.
+The file provided will be automatically converted into the proper PC-1500/A or PC-1600 format, and no manual work is required.
 
 ### Settings for the Sharp PC-1600 serial port
 After a reset / power loss of the PC-1600, these commands need to be entered
@@ -93,7 +104,7 @@ PCONSOLE "COM1:",80,2
 ### Settings for the Sharp PC-1500 serial port
 To switch to the USB port, enter this: `SETDEV U1,CI,CO`
 
-## Reference Section
+## Appendix
 ### PC/1600 commands relevant to serial communication
 #### INIT
 Sets the receive buffer size. Default is 40 bytes after power on.
@@ -223,18 +234,26 @@ Loads a program from serial port.
 `LOAD "<COM1:>"[,R]`
 * R: Auto-starts the program after loading.
 
-## Future work
-### Use a Raspberry Pi Pico instead of a USB / UART adapter
+
+### Future software work
+* Allow to specify the serial port. Important if the port can't be autodetected.
+* Normalize the file when saving to PC (line breaks, EOF marker, leading / trailing blanks etc.)
+* Support tokenizing a Basic program, and then sending it in binary format (will be faster)
+  * Also add the binary header required for the PC-1500 / CE-158
+* Define a format for "Reserve Keys" and support to load these (maybe even save)
+  * This will also require tokenization support 
+* Add an option for "binary" load and save, which will not normalize during load or save
+* Support comments in Basic programs (e.g. a line starting with "#" will be removed during normalization)
+* Support a "terminal" mode, where input from the keyboard is sent to the Pocket Computer,
+  and output is shown on the screen.
+  * As part of the terminal mode, support both `MODE 0` and `MODE 1` codepages correctly.
+
+### Hardware Idea: Use a Raspberry Pi Pico instead of a USB / UART adapter
 A Raspberry Pi Pico has a USB connector, serial pins, and 264k RAM. It should
-therefore be possible to send a PC-1600 program via USB to the Raspberry Pi Pico
+therefore be possible to send a Pocket Computer program via USB to the Raspberry Pi Pico
 at full speed and buffer it in its RAM, and then the Pico sends the data to the
-PC-1600 via its serial lines, using RTC/CTS flow control.
+Pocket Computer via its serial lines, using RTC/CTS flow control.
 
 This should be cheaper than an USB / UART adapter, and it would work on a Mac as well.
 
 Signal level adaption (3.3V vs. TTL) and signal inversion needs to be solved.
-### Additional features
-* Allow to specify the serial port. Important if the port can't be autodetected.
-* Support `INPUT` from the PC to the PC-1600 (probably add to printer simulator)
-* Print simulator: Support both codepages correctly (`MODE 0` and `MODE 1`)
-* LOAD: Check for label or line number conflicts when adding the serial utils
