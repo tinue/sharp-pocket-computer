@@ -1,5 +1,8 @@
 package ch.erzberger.sharppc;
 
+import ch.erzberger.commandline.CmdLineArgs;
+import ch.erzberger.commandline.CmdLineArgsChecker;
+import ch.erzberger.commandline.Direction;
 import ch.erzberger.serialhandler.ByteProcessor;
 import ch.erzberger.serialhandler.SerialPortWrapper;
 import lombok.extern.java.Log;
@@ -22,31 +25,21 @@ public class SharpCommunicator {
     }
 
     public static void main(String[] args) {
-        String operation = new CmdLineArgsChecker().checkArgs(args);
-        if (operation == null) {
+        CmdLineArgs cmdLineArgs = new CmdLineArgsChecker().checkArgs(args);
+        if (cmdLineArgs == null) {
             System.exit(-1);
         }
         SerialPortWrapper wrapper = new SerialPortWrapper(null);
-        if ("p".equals(operation)) {
-            // Printer simulator
-            ByteProcessor byteProcessor = new ProcessPrint();
-            wrapper.openPort(byteProcessor);
-            // The main thread will end, but the VM remains active due to the printer thread. This is what we want.
-            // To stop, use Ctrl-C.
-            return;
-        }
-        String loadSave = operation.substring(0, 1);
-        String filename = operation.substring(2, operation.length() - 1);
+        Direction direction = cmdLineArgs.direction();
+        String filename = cmdLineArgs.filename();
         wrapper.openPort();
-        if ("s".equals(loadSave)) {
+        if (Direction.FROMPOCKETOPC.equals(direction)) {
             // Save, PC-1600 -> Disk
             ByteProcessor byteProcessor = new ProcessFiles(filename);
             wrapper.openPort(byteProcessor);
-            return;
-        }
-        if ("l".equals(loadSave) || "u".equals(loadSave)) {
+        } else {
             // Load, Disk -> PC-1600
-            byte[] buffer = SharpFileLoader.loadFile(filename, "u".equals(loadSave));
+            byte[] buffer = SharpFileLoader.loadFile(filename, cmdLineArgs.addUtil());
             log.log(Level.INFO, "Read {0} bytes from buffer", buffer.length);
             int bytesWritten = wrapper.writeBytes(buffer);
             log.log(Level.FINE, "Written {0} bytes", bytesWritten);

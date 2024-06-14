@@ -1,4 +1,4 @@
-package ch.erzberger.sharppc;
+package ch.erzberger.commandline;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,33 +19,33 @@ class CmdLineArgsCheckerTest {
     }
 
     @Test
-    void printer() {
-        CmdLineArgsChecker checker = new CmdLineArgsChecker();
-        assertEquals("p", checker.checkArgs(new String[]{"SharpCommunicator", "--printer"}));
-    }
-
-    @Test
     void save() {
         CmdLineArgsChecker checker = new CmdLineArgsChecker();
-        assertEquals("s(theSaveFile.bas)", checker.checkArgs(new String[]{"SharpCommunicator", "--save", "theSaveFile.bas"}));
+        CmdLineArgs cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--save", "theSaveFile.bas"});
+        assertEquals("theSaveFile.bas", cmdLineArgs.filename());
+        assertEquals(Direction.FROMPOCKETOPC, cmdLineArgs.direction());
     }
 
     @Test
     void saveShort() {
         CmdLineArgsChecker checker = new CmdLineArgsChecker();
-        assertEquals("s(theSaveFile.bas)", checker.checkArgs(new String[]{"SharpCommunicator", "-s", "theSaveFile.bas"}));
+        CmdLineArgs cmdLineArgsLong = checker.checkArgs(new String[]{"SharpCommunicator", "--save", "theSaveFile.bas"});
+        CmdLineArgs cmdLineArgsShort = checker.checkArgs(new String[]{"SharpCommunicator", "-s", "theSaveFile.bas"});
+        assertEquals(cmdLineArgsLong, cmdLineArgsShort);
     }
 
     @Test
     void load() {
         CmdLineArgsChecker checker = new CmdLineArgsChecker();
-        assertEquals("l(theLoadFile.bas)", checker.checkArgs(new String[]{"SharpCommunicator", "--load", "theLoadFile.bas"}));
+        CmdLineArgs cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--load", "theSaveFile.bas"});
+        assertEquals("theSaveFile.bas", cmdLineArgs.filename());
+        assertEquals(Direction.FROMPCTOPOCKET, cmdLineArgs.direction());
     }
 
     @Test
     void tooManyArgs() {
         CmdLineArgsChecker checker = new CmdLineArgsChecker();
-        assertNull(checker.checkArgs(new String[]{"SharpCommunicator", "--printer", "--load", "theLoadFile.bas", "--save", "theSaveFile.bas"}));
+        assertNull(checker.checkArgs(new String[]{"SharpCommunicator", "--load", "theLoadFile.bas", "--save", "theSaveFile.bas"}));
     }
 
     @Test
