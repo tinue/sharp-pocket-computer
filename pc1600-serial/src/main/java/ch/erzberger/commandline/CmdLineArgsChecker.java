@@ -9,6 +9,7 @@ public class CmdLineArgsChecker {
     public static final String LOADARG = "load";
     public static final String UTILARG = "addutil";
     public static final String FILEARG = "filename";
+    public static final String BINARYARG = "binary";
     public static final String TOOLNAME = "SharpCommunicator";
     public static final String PC1500ARG = "1500";
 
@@ -16,11 +17,13 @@ public class CmdLineArgsChecker {
         PocketPcDevice device;
         Direction direction = null;
         boolean util = false;
+        boolean binary = false;
         String fileName = null;
         // Set up the command line parameters
         Options options = new Options();
         options.addOption(new Option("h", "help", false, "Print usage."));
         options.addOption(new Option("u", UTILARG, false, "Add the serial utilities when loading the Basic program."));
+        options.addOption(new Option("b", BINARYARG, false, "Load / Save in binary."));
         options.addOption(new Option("5", PC1500ARG, false, "Device is a PC1500/A connected to a CE-158X (default is a PC-1600)."));
         options.addOption(Option.builder("s").longOpt(SAVEARG)
                 .desc(String.format("Save the file received from the PC-1500/1600 to disk. Note: Start %s first, then launch (C)SAVE on the PocketPC.", TOOLNAME))
@@ -50,6 +53,9 @@ public class CmdLineArgsChecker {
                 direction = Direction.FROMPOCKETOPC;
                 fileName = line.getOptionValue(SAVEARG);
             }
+            if (line.hasOption(BINARYARG)) {
+                binary = true;
+            }
             if (line.hasOption(LOADARG)) {
                 direction = Direction.FROMPCTOPOCKET;
                 fileName = line.getOptionValue(LOADARG);
@@ -74,6 +80,6 @@ public class CmdLineArgsChecker {
             formatter.printHelp(TOOLNAME, null, options, "ERROR: No option has been selected");
             return null;
         }
-        return new CmdLineArgs(fileName, device, util, direction);
+        return new CmdLineArgs(fileName, device, util, binary, direction);
     }
 }

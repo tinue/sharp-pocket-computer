@@ -48,33 +48,66 @@ public class SharpCommunicator {
             ByteProcessor byteProcessor = new ProcessFiles(filename, cmdLineArgs.device());
             wrapper.openPort(baudRate, handShake, byteProcessor);
         } else {
-            // Load the file into a list fo Strings. The helper will normalize the file, i.e. remove extra end of file markers etc.
-            List<String> lines = SharpFileLoader.loadAsciiFile(filename, cmdLineArgs.addUtil(), cmdLineArgs.device());
-            // Send each line individually to the PocketPC. This gives the device time to process the line
-            for (String line : lines) {
-                byte[] lineBytes = SharpFileLoader.convertStringIntoByteArray(line, cmdLineArgs.device());
-                wrapper.writeBytes(lineBytes);
-                // The PC-1500 needs more time to handle one line. Add some wait.
+            if (cmdLineArgs.binary()) {
+                byte[] program = SharpFileLoader.loadBinaryFile(filename, cmdLineArgs.device());
                 if (PocketPcDevice.PC1500.equals(cmdLineArgs.device())) {
+                    // The PC-1500 needs two things:
+                    // 1. The first 28 bytes are a header, and after the header a pause is required (at least 100ms)
+                    // 2. It can't keep up with the fixed 19200 baud of the CE-158X. A pause is required between bytes.
+                    // Split into header and program
+                    byte[] header = new byte[28];
+                    byte[] programBytes = new byte[program.length - 28];
+                    System.arraycopy(program, 0, header, 0, 28);
+                    System.arraycopy(program, 28, programBytes, 0, programBytes.length);
+                    // Write the header. It can be sent with full speed, 28 bytes seem to not be an issue
+                    wrapper.writeBytes(header);
+                    // Now wait for the header to be processed
+                    try {
+                        Thread.sleep(200L);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                    // Next, send the program byte by byte and wait 1ms after each byte
+                    wrapper.writeBytes(programBytes, 1L);
+                    // Wait a bit after the last byte before closing the port.
                     try {
                         Thread.sleep(500L);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                     }
+                } else {
+                    // The PC-1600 has no issues with full speed sending, and it has no header
+                    wrapper.writeBytes(program);
                 }
-            }
-            // To finalize, send an End-Of-File marker
-            if (PocketPcDevice.PC1500.equals(cmdLineArgs.device())) {
-                // The PC-1500 stops receiving when two CRs are received in a row
-                wrapper.writeBytes(new byte[]{0x0D});
             } else {
-                // The PC-1600 stops on an EOF ASCII code
-                wrapper.writeBytes(new byte[]{0x1A});
-            }
-            try {
-                Thread.sleep(500L);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+                // Load the file into a list fo Strings. The helper will normalize the file, i.e. remove extra end of file markers etc.
+                List<String> lines = SharpFileLoader.loadAsciiFile(filename, cmdLineArgs.addUtil(), cmdLineArgs.device());
+                // Send each line individually to the PocketPC. This gives the device time to process the line
+                for (String line : lines) {
+                    byte[] lineBytes = SharpFileLoader.convertStringIntoByteArray(line, cmdLineArgs.device());
+                    wrapper.writeBytes(lineBytes);
+                    // The PC-1500 needs more time to handle one line. Add some wait.
+                    if (PocketPcDevice.PC1500.equals(cmdLineArgs.device())) {
+                        try {
+                            Thread.sleep(500L);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                }
+                // To finalize, send an End-Of-File marker
+                if (PocketPcDevice.PC1500.equals(cmdLineArgs.device())) {
+                    // The PC-1500 stops receiving when two CRs are received in a row
+                    wrapper.writeBytes(new byte[]{0x0D});
+                } else {
+                    // The PC-1600 stops on an EOF ASCII code
+                    wrapper.writeBytes(new byte[]{0x1A});
+                }
+                try {
+                    Thread.sleep(500L);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
             }
             wrapper.closePort();
         }

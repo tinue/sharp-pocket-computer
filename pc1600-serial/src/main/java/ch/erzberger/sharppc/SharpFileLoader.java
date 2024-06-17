@@ -44,6 +44,20 @@ public class SharpFileLoader {
         }
     }
 
+    public static byte[] loadBinaryFile(String fileName, PocketPcDevice device) {
+        if (fileName == null) {
+            log.log(Level.SEVERE, "File name is null");
+            return new byte[0];
+        }
+        Path path = Paths.get(fileName);
+        try {
+            return Files.readAllBytes(path);
+        } catch (IOException ex) {
+            logException(ex);
+            return new byte[0];
+        }
+    }
+
     static List<String> normalizeLines(List<String> lines) {
         List<String> normalizedLines = new ArrayList<>();
         for (String line : lines) {
@@ -76,7 +90,7 @@ public class SharpFileLoader {
         // Add the carriage return
         newlineBytes[lineBytes.length] = 0x0D;
         if (isPc1600) {
-            newlineBytes[lineBytes.length+1] = 0x0A;
+            newlineBytes[lineBytes.length + 1] = 0x0A;
         }
         return newlineBytes;
     }

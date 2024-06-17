@@ -122,6 +122,27 @@ public class SerialPortWrapper {
         port.closePort();
     }
 
+    /**
+     * Writes a block of bytes, slowing down as desired.
+     * @param bytesToWrite The bytes to write
+     * @param delay Delay between writing individual bytes
+     * @return Number of bytes written
+     */
+    public int writeBytes(byte[] bytesToWrite, long delay) {
+        int bytesWritten = 0;
+        for (byte byteToWrite : bytesToWrite) {
+            port.writeBytes(new byte[]{byteToWrite}, 1);
+            bytesWritten++;
+            try {
+                Thread.sleep(delay);
+            } catch (InterruptedException e) {
+                log.log(Level.WARNING, "Thread sleep got interrupted");
+                Thread.currentThread().interrupt();
+            }
+        }
+        return bytesWritten;
+    }
+
     public int writeBytes(byte[] bytesToWrite) {
         return port.writeBytes(bytesToWrite, bytesToWrite.length);
     }
