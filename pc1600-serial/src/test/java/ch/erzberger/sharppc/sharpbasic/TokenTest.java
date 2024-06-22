@@ -2,6 +2,9 @@ package ch.erzberger.sharppc.sharpbasic;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.HexFormat;
+
+import static ch.erzberger.sharppc.sharpbasic.Token.appendBytes;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TokenTest {
@@ -10,9 +13,9 @@ class TokenTest {
     void keyword() {
         Keyword keyword = new Keyword("{POKE#}&FFFF,X");
         assertTrue(keyword.isValid());
-        assertEquals(2, keyword.getBinary().length);
-        assertEquals((byte) 0xF1, keyword.getBinary()[0]);
-        assertEquals((byte) 0xA0, keyword.getBinary()[1]);
+        assertEquals(2, keyword.getBinaryRepresentation().length);
+        assertEquals((byte) 0xF1, keyword.getBinaryRepresentation()[0]);
+        assertEquals((byte) 0xA0, keyword.getBinaryRepresentation()[1]);
         assertEquals("POKE# ", keyword.getNormalizedRepresentation());
         assertEquals("&FFFF,X", keyword.getInputMinusToken());
         assertFalse(new Keyword("A=10").isValid());
@@ -39,13 +42,15 @@ class TokenTest {
         LineNumber result = new LineNumber("10:: FOR");
         assertTrue(result.isValid());
         assertEquals(": FOR", result.getInputMinusToken());
+        assertEquals((byte) 0x00, result.getBinaryRepresentation()[0]);
+        assertEquals((byte) 0x0A, result.getBinaryRepresentation()[1]);
     }
 
     private void examineLineNumbers(LineNumber line) {
         assertTrue(line.isValid());
-        assertEquals(2, line.getBinary().length);
-        assertEquals((byte) 0x00, line.getBinary()[0]);
-        assertEquals((byte) 0x0A, line.getBinary()[1]);
+        assertEquals(3, line.getBinaryRepresentation().length);
+        assertEquals((byte) 0x00, line.getBinaryRepresentation()[0]);
+        assertEquals((byte) 0x0A, line.getBinaryRepresentation()[1]);
         assertEquals(" 10:", line.getNormalizedRepresentation());
         assertEquals("FOR I = 1 TO 100", line.getInputMinusToken());
     }
@@ -54,36 +59,29 @@ class TokenTest {
     void line() {
         Line line = new Line("10 FOR I = 1 TO 100:PRINT I:NEXT I");
         assertTrue(line.isValid());
-        assertEquals(" 10:FOR I = 1 TO 100:PRINT I:NEXT I", line.getNormalizedRepresentation());
+        assertEquals(" 10:FOR I=1TO 100:PRINT I:NEXT I", line.getNormalizedRepresentation());
         assertEquals("", line.getInputMinusToken());
+        line = new Line("10 \"BIO\":CLEAR :INPUT \"Biorhythm, Year? \";L, \"Month?\";M");
+        assertEquals(" 10:\"BIO\":CLEAR :INPUT \"Biorhythm, Year? \";L,\"Month?\";M", line.getNormalizedRepresentation());
+        assertEquals("000A2C2242494F223AF1873AF0912242696F72687974686D2C20596561723F20223B4C2C224D6F6E74683F223B4D0D", HexFormat.of().formatHex(line.getBinaryRepresentation()).toUpperCase());
     }
 
     @Test
-    void sharpString() {
-        SharpString sharpString = new SharpString("\"This is a string\"");
-        assertEquals("\"This is a string\"", sharpString.getNormalizedRepresentation());
-        sharpString = new SharpString("Something else");
-        assertFalse(sharpString.isValid());
+    void other() {
+        Other other = new Other("I=1{TO}");
+        assertEquals("I=1", other.getNormalizedRepresentation());
+        assertEquals("{TO}", other.getInputMinusToken());
+        other = new Other("{TO}");
+        assertFalse(other.isValid());
     }
 
     @Test
-    void variable() {
-        Variable variable = new Variable("I");
-        assertEquals("I", variable.getNormalizedRepresentation());
-        variable = new Variable("I$");
-        assertEquals("I$", variable.getNormalizedRepresentation());
-        variable = new Variable("A1A1");
-        assertEquals("A1A1", variable.getNormalizedRepresentation());
-        variable = new Variable("A1A1=");
-        assertEquals("A1A1", variable.getNormalizedRepresentation());
-        assertEquals("=", variable.getInputMinusToken());
-        variable = new Variable("Aa");
-        assertEquals("A", variable.getNormalizedRepresentation());
-        assertEquals("a", variable.getInputMinusToken());
-        variable = new Variable("+");
-        assertFalse(variable.isValid());
-        variable = new Variable("a");
-        assertFalse(variable.isValid());
-        assertEquals("a", variable.getInputMinusToken());
+    void combineArrays() {
+        byte[] one = new byte[]{(byte)0x1A, (byte)0x2A};
+        byte[] two = new byte[]{(byte)0xFF};
+        byte[] three = appendBytes(one, two);
+        assertEquals(3, three.length);
+        assertEquals((byte)0x1A, three[0]);
+        assertEquals((byte)0xFF, three[2]);
     }
 }

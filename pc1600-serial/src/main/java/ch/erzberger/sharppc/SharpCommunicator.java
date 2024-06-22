@@ -6,6 +6,7 @@ import ch.erzberger.commandline.Direction;
 import ch.erzberger.commandline.PocketPcDevice;
 import ch.erzberger.serialhandler.ByteProcessor;
 import ch.erzberger.serialhandler.SerialPortWrapper;
+import ch.erzberger.sharppc.sharpbasic.Program;
 import lombok.extern.java.Log;
 
 import java.io.IOException;
@@ -82,6 +83,8 @@ public class SharpCommunicator {
             } else {
                 // Load the file into a list fo Strings. The helper will normalize the file, i.e. remove extra end of file markers etc.
                 List<String> lines = SharpFileLoader.loadAsciiFile(filename, cmdLineArgs.addUtil(), cmdLineArgs.device());
+                Program program = new Program("Name", lines);
+                System.out.println(program.getNormalizedRepresentation());
                 // Send each line individually to the PocketPC. This gives the device time to process the line
                 for (String line : lines) {
                     byte[] lineBytes = SharpFileLoader.convertStringIntoByteArray(line, cmdLineArgs.device());

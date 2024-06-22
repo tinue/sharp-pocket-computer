@@ -33,4 +33,9 @@ public class Program extends Token{
         }
         return sb.toString();
     }
+
+    @Override
+    public byte[] getBinaryRepresentation() {
+        return new byte[0];
+    }
 }

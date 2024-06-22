@@ -51,4 +51,23 @@ public class Line extends Token {
         }
         return lineNumber.getNormalizedRepresentation() + joiner;
     }
+
+    @Override
+    public byte[] getBinaryRepresentation() {
+        byte[] line = new byte[0];
+        for (int numStatement = 0; numStatement < statements.size(); numStatement++) {
+            Statement statement = statements.get(numStatement);
+            line = appendBytes(line, statement.getBinaryRepresentation());
+            if (numStatement < statements.size() - 1) {
+                line = appendBytes(line, new byte[]{0x3A}); // Add the colon
+            }
+        }
+        // Add the carriage return
+        line = appendBytes(line, new byte[]{0x0D});
+        byte[] length = convertIntToTwoByteByteArray(line.length);
+        byte[] retVal = lineNumber.getBinaryRepresentation();
+        retVal[2] = length[1];
+        retVal = appendBytes(retVal, line);
+        return retVal;
+    }
 }

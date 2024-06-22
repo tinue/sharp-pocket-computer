@@ -9,6 +9,7 @@ package ch.erzberger.sharppc.sharpbasic;
  */
 public class LineNumber extends Token {
     private final String normalizedRepresentation;
+    private final byte[] binaryRepresentation;
     public LineNumber(String input) {
         // In many listings, the line number ends with a colon. In other listing, it is separated
         // from the rest of the statement with a blank. Also, the line number may be indented with blanks.
@@ -17,14 +18,18 @@ public class LineNumber extends Token {
         String lineNumberAsString = findSubstring(input, "^ *\\d+ *:? *");
         if (lineNumberAsString == null) {  // The String does not start with a line number
             normalizedRepresentation = "";
+            binaryRepresentation = new byte[0];
             setInputMinusToken(input);
             return;
         }
         setInputMinusToken(input.substring(lineNumberAsString.length())); // Remove the line number part
         lineNumberAsString = lineNumberAsString.replace(":","").trim(); // Remove colon, if present
         int lineNumber = Integer.parseInt(lineNumberAsString);
-        // TODO: Array must be three bytes, not two
-        setBinary(convertIntToTwoByteByteArray(lineNumber));
+        binaryRepresentation = new byte[3];
+        byte[] pureLine = convertIntToTwoByteByteArray(lineNumber);
+        binaryRepresentation[0] = pureLine[0];
+        binaryRepresentation[1] = pureLine[1];
+        binaryRepresentation[2] = 0;
         // Use the LLIST format for the line number, i.e. indented to three digits, and a colon as separator
         normalizedRepresentation = String.format("%3d", lineNumber) + ":";
         validate();
@@ -33,5 +38,10 @@ public class LineNumber extends Token {
     @Override
     public String getNormalizedRepresentation() {
         return normalizedRepresentation;
+    }
+
+    @Override
+    public byte[] getBinaryRepresentation() {
+        return binaryRepresentation;
     }
 }

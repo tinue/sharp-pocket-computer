@@ -8,6 +8,7 @@ import java.util.logging.Level;
 @Log
 public class Keyword extends Token {
     private final String normalizedRepresentation;
+    private final byte[] binaryRepresentation;
 
     public Keyword(String input) {
         if (input.startsWith("{")) {
@@ -17,20 +18,27 @@ public class Keyword extends Token {
             if (code == null) {
                 log.log(Level.SEVERE, "Impossible: Found escaped Basic keyword, but it does not resolve: {0}", pureKeyword);
                 normalizedRepresentation = null;
+                binaryRepresentation = new byte[0];
                 return;
             }
-            setBinary(convertIntToTwoByteByteArray(code));
+            binaryRepresentation = convertIntToTwoByteByteArray(code);
             normalizedRepresentation = pureKeyword + " ";
             setInputMinusToken(input.substring(input.indexOf("}")+1));
             validate();
         } else {
             log.log(Level.FINEST, "Not a Basic keyword: {0}", input);
             normalizedRepresentation = null;
+            binaryRepresentation = new byte[0];
         }
     }
 
     @Override
     public String getNormalizedRepresentation() {
         return normalizedRepresentation;
+    }
+
+    @Override
+    public byte[] getBinaryRepresentation() {
+        return binaryRepresentation;
     }
 }

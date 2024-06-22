@@ -2,6 +2,8 @@ package ch.erzberger.sharppc.sharpbasic;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.HexFormat;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class StatementTest {
@@ -42,12 +44,14 @@ class StatementTest {
     void makeStatement() {
         Statement statement = new Statement("FOR PRINT LET");
         assertEquals("FOR PRINT LET ", statement.getNormalizedRepresentation());
+        assertEquals("f1a5f097f198", HexFormat.of().formatHex(statement.getBinaryRepresentation()));
         statement = new Statement("FOR\"bla bla\"");
         assertEquals("FOR \"bla bla\"", statement.getNormalizedRepresentation());
         statement = new Statement("\"bla bla\"FOR");
         assertEquals("\"bla bla\"FOR ", statement.getNormalizedRepresentation());
-        statement = new Statement("FOR I = 1 TO 100"); // Not currently a valid statement
-        assertEquals("", statement.getNormalizedRepresentation());
+        statement = new Statement("FOR I = 1 TO 100");
+        assertEquals("FOR I=1TO 100", statement.getNormalizedRepresentation());
+        assertEquals("f1a5493d31f1b1313030", HexFormat.of().formatHex(statement.getBinaryRepresentation()));
     }
 
     private void testEscape(String expectedResult, String input) {

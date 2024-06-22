@@ -29,18 +29,16 @@ public class Statement extends Token {
     public Statement(String input) {
         // Prepare for matching by surrounding all Basic keywords with curly braces
         String escapedInput = escapeBasicKeywords(input);
-        // Try to match from the left. If no Token can be found, then the Statement is invalid.
-        // If a Token is found, add it to the Token list, remove the source for the Token from the input,
-        // and restart matching until nothing is left.
+        // Repeatedly match Basic keywords and "Other" in-between, until nothing is left
         while (!escapedInput.isEmpty()) {
-            // First, Basic keyword
+            // Basic keyword
             Keyword keyword = new Keyword(escapedInput);
             if (keyword.isValid()) {
                 escapedInput = addToken(keyword);
                 continue;
             }
-            // Next, A string
-            SharpString string = new SharpString(escapedInput);
+            // "Other" string
+            Other string = new Other(escapedInput);
             if (string.isValid()) {
                 escapedInput = addToken(string);
                 continue;
@@ -73,6 +71,16 @@ public class Statement extends Token {
         return sb.toString();
     }
 
+    @Override
+    public byte[] getBinaryRepresentation() {
+        byte[] retVal = new byte[0];
+        for (Token token : tokenList) {
+            byte[] binaryRep = token.getBinaryRepresentation();
+            retVal = appendBytes(retVal, binaryRep);
+        }
+        return retVal;
+    }
+
     String normalizeStatement(String input) {
         // Do we have a REM statement?
         Pattern pattern = Pattern.compile("R *E *M *");
@@ -101,6 +109,8 @@ public class Statement extends Token {
             input = input.substring(0, index);
         }
         String result = input; // Initialize the result
+        // Also before parsing, quoted Strings must be removed from the input (but left in the result, of course)
+        input = input.replaceAll("\"[^\"]+\"", "");
         for (int wordLength = 8; wordLength > 1; wordLength--) { // Go from length 8 down to 2
             String dummy = new String(new char[wordLength]).replace('\0', '#'); // Cache dummy for this length
             for (int currentPos = 0; currentPos <= input.length() - wordLength; currentPos++) { // Go through the input, be sure not to overstep

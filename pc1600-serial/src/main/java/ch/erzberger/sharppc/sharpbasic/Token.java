@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
 @Getter
 public abstract class Token {
     private String inputMinusToken;
-    private byte[] binary;
     private boolean valid = false;
 
     protected void validate() {
@@ -25,11 +24,8 @@ public abstract class Token {
         this.inputMinusToken = inputMinusToken;
     }
 
-    void setBinary(byte[] binary) {
-        this.binary = binary;
-    }
-
     public abstract String getNormalizedRepresentation();
+    public abstract byte[] getBinaryRepresentation();
 
     byte[] convertIntToTwoByteByteArray(int value) {
         byte[] intermediary = ByteBuffer.allocate(4).putInt(value).array();
@@ -57,5 +53,12 @@ public abstract class Token {
         } else {
             return -1;
         }
+    }
+
+    static byte[] appendBytes(byte[] source, byte[] toAppend) {
+        byte[] retVal = new byte[source.length + toAppend.length];
+        System.arraycopy(source, 0, retVal, 0, source.length);
+        System.arraycopy(toAppend, 0, retVal, source.length, toAppend.length);
+        return retVal;
     }
 }
