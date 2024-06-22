@@ -5,22 +5,28 @@ package ch.erzberger.sharppc.sharpbasic;
  * Its binary format is:
  * - 2 bytes is the line number in binary (e.g. 000A for "10")
  * - 1 byte for the length of the line
- * The length will be zero here, because this can only be patched after the line has been constructed.
+ * The length will be zero here, because this can only be patched after the entire Line has been constructed.
  */
 public class LineNumber extends Token {
     private final String normalizedRepresentation;
     public LineNumber(String input) {
-        // A line number must start with digits and end with zero or more blanks.
-        String lineNumberAsString = findSubstring(input, "^\\d+ *");
-        if (lineNumberAsString == null) {
+        // In many listings, the line number ends with a colon. In other listing, it is separated
+        // from the rest of the statement with a blank. Also, the line number may be indented with blanks.
+        // The regex therefore extracts from the start:
+        //  0 or more blanks | 1 or more digits | 0 or more blanks | 0 or 1 colon | 0 or more blanks.
+        String lineNumberAsString = findSubstring(input, "^ *\\d+ *:? *");
+        if (lineNumberAsString == null) {  // The String does not start with a line number
             normalizedRepresentation = "";
             setInputMinusToken(input);
             return;
         }
-        setInputMinusToken(input.substring(lineNumberAsString.length()));
-        int lineNumber = Integer.parseInt(lineNumberAsString.trim());
+        setInputMinusToken(input.substring(lineNumberAsString.length())); // Remove the line number part
+        lineNumberAsString = lineNumberAsString.replace(":","").trim(); // Remove colon, if present
+        int lineNumber = Integer.parseInt(lineNumberAsString);
+        // TODO: Array must be three bytes, not two
         setBinary(convertIntToTwoByteByteArray(lineNumber));
-        normalizedRepresentation = lineNumberAsString.trim() + " ";
+        // Use the LLIST format for the line number, i.e. indented to three digits, and a colon as separator
+        normalizedRepresentation = String.format("%3d", lineNumber) + ":";
         validate();
     }
 

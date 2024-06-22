@@ -24,6 +24,9 @@ class StatementTest {
 
     @Test
     void escapeBasicKeywords() {
+        testEscape("{FOR}{PRINT}","FORPRINT");
+        testEscape("{PRINT}{FOR}{PRINT}","PRINTFORPRINT");
+        testEscape("{PRINT}{PRINT}{PRINT}","PRINTPRINTPRINT");
         testEscape("{FOR}I=1{TO}100","FOR I=1 TO 100");
         testEscape("A{FOR}{LET}","AFORLET");
         testEscape("{FOR}I","FO RI");
@@ -33,6 +36,18 @@ class StatementTest {
         testEscape("10*5{PROTOCOL}{IF}3*3","10*5 PROTOCOLIF 3*3");
         testEscape("\"A\"","\"A\"");
         testEscape("77*100","77 * 100");
+    }
+
+    @Test
+    void makeStatement() {
+        Statement statement = new Statement("FOR PRINT LET");
+        assertEquals("FOR PRINT LET ", statement.getNormalizedRepresentation());
+        statement = new Statement("FOR\"bla bla\"");
+        assertEquals("FOR \"bla bla\"", statement.getNormalizedRepresentation());
+        statement = new Statement("\"bla bla\"FOR");
+        assertEquals("\"bla bla\"FOR ", statement.getNormalizedRepresentation());
+        statement = new Statement("FOR I = 1 TO 100"); // Not currently a valid statement
+        assertEquals("", statement.getNormalizedRepresentation());
     }
 
     private void testEscape(String expectedResult, String input) {

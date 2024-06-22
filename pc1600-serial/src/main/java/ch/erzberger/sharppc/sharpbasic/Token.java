@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
 
 /**
  * Root token class.
+ * The Basic program is composed with Tokens:
+ * Program --> Lines -->* Line -->* Statement
  */
 @Getter
 public abstract class Token {
@@ -44,6 +46,16 @@ public abstract class Token {
             return matcher.group(0);
         } else {
             return null;
+        }
+    }
+
+    int findIndexOfSubstring(String input, String regex) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(input);
+        if (matcher.find()) {
+            return matcher.start();
+        } else {
+            return -1;
         }
     }
 }

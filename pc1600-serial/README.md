@@ -10,7 +10,7 @@ for the PC-1500, so that it can keep up.
 ### PC-1600: USB Serial Adapter
 
 The Sharp PC-1600 has a serial device built in. It uses fairly standard 5V logic, and can be interfaced
-with currently available FTDI adapters. hen using the original FTDI adapter, no additional
+with currently available FTDI adapters. When using the original FTDI adapter, no additional
 logic chips or inverters are required.
 
 These are the components that I used:
@@ -64,7 +64,7 @@ compatible with the original device, but it would not be difficult to change thi
 [Jeff Birt](https://github.com/Jeff-Birt) built a modern equivalent of this add-on,
 and sells it under the name
 [CE-158X](https://www.soigeneris.com/ce-158x-serial-parallel-interface-for-sharp-pc-1500).
-This software works with the USB port of the CE-158X. See below on how to set-up the
+This software works with the USB port (U1) of the CE-158X. See below on how to set-up the
 PC-1500 to use the correct port.
 
 ## Software
@@ -79,10 +79,18 @@ The tool is launched as follows:
 The options are:
 * `--load (-l)`: Load a file onto the PC-1500/1600. Before launching the tool, enter `LOAD "COM1:"` on the PC-1600, or `CLOADa` on the PC-1500.
 * `--save (-s)`: Save a file from the PC-1500/1600 to the PC. Launch the tool, and then enter `SAVE "COM1:",A` on the PC-1600, or `CSAVEa`on the PC-1500.
-* `--1500 (-5)`: Setup the tool to communicate with the PC-1500 (default is the PC-1600)
-* `--addutil (-u)`: Adds some shortcuts starting with line 61000 (Def-J: Init serial; Def-S: Save, Def-L: Load)
+* `--1500 (-5)`: Setup the tool to communicate with the PC-1500 (default is the PC-1600).
+* `--binary` (-b): Assume that the file to be sent or received is in binary format. This will also trigger necessary delays when communicating with the PC-1500.
+* `--addutil (-u)`: Adds some shortcuts starting with line 61000 (`Def-J`: Init serial; `Def-S`: Save, `Def-L`: Load)
 
 The file provided will be automatically converted into the proper PC-1500/A or PC-1600 format, and no manual work is required.
+
+### Limitations
+## Abbreviations are not supported
+According to the PC-1500 manual, many Basic commands can be abbreviated. For example, `PRINT` can be abbreviated as
+`P.`, `PR.`, `PRI.` or `PRIN.`. Even though this would be simple to implement, it is not done. The reason is simple:
+When listing a program with `LLIST`, all abbreviations get expanded into the full keyword. Therefore, one never finds any old source
+code in magazines etc. that actually use these abbreviations. Supporting these, is just a waste of time.
 
 ### Settings for the Sharp PC-1600 serial port
 After a reset / power loss of the PC-1600, these commands need to be entered
@@ -93,6 +101,7 @@ INIT "COM1:",4096
 OUTSTAT "COM1:"
 RCVSTAT "COM1:",24
 ```
+Save and load commands need to be prefixed with the com port, e.g. `SAVE "COM1:"`.
 
 For sending, this is required in addition (adapt `PCONSOLE` to your needs):
 ```
@@ -102,7 +111,7 @@ PCONSOLE "COM1:",80,2
 ```
 
 ### Settings for the Sharp PC-1500 serial port
-To switch to the USB port, enter this: `SETDEV U1,CI,CO`
+To switch to the U1 USB port, enter this: `SETDEV U1,CI,CO`. Save and load (`CSAVE`, `CLOAD`) then work with this port.
 
 ## Appendix
 ### PC/1600 commands relevant to serial communication
@@ -238,11 +247,10 @@ Loads a program from serial port.
 ### Future software work
 * Allow to specify the serial port. Important if the port can't be autodetected.
 * Normalize the file when saving to PC (line breaks, EOF marker, leading / trailing blanks etc.)
-* Support tokenizing a Basic program, and then sending it in binary format (will be faster)
+* Support tokenizing a Basic program, and then sending it in binary format (will be much faster than sending it in ASCII)
   * Also add the binary header required for the PC-1500 / CE-158
 * Define a format for "Reserve Keys" and support to load these (maybe even save)
   * This will also require tokenization support 
-* Add an option for "binary" load and save, which will not normalize during load or save
 * Support comments in Basic programs (e.g. a line starting with "#" will be removed during normalization)
 * Support a "terminal" mode, where input from the keyboard is sent to the Pocket Computer,
   and output is shown on the screen.
