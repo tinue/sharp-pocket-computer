@@ -1,8 +1,8 @@
 package ch.erzberger.sharppc.sharpbasic;
 
-import ch.erzberger.tokenizer.SharpPc1500BasicKeywords;
 import lombok.extern.java.Log;
 
+import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 
 @Log
@@ -14,6 +14,12 @@ public class Keyword extends Token {
         if (input.startsWith("{")) {
             // This will be a Basic keyword (escaped)
             String pureKeyword = input.substring(1, input.indexOf("}"));
+            String remark = "";
+            if (pureKeyword.startsWith("REM")) {
+                // REM is packaged a bit differently: It also contains the actual remark
+                remark = pureKeyword.substring(3).trim();
+                pureKeyword = "REM";
+            }
             Integer code = SharpPc1500BasicKeywords.getCode(pureKeyword);
             if (code == null) {
                 log.log(Level.SEVERE, "Impossible: Found escaped Basic keyword, but it does not resolve: {0}", pureKeyword);
@@ -21,9 +27,21 @@ public class Keyword extends Token {
                 binaryRepresentation = new byte[0];
                 return;
             }
-            binaryRepresentation = convertIntToTwoByteByteArray(code);
-            normalizedRepresentation = pureKeyword + " ";
-            setInputMinusToken(input.substring(input.indexOf("}")+1));
+            byte[] remarkBytes;
+            try {
+                remarkBytes = remark.getBytes("Cp437");
+            } catch (UnsupportedEncodingException e) {
+                log.log(Level.SEVERE, "CP437 not installed");
+                remarkBytes = new byte[0];
+            }
+            byte[] binaryRepresentationTemp = convertIntToTwoByteByteArray(code);
+            if (remarkBytes.length > 0) {
+                binaryRepresentation = appendBytes(binaryRepresentationTemp, remarkBytes);
+            } else {
+                binaryRepresentation = binaryRepresentationTemp;
+            }
+            normalizedRepresentation = pureKeyword + " " + remark;
+            setInputMinusToken(input.substring(input.indexOf("}") + 1));
             validate();
         } else {
             log.log(Level.FINEST, "Not a Basic keyword: {0}", input);

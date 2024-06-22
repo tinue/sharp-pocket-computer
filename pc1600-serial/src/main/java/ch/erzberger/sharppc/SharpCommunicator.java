@@ -11,6 +11,7 @@ import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -49,8 +50,23 @@ public class SharpCommunicator {
             ByteProcessor byteProcessor = new ProcessFiles(filename, cmdLineArgs.device());
             wrapper.openPort(baudRate, handShake, byteProcessor);
         } else {
-            if (cmdLineArgs.binary()) {
-                byte[] program = SharpFileLoader.loadBinaryFile(filename, cmdLineArgs.device());
+            // Load a program from the PC to the Sharp Pocket Computer
+            // Three options:
+            //  1. .BAS as binary (convert first) -> Needs option --ascii
+            //  2. .BAS as ASCII (CLOADa / LOAD .. ,A) -> No option needed
+            //  3. .BAS as binary  -> No option needed
+            // TODO: Fix for PC-1600
+            boolean isBasicProgram = filename.toUpperCase().contains(".BAS");
+            if ((!isBasicProgram || !cmdLineArgs.ascii())) {
+                // Binary load is required.
+                byte[] program;
+                if (isBasicProgram) {
+                    List<String> lines = SharpFileLoader.loadAsciiFile(filename, cmdLineArgs.addUtil(), cmdLineArgs.device());
+                    Program theProgram = new Program(filename, lines);
+                    program = theProgram.getBinaryRepresentation();
+                } else {
+                    program = SharpFileLoader.loadBinaryFile(filename, cmdLineArgs.device());
+                }
                 if (PocketPcDevice.PC1500.equals(cmdLineArgs.device())) {
                     // The PC-1500 needs two things:
                     // 1. The first 28 bytes are a header, and after the header a pause is required (at least 100ms)
@@ -81,10 +97,9 @@ public class SharpCommunicator {
                     wrapper.writeBytes(program);
                 }
             } else {
+                // ASCII mode
                 // Load the file into a list fo Strings. The helper will normalize the file, i.e. remove extra end of file markers etc.
                 List<String> lines = SharpFileLoader.loadAsciiFile(filename, cmdLineArgs.addUtil(), cmdLineArgs.device());
-                Program program = new Program("Name", lines);
-                System.out.println(program.getNormalizedRepresentation());
                 // Send each line individually to the PocketPC. This gives the device time to process the line
                 for (String line : lines) {
                     byte[] lineBytes = SharpFileLoader.convertStringIntoByteArray(line, cmdLineArgs.device());

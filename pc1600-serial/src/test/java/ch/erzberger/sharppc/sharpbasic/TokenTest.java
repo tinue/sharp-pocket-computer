@@ -18,6 +18,11 @@ class TokenTest {
         assertEquals((byte) 0xA0, keyword.getBinaryRepresentation()[1]);
         assertEquals("POKE# ", keyword.getNormalizedRepresentation());
         assertEquals("&FFFF,X", keyword.getInputMinusToken());
+        keyword = new Keyword("{REMBla Bla}");
+        assertEquals("REM Bla Bla", keyword.getNormalizedRepresentation());
+        assertEquals("f1ab426c6120426c61", HexFormat.of().formatHex(keyword.getBinaryRepresentation()));
+        keyword = new Keyword("{REM Bla Bla}");
+        assertEquals("REM Bla Bla", keyword.getNormalizedRepresentation());
         assertFalse(new Keyword("A=10").isValid());
         assertFalse(new Keyword("A=10{TO}").isValid());
         assertFalse(new Keyword("{NOPE}").isValid());
@@ -61,6 +66,8 @@ class TokenTest {
         assertTrue(line.isValid());
         assertEquals(" 10:FOR I=1TO 100:PRINT I:NEXT I", line.getNormalizedRepresentation());
         assertEquals("", line.getInputMinusToken());
+        line = new Line("10 REM Test program");
+        assertTrue(line.isValid());
         line = new Line("10 \"BIO\":CLEAR :INPUT \"Biorhythm, Year? \";L, \"Month?\";M");
         assertEquals(" 10:\"BIO\":CLEAR :INPUT \"Biorhythm, Year? \";L,\"Month?\";M", line.getNormalizedRepresentation());
         assertEquals("000A2C2242494F223AF1873AF0912242696F72687974686D2C20596561723F20223B4C2C224D6F6E74683F223B4D0D", HexFormat.of().formatHex(line.getBinaryRepresentation()).toUpperCase());

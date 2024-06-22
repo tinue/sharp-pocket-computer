@@ -1,6 +1,5 @@
 package ch.erzberger.sharppc.sharpbasic;
 
-import ch.erzberger.tokenizer.SharpPc1500BasicKeywords;
 import lombok.extern.java.Log;
 
 import java.util.ArrayList;
@@ -119,7 +118,9 @@ public class Statement extends Token {
                 if (code != null) {
                     // A code could be found -> We have a keyword.
                     // Find the same match in the result, must not yet have been escaped before, i.e. not preceded with '{'
-                    int startMatchInResult = findIndexOfSubstring(result, "(?<!\\{)" + searchWord);
+                    // Some Basic keywords have a dollar sign in them, which means something in a REGEX. It needs to be escaped
+                    String escapedSearchWord = searchWord.replace("$", "\\$");
+                    int startMatchInResult = findIndexOfSubstring(result, "(?<!\\{)" + escapedSearchWord);
                     // Add everything before the match, then the escaped keyword, then everything after the match
                     result = result.substring(0, startMatchInResult) + "{" + searchWord + "}" + result.substring(startMatchInResult + searchWord.length());
                     // To avoid a re-match with a shorter keyword (FOR -> OR), replace the found keyword with a dummy of the same length

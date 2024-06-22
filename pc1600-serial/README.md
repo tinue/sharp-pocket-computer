@@ -247,10 +247,15 @@ Loads a program from serial port.
 ### Future software work
 * Allow to specify the serial port. Important if the port can't be autodetected.
 * Normalize the file when saving to PC (line breaks, EOF marker, leading / trailing blanks etc.)
+  * also safe a binary loaded program (reverse-tokenize it, and remove the binary header) 
+* Allow to write a file back to the PC, instead of sending it to the Pocket Computer (-i and -o both specified)
 * Support tokenizing a Basic program, and then sending it in binary format (will be much faster than sending it in ASCII)
   * Also add the binary header required for the PC-1500 / CE-158
+  * Check for PC-1600: Header? Additional Basic tokens?
+* Support loading a binary program to the PC-1500, i.e. add the necessary CE-158 header.
 * Define a format for "Reserve Keys" and support to load these (maybe even save)
-  * This will also require tokenization support 
+  * This will also require tokenization support
+  * It also needs a special reserve key header
 * Support comments in Basic programs (e.g. a line starting with "#" will be removed during normalization)
 * Support a "terminal" mode, where input from the keyboard is sent to the Pocket Computer,
   and output is shown on the screen.

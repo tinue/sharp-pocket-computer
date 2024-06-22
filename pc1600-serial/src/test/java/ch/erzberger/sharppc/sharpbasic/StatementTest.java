@@ -27,6 +27,7 @@ class StatementTest {
     @Test
     void escapeBasicKeywords() {
         testEscape("{FOR}{PRINT}","FORPRINT");
+        testEscape("{CHR$}", "CHR$");
         testEscape("{PRINT}{FOR}{PRINT}","PRINTFORPRINT");
         testEscape("{PRINT}{PRINT}{PRINT}","PRINTPRINTPRINT");
         testEscape("{FOR}I=1{TO}100","FOR I=1 TO 100");
@@ -45,6 +46,8 @@ class StatementTest {
         Statement statement = new Statement("FOR PRINT LET");
         assertEquals("FOR PRINT LET ", statement.getNormalizedRepresentation());
         assertEquals("f1a5f097f198", HexFormat.of().formatHex(statement.getBinaryRepresentation()));
+        statement = new Statement("PRINT CHR$ 127;");
+        assertEquals("PRINT CHR$ 127;", statement.getNormalizedRepresentation());
         statement = new Statement("FOR\"bla bla\"");
         assertEquals("FOR \"bla bla\"", statement.getNormalizedRepresentation());
         statement = new Statement("\"bla bla\"FOR");

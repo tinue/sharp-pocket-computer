@@ -1,4 +1,4 @@
-package ch.erzberger.tokenizer;
+package ch.erzberger.sharppc.sharpbasic;
 
 import lombok.extern.java.Log;
 
