@@ -46,7 +46,6 @@ public class Statement extends Token {
             log.log(Level.WARNING, "This part of a Statement could not be matched: {0}", escapedInput);
             setInputMinusToken(input);
             return;
-
         }
         // Done, Statement is valid
         setInputMinusToken("");

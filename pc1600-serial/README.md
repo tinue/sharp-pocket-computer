@@ -76,23 +76,40 @@ The tool is launched as follows:
 
 `java -jar SharpCommunicator.jar <options> [filename]`
 
-The options are:
-* `--load (-l)`: Load a file onto the PC-1500/1600. Before launching the tool, enter `LOAD "COM1:"` on the PC-1600, or `CLOADa` on the PC-1500.
-* `--save (-s)`: Save a file from the PC-1500/1600 to the PC. Launch the tool, and then enter `SAVE "COM1:",A` on the PC-1600, or `CSAVEa`on the PC-1500.
-* `--1500 (-5)`: Setup the tool to communicate with the PC-1500 (default is the PC-1600).
-* `--binary` (-b): Assume that the file to be sent or received is in binary format. This will also trigger necessary delays when communicating with the PC-1500.
-* `--addutil (-u)`: Adds some shortcuts starting with line 61000 (`Def-J`: Init serial; `Def-S`: Save, `Def-L`: Load)
+Software for the PC-1500 or PC-1600 can come in two formats:
+* ASCII, which is readable / editable on the PC (e.g. `10 FOR I=1 to 100`)
+* Binary, which can't be edited. Binary files can be exchanged much more quickly with the Pocket Computer than ASCII files
 
-The file provided will be automatically converted into the proper PC-1500/A or PC-1600 format, and no manual work is required.
+To load ASCII files, the PC-1500 needs to be told that an ASCII file is to be expected, by adding an `a`: `CLOADa`.
+The same is true for saving: `CSAVEa`.
+
+The PC-1600 can detect on its own that an ASCII file is being received, and a simple `LOAD "COM1:"` will do.
+Saving on the other hand must be specified with `SAVE "COM1:",A`.
+
+The Sharp Communicator software will safe to disk whatever is being sent by the Pocket Computer:
+* `CSAVEa` / `SAVE COM1:,A` will result in an ASCII file on the disk.
+* `CSAVE` / `SAVE COM1:` will give a binary file.
+
+Loading is different, though:
+* A file with a `.BAS` extension will be automatically converted to binary, and must be loaded with `CLOAD` on the PC-1500.
+* A file with any other extension is loaded as binary without conversion. It also needs to be loaded with `CLOAD`.
+* Finally, a `.BAS` file plus the option `--ascii` will not convert the file to binary, and it must be loaded with `CLOADa`.
+
+With the above in mind, the options are:
+* `--load (-l)`: Load a file onto the PC-1500/1600. Before launching the tool, enter `LOAD "COM1:"` on the PC-1600, or `CLOAD` on the PC-1500.
+* `--save (-s)`: Save a file from the PC-1500/1600 to the PC. Launch the tool, and then enter `SAVE "COM1:",A` on the PC-1600, or `CSAVEa`on the PC-1500.
+* `--ascii (-a)`: When loading, do not convert the `.BAS` file to binary, use `CLOADa` on the PC-1500 to load.
+* `--1500 (-5)`: Setup the tool to communicate with the PC-1500 (default is the PC-1600).
+* `--addutil (-u)`: Adds some shortcuts starting with line 61000 (`Def-J`: Init serial; `Def-S`: Save, `Def-L`: Load)
 
 ### Limitations
 ## Abbreviations are not supported
 According to the PC-1500 manual, many Basic commands can be abbreviated. For example, `PRINT` can be abbreviated as
-`P.`, `PR.`, `PRI.` or `PRIN.`. Even though this would be simple to implement, it is not done. The reason is simple:
+`P.`, `PR.`, `PRI.` or `PRIN.`. Even though this would be simple to implement, it is not done. The reason is this:
 When listing a program with `LLIST`, all abbreviations get expanded into the full keyword. Therefore, one never finds any old source
-code in magazines etc. that actually use these abbreviations. Supporting these, is just a waste of time.
+code in magazines etc. that actually use these abbreviations.
 
-### Settings for the Sharp PC-1600 serial port
+### Enabling the Sharp PC-1600 serial port
 After a reset / power loss of the PC-1600, these commands need to be entered
 to make it ready for receiving data:
 ```
@@ -110,8 +127,8 @@ SETDEV "COM1:",PO
 PCONSOLE "COM1:",80,2
 ```
 
-### Settings for the Sharp PC-1500 serial port
-To switch to the U1 USB port, enter this: `SETDEV U1,CI,CO`. Save and load (`CSAVE`, `CLOAD`) then work with this port.
+### Enabling the Sharp PC-1500 serial port
+To switch `CLOAD` / `CSAVE` to the U1 USB port, enter this: `SETDEV U1,CI,CO`.
 
 ## Appendix
 ### PC/1600 commands relevant to serial communication

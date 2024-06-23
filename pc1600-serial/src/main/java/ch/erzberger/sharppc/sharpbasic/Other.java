@@ -34,7 +34,7 @@ import java.util.logging.Level;
         } catch (UnsupportedEncodingException e) {
             log.log(Level.SEVERE, "Codepage 437 not installed");
             System.exit(1);
-            return null;
+            return new byte[0];
         }
     }
 }

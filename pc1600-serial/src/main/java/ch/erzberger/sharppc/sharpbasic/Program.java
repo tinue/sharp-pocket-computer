@@ -5,7 +5,6 @@ import lombok.extern.java.Log;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HexFormat;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -14,17 +13,18 @@ import java.util.logging.Level;
  * A program consists of a program name (which is not a token), and a list of Lines.
  * The program takes care of writing the CE-158 header that is required when loading through the CE-158.
  */
-@Log public class Program extends Token{
+@Log
+public class Program extends Token {
     private final String programName;
     private final List<Line> lines;
 
     public Program(String programName, List<String> lineInput) {
         this.programName = programName;
-        List<Line> lines = new ArrayList<>();
+        List<Line> tempLines = new ArrayList<>();
         for (String line : lineInput) {
-            lines.add(new Line(line));
+            tempLines.add(new Line(line));
         }
-        this.lines = Collections.unmodifiableList(lines);
+        this.lines = Collections.unmodifiableList(tempLines);
         validate(); // Set the token as valid.
         setInputMinusToken(""); // Should not be necessary, because each line does this of its own.
     }
@@ -60,9 +60,9 @@ import java.util.logging.Level;
             log.log(Level.SEVERE, "Codepage 437 not found");
             System.exit(-1);
         }
-        byte[] sizePartOfHeader = new byte[27-progName.length];
+        byte[] sizePartOfHeader = new byte[27 - progName.length];
         byte[] retVal = appendBytes(progName, sizePartOfHeader);
-        byte[] sizeBytes = convertIntToTwoByteByteArray(size-1);
+        byte[] sizeBytes = convertIntToTwoByteByteArray(size - 1);
         retVal[23] = sizeBytes[0];
         retVal[24] = sizeBytes[1];
         return retVal;
