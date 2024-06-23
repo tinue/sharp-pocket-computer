@@ -91,9 +91,10 @@ The Sharp Communicator software will safe to disk whatever is being sent by the 
 * `CSAVE` / `SAVE COM1:` will give a binary file.
 
 Loading is different, though:
-* A file with a `.BAS` extension will be automatically converted to binary, and must be loaded with `CLOAD` on the PC-1500.
+* A file with a `.BAS` extension will be automatically converted to binary on the PC-1500, and must be loaded with `CLOAD`.
 * A file with any other extension is loaded as binary without conversion. It also needs to be loaded with `CLOAD`.
 * Finally, a `.BAS` file plus the option `--ascii` will not convert the file to binary, and it must be loaded with `CLOADa`.
+* Only for the PC-1600: Currently, the code cannot convert a PC-1600 file to binary, therefore a `.BAS` file will always be loaded as ASCII on the PC-1600.
 
 With the above in mind, the options are:
 * `--load (-l)`: Load a file onto the PC-1500/1600. Before launching the tool, enter `LOAD "COM1:"` on the PC-1600, or `CLOAD` on the PC-1500.

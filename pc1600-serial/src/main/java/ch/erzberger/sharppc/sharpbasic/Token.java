@@ -35,6 +35,10 @@ public abstract class Token {
         return retVal;
     }
 
+    byte[] convertIntToFourByteByteArray(int value) {
+        return ByteBuffer.allocate(4).putInt(value).array();
+    }
+
     String findSubstring(String input, String regex) {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(input);

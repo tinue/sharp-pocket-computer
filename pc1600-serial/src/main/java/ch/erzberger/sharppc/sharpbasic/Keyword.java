@@ -1,5 +1,6 @@
 package ch.erzberger.sharppc.sharpbasic;
 
+import ch.erzberger.commandline.PocketPcDevice;
 import lombok.extern.java.Log;
 
 import java.io.UnsupportedEncodingException;
@@ -10,7 +11,7 @@ public class Keyword extends Token {
     private final String normalizedRepresentation;
     private final byte[] binaryRepresentation;
 
-    public Keyword(String input) {
+    public Keyword(String input, PocketPcDevice device) {
         if (input.startsWith("{")) {
             // This will be a Basic keyword (escaped)
             String pureKeyword = input.substring(1, input.indexOf("}"));
@@ -20,7 +21,7 @@ public class Keyword extends Token {
                 remark = pureKeyword.substring(3).trim();
                 pureKeyword = "REM";
             }
-            Integer code = SharpPc1500BasicKeywords.getCode(pureKeyword);
+            Integer code = KeywordLookup.getCode(pureKeyword, device);
             if (code == null) {
                 log.log(Level.SEVERE, "Impossible: Found escaped Basic keyword, but it does not resolve: {0}", pureKeyword);
                 normalizedRepresentation = null;

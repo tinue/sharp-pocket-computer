@@ -1,5 +1,6 @@
 package ch.erzberger.sharppc.sharpbasic;
 
+import ch.erzberger.commandline.PocketPcDevice;
 import lombok.extern.java.Log;
 
 import java.io.UnsupportedEncodingException;
@@ -17,12 +18,14 @@ import java.util.logging.Level;
 public class Program extends Token {
     private final String programName;
     private final List<Line> lines;
+    private final PocketPcDevice device;
 
-    public Program(String programName, List<String> lineInput) {
+    public Program(String programName, List<String> lineInput, PocketPcDevice device) {
+        this.device = device;
         this.programName = programName;
         List<Line> tempLines = new ArrayList<>();
         for (String line : lineInput) {
-            tempLines.add(new Line(line));
+            tempLines.add(new Line(line, device));
         }
         this.lines = Collections.unmodifiableList(tempLines);
         validate(); // Set the token as valid.
@@ -45,10 +48,14 @@ public class Program extends Token {
         for (Line line : lines) {
             program = appendBytes(program, line.getBinaryRepresentation());
         }
-        return appendBytes(makeHeader(programName, program.length), program);
+        if (PocketPcDevice.PC1600.equals(device)) {
+            return appendBytes(make1600header(program.length), program);
+        } else {
+            return appendBytes(make1500header(programName, program.length), program);
+        }
     }
 
-    byte[] makeHeader(String programName, int size) {
+    byte[] make1500header(String programName, int size) {
         if (programName.length() > 16) {
             programName = programName.substring(0, 16);
         }
@@ -66,5 +73,20 @@ public class Program extends Token {
         retVal[23] = sizeBytes[0];
         retVal[24] = sizeBytes[1];
         return retVal;
+    }
+
+    byte[] make1600header(int size) {
+        // See PC-1600 Technical Reference Manual, Page 45
+        byte[] header = new byte[16];
+        header[0] = (byte)0xFF; // Indicates that a header is present
+        header[1] = (byte)0x10; // ID Code, must be 0x10
+        header[4] = (byte)0x21; // Mode, 0x21 is Basic program
+        byte[] sizeBytes = convertIntToFourByteByteArray(size);
+        header[5] = sizeBytes[3]; // Size, low byte
+        header[6] = sizeBytes[2]; // Size, middle byte
+        header[7] = sizeBytes[1]; // Size, high byte
+        header[14] = (byte)0x00; // Reserved
+        header[15] = (byte)0xF0; // Reserved
+        return header;
     }
 }

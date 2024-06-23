@@ -45,23 +45,24 @@ public class SharpCommunicator {
         }
         wrapper.openPort(baudRate, handShake);
         if (Direction.FROMPOCKETOPC.equals(direction)) {
-            // Save, PC-1600 -> Disk
+            // Save, Pocket Computer -> Disk, just save what's coming, no conversions.
             ByteProcessor byteProcessor = new ProcessFiles(filename, cmdLineArgs.device());
             wrapper.openPort(baudRate, handShake, byteProcessor);
         } else {
             // Load a program from the PC to the Sharp Pocket Computer
-            // Three options:
-            //  1. .BAS as binary (convert first) -> Needs option --ascii
-            //  2. .BAS as ASCII (CLOADa / LOAD .. ,A) -> No option needed
-            //  3. .BAS as binary  -> No option needed
-            // TODO: Fix for PC-1600
-            boolean isBasicProgram = filename.toUpperCase().contains(".BAS");
-            if ((!isBasicProgram || !cmdLineArgs.ascii())) {
+            // Logic:
+            // .BAS files will be converted to binary first for the PC-1500. --ascii option prevents this.
+            // on the PC-1600, the file can't yet be converted. --ascii therefore has no effect there.
+            // Any other file will be loaded as binary.
+            boolean isBasicProgram = filename.toUpperCase().endsWith(".BAS");
+            boolean needToConvert = isBasicProgram && !cmdLineArgs.ascii();
+            boolean binaryload = needToConvert || !isBasicProgram;
+            if (binaryload) {
                 // Binary load is required.
                 byte[] program;
-                if (isBasicProgram) {
+                if (needToConvert) {
                     List<String> lines = SharpFileLoader.loadAsciiFile(filename, cmdLineArgs.addUtil(), cmdLineArgs.device());
-                    Program theProgram = new Program(filename, lines);
+                    Program theProgram = new Program(filename, lines, cmdLineArgs.device());
                     program = theProgram.getBinaryRepresentation();
                 } else {
                     program = SharpFileLoader.loadBinaryFile(filename, cmdLineArgs.device());
@@ -92,7 +93,7 @@ public class SharpCommunicator {
                         Thread.currentThread().interrupt();
                     }
                 } else {
-                    // The PC-1600 has no issues with full speed sending, and it has no header
+                    // The PC-1600 has no issues with full speed sending. Its 16 byte header is just loaded along with the rest
                     wrapper.writeBytes(program);
                 }
             } else {

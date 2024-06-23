@@ -1,5 +1,6 @@
 package ch.erzberger.sharppc.sharpbasic;
 
+import ch.erzberger.commandline.PocketPcDevice;
 import lombok.extern.java.Log;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ public class Line extends Token {
     private final LineNumber lineNumber;
     private final List<Statement> statements = new ArrayList<>();
 
-    public Line(String input) {
+    public Line(String input, PocketPcDevice device) {
         // First, extract the line number from the start of the String
         this.lineNumber = new LineNumber(input);
         if (!lineNumber.isValid()) {
@@ -29,7 +30,7 @@ public class Line extends Token {
             // Line number is valid, split the rest of the line into Statements
             String[] statementsAsString = lineNumber.getInputMinusToken().split(":");
             for (String statementAsString : statementsAsString) {
-                Statement statement = new Statement(statementAsString);
+                Statement statement = new Statement(statementAsString, device);
                 if (!statement.isValid()) {
                     log.log(Level.WARNING, "The line started ok, but this is not a statement: {0}", statementAsString);
                     setInputMinusToken(input);

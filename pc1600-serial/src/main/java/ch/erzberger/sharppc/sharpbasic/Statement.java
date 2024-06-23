@@ -1,5 +1,6 @@
 package ch.erzberger.sharppc.sharpbasic;
 
+import ch.erzberger.commandline.PocketPcDevice;
 import lombok.extern.java.Log;
 
 import java.util.ArrayList;
@@ -25,13 +26,13 @@ import java.util.regex.Pattern;
 public class Statement extends Token {
     private final List<Token> tokenList = new ArrayList<>();
 
-    public Statement(String input) {
+    public Statement(String input, PocketPcDevice device) {
         // Prepare for matching by surrounding all Basic keywords with curly braces
-        String escapedInput = escapeBasicKeywords(input);
+        String escapedInput = escapeBasicKeywords(input, device);
         // Repeatedly match Basic keywords and "Other" in-between, until nothing is left
         while (!escapedInput.isEmpty()) {
             // Basic keyword
-            Keyword keyword = new Keyword(escapedInput);
+            Keyword keyword = new Keyword(escapedInput, device);
             if (keyword.isValid()) {
                 escapedInput = addToken(keyword);
                 continue;
@@ -92,7 +93,7 @@ public class Statement extends Token {
         return input.replaceAll("\\s+(?=([^\"]*\"[^\"]*\")*[^\"]*$)", ""); //NOSONAR
     }
 
-    String escapeBasicKeywords(String input) {
+    String escapeBasicKeywords(String input, PocketPcDevice device) {
         /* Basic algorithm:
          * - Try each 8 char substring from left to right whether it matches or not
          *  - If so, replace it with the code
@@ -113,7 +114,7 @@ public class Statement extends Token {
             String dummy = new String(new char[wordLength]).replace('\0', '#'); // Cache dummy for this length
             for (int currentPos = 0; currentPos <= input.length() - wordLength; currentPos++) { // Go through the input, be sure not to overstep
                 String searchWord = input.substring(currentPos, currentPos + wordLength); // Extract the search word
-                Integer code = SharpPc1500BasicKeywords.getCode(searchWord); // Check if a code can be found for the search word.
+                Integer code = KeywordLookup.getCode(searchWord, device); // Check if a code can be found for the search word.
                 if (code != null) {
                     // A code could be found -> We have a keyword.
                     // Find the same match in the result, must not yet have been escaped before, i.e. not preceded with '{'

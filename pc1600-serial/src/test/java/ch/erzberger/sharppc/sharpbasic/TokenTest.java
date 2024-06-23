@@ -1,5 +1,6 @@
 package ch.erzberger.sharppc.sharpbasic;
 
+import ch.erzberger.commandline.PocketPcDevice;
 import org.junit.jupiter.api.Test;
 
 import java.util.HexFormat;
@@ -8,24 +9,25 @@ import static ch.erzberger.sharppc.sharpbasic.Token.appendBytes;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TokenTest {
+    private final PocketPcDevice DEVICE = PocketPcDevice.PC1500;
 
     @Test
     void keyword() {
-        Keyword keyword = new Keyword("{POKE#}&FFFF,X");
+        Keyword keyword = new Keyword("{POKE#}&FFFF,X", DEVICE);
         assertTrue(keyword.isValid());
         assertEquals(2, keyword.getBinaryRepresentation().length);
         assertEquals((byte) 0xF1, keyword.getBinaryRepresentation()[0]);
         assertEquals((byte) 0xA0, keyword.getBinaryRepresentation()[1]);
         assertEquals("POKE# ", keyword.getNormalizedRepresentation());
         assertEquals("&FFFF,X", keyword.getInputMinusToken());
-        keyword = new Keyword("{REMBla Bla}");
+        keyword = new Keyword("{REMBla Bla}", DEVICE);
         assertEquals("REM Bla Bla", keyword.getNormalizedRepresentation());
         assertEquals("f1ab426c6120426c61", HexFormat.of().formatHex(keyword.getBinaryRepresentation()));
-        keyword = new Keyword("{REM Bla Bla}");
+        keyword = new Keyword("{REM Bla Bla}", DEVICE);
         assertEquals("REM Bla Bla", keyword.getNormalizedRepresentation());
-        assertFalse(new Keyword("A=10").isValid());
-        assertFalse(new Keyword("A=10{TO}").isValid());
-        assertFalse(new Keyword("{NOPE}").isValid());
+        assertFalse(new Keyword("A=10", DEVICE).isValid());
+        assertFalse(new Keyword("A=10{TO}", DEVICE).isValid());
+        assertFalse(new Keyword("{NOPE}", DEVICE).isValid());
     }
 
     @Test
@@ -62,13 +64,13 @@ class TokenTest {
 
     @Test
     void line() {
-        Line line = new Line("10 FOR I = 1 TO 100:PRINT I:NEXT I");
+        Line line = new Line("10 FOR I = 1 TO 100:PRINT I:NEXT I", DEVICE);
         assertTrue(line.isValid());
         assertEquals(" 10:FOR I=1TO 100:PRINT I:NEXT I", line.getNormalizedRepresentation());
         assertEquals("", line.getInputMinusToken());
-        line = new Line("10 REM Test program");
+        line = new Line("10 REM Test program", DEVICE);
         assertTrue(line.isValid());
-        line = new Line("10 \"BIO\":CLEAR :INPUT \"Biorhythm, Year? \";L, \"Month?\";M");
+        line = new Line("10 \"BIO\":CLEAR :INPUT \"Biorhythm, Year? \";L, \"Month?\";M", DEVICE);
         assertEquals(" 10:\"BIO\":CLEAR :INPUT \"Biorhythm, Year? \";L,\"Month?\";M", line.getNormalizedRepresentation());
         assertEquals("000A2C2242494F223AF1873AF0912242696F72687974686D2C20596561723F20223B4C2C224D6F6E74683F223B4D0D", HexFormat.of().formatHex(line.getBinaryRepresentation()).toUpperCase());
     }

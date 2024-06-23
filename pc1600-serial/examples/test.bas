@@ -1,6 +1,8 @@
-10 REMJust a short Basic program for testing
-20 "A"WAIT 0
-30 FOR I = 1TO 100
-40 PRINT I
-50 NEXT I
-60 END
+10 REM Just a short Basic program for testing
+20 "A"WAIT 0:FOR I=1TO100
+30 PRINTI:NEXTI
+40 END
+50 "S"A=5:IF A<>5 GOTO "NOT5"
+60 PRINT"A is 5":GOTO "END"
+70 "NOT5"PRINT"A is not 5"
+80 "END":END

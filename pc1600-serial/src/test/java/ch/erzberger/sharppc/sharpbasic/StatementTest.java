@@ -1,5 +1,6 @@
 package ch.erzberger.sharppc.sharpbasic;
 
+import ch.erzberger.commandline.PocketPcDevice;
 import org.junit.jupiter.api.Test;
 
 import java.util.HexFormat;
@@ -7,6 +8,7 @@ import java.util.HexFormat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class StatementTest {
+    private final PocketPcDevice DEVICE = PocketPcDevice.PC1500;
     @Test
     void normalizeStatement() {
         testNormalization("Hithere", "Hi there");
@@ -19,7 +21,7 @@ class StatementTest {
     }
 
     private void testNormalization(String expectedResult, String input) {
-        Statement statement = new Statement("FOR");
+        Statement statement = new Statement("FOR", DEVICE);
         String result = statement.normalizeStatement(input);
         assertEquals(expectedResult, result);
     }
@@ -43,23 +45,23 @@ class StatementTest {
 
     @Test
     void makeStatement() {
-        Statement statement = new Statement("FOR PRINT LET");
+        Statement statement = new Statement("FOR PRINT LET", DEVICE);
         assertEquals("FOR PRINT LET ", statement.getNormalizedRepresentation());
         assertEquals("f1a5f097f198", HexFormat.of().formatHex(statement.getBinaryRepresentation()));
-        statement = new Statement("PRINT CHR$ 127;");
+        statement = new Statement("PRINT CHR$ 127;", DEVICE);
         assertEquals("PRINT CHR$ 127;", statement.getNormalizedRepresentation());
-        statement = new Statement("FOR\"bla bla\"");
+        statement = new Statement("FOR\"bla bla\"", DEVICE);
         assertEquals("FOR \"bla bla\"", statement.getNormalizedRepresentation());
-        statement = new Statement("\"bla bla\"FOR");
+        statement = new Statement("\"bla bla\"FOR", DEVICE);
         assertEquals("\"bla bla\"FOR ", statement.getNormalizedRepresentation());
-        statement = new Statement("FOR I = 1 TO 100");
+        statement = new Statement("FOR I = 1 TO 100", DEVICE);
         assertEquals("FOR I=1TO 100", statement.getNormalizedRepresentation());
         assertEquals("f1a5493d31f1b1313030", HexFormat.of().formatHex(statement.getBinaryRepresentation()));
     }
 
     private void testEscape(String expectedResult, String input) {
-        Statement statement = new Statement("FOR");
-        String result = statement.escapeBasicKeywords(input);
+        Statement statement = new Statement("FOR", DEVICE);
+        String result = statement.escapeBasicKeywords(input, DEVICE);
         assertEquals(expectedResult, result);
     }
 }

@@ -1,12 +1,11 @@
-package ch.erzberger.tokenizer;
+package ch.erzberger.sharppc.sharpbasic;
 
-import ch.erzberger.sharppc.sharpbasic.SharpPc1500BasicKeywords;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class SharpPc1500BasicKeywordsTest {
+class SharpPc1x00BasicKeywordsTest {
     @Test
     void testGetCode() {
         assertEquals(0xF16F, SharpPc1500BasicKeywords.getCode("PEEK"));
