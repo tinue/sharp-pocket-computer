@@ -109,7 +109,7 @@ public class Statement extends Token {
         }
         String result = input; // Initialize the result
         // Also before parsing, quoted Strings must be removed from the input (but left in the result, of course)
-        input = input.replaceAll("\"[^\"]+\"", "");
+        input = input.replaceAll("\"[^\"]*\"", ""); // Then text plus the double quotes
         for (int wordLength = 8; wordLength > 1; wordLength--) { // Go from length 8 down to 2
             String dummy = new String(new char[wordLength]).replace('\0', '#'); // Cache dummy for this length
             for (int currentPos = 0; currentPos <= input.length() - wordLength; currentPos++) { // Go through the input, be sure not to overstep

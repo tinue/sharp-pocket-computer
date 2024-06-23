@@ -28,7 +28,7 @@ public class Line extends Token {
             setInputMinusToken(input);
         } else {
             // Line number is valid, split the rest of the line into Statements
-            String[] statementsAsString = lineNumber.getInputMinusToken().split(":");
+            List<String> statementsAsString = split(lineNumber.getInputMinusToken());
             for (String statementAsString : statementsAsString) {
                 Statement statement = new Statement(statementAsString, device);
                 if (!statement.isValid()) {
@@ -70,5 +70,25 @@ public class Line extends Token {
         retVal[2] = length[1];
         retVal = appendBytes(retVal, line);
         return retVal;
+    }
+
+    /**
+     * Special helper to split a line into statements, ignoring the delimiter inside of quotes
+     * @param input String to split
+     * @return Statements
+     */
+    private List<String> split(String input) {
+        List<String> result = new ArrayList<>();
+        int start = 0;
+        boolean inQuotes = false;
+        for (int current = 0; current < input.length(); current++) {
+            if (input.charAt(current) == '\"') inQuotes = !inQuotes; // toggle state
+            else if (input.charAt(current) == ':' && !inQuotes) {
+                result.add(input.substring(start, current));
+                start = current + 1;
+            }
+        }
+        result.add(input.substring(start));
+        return result;
     }
 }

@@ -28,6 +28,8 @@ class StatementTest {
 
     @Test
     void escapeBasicKeywords() {
+        testEscape("{IF}{INKEY$}<>\"\"{AND}C$=\"BEGIN\"{GOTO}260","IF INKEY$ <>\"\"ANDC$=\"BEGIN\"GOTO 260");
+        testEscape("{INPUT}\"Letter:\";L$", "INPUT \"Letter:\";L$");
         testEscape("{FOR}{PRINT}","FORPRINT");
         testEscape("{CHR$}", "CHR$");
         testEscape("{PRINT}{FOR}{PRINT}","PRINTFORPRINT");
@@ -57,6 +59,10 @@ class StatementTest {
         statement = new Statement("FOR I = 1 TO 100", DEVICE);
         assertEquals("FOR I=1TO 100", statement.getNormalizedRepresentation());
         assertEquals("f1a5493d31f1b1313030", HexFormat.of().formatHex(statement.getBinaryRepresentation()));
+        statement = new Statement("IF INKEY$ <>\"\"AND C$=\"BEGIN\"GOTO 260", PocketPcDevice.PC1600);
+        assertEquals("IF INKEY$ <>\"\"AND C$=\"BEGIN\"GOTO 260", statement.getNormalizedRepresentation());
+        statement = new Statement("INPUT \"Letter:\";L$", PocketPcDevice.PC1600);
+        assertEquals("INPUT \"Letter:\";L$", statement.getNormalizedRepresentation());
     }
 
     private void testEscape(String expectedResult, String input) {

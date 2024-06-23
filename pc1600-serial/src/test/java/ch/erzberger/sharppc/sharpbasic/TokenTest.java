@@ -73,6 +73,8 @@ class TokenTest {
         line = new Line("10 \"BIO\":CLEAR :INPUT \"Biorhythm, Year? \";L, \"Month?\";M", DEVICE);
         assertEquals(" 10:\"BIO\":CLEAR :INPUT \"Biorhythm, Year? \";L,\"Month?\";M", line.getNormalizedRepresentation());
         assertEquals("000A2C2242494F223AF1873AF0912242696F72687974686D2C20596561723F20223B4C2C224D6F6E74683F223B4D0D", HexFormat.of().formatHex(line.getBinaryRepresentation()).toUpperCase());
+        line = new Line("310 CURSOR 15,2:INPUT \"Letter:\";L$", PocketPcDevice.PC1600);
+        assertEquals("310:CURSOR 15,2:INPUT \"Letter:\";L$", line.getNormalizedRepresentation());
     }
 
     @Test
