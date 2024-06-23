@@ -8,8 +8,12 @@ import java.util.regex.Pattern;
 
 /**
  * Root token class.
- * The Basic program is composed with Tokens:
- * Program --> Lines -->* Line -->* Statement
+ * Despite its name, this class and its subclasses do not attempt to fully parse and tokenize the Basic program.
+ * This is only done up to a level necessary to create a binary version of the program, for the purpose of quicker loading.
+ * The instance hierarchy is as follows:
+ * Program --> *Line --> LineNumber
+ *                   --> *Statement --> *Keyword
+ *                                  --> *Other
  */
 @Getter
 public abstract class Token {

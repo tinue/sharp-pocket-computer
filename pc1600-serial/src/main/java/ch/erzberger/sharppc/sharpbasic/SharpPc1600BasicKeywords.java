@@ -49,8 +49,8 @@ public class SharpPc1600BasicKeywords {
 
     private static Map<String, Integer> makeBasicKeywordsMap() {
         // Basic Tokens used in the PC-1600. Source: Sharp PC-1600 Technical Reference Manual, Page 157ff
-        // Command "LCURSOR" has two codes assigned: 0xE683 and 0xF0A5; I don't know which one is correct.
-        // Also, the list contains errors, for example "GCURSOR" is F093, and not F092 as in the manual
+        // Command "LCURSOR" has two codes assigned: 0xE683 and 0xF0A5; This class uses the one that is used in the PC-1500 as well.
+        // Also, the list below fixes some errors, for example "GCURSOR" is F093, and not F092 as in the manual.
         Map<String, Integer> basicKeywords = new HashMap<>();
         basicKeywords.put("ABS", 0xF170);
         basicKeywords.put("ACS", 0xF174);

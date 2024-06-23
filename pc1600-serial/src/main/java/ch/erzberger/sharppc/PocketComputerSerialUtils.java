@@ -12,15 +12,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
+/**
+ * Helper to fetch the serial utils Basic program to be appended to the loaded Basic program.
+ */
 @Log
-public class Pc1600SerialUtils {
-    private Pc1600SerialUtils() {
+public class PocketComputerSerialUtils {
+    private PocketComputerSerialUtils() {
         // Prevent instantiation
     }
 
     public static List<String> getSerialUtilBasicApp(PocketPcDevice device) {
         String utilName = PocketPcDevice.PC1500.equals(device) ? "setcom1500.bas" : "setcom1600.bas";
-        try (InputStream in = Pc1600SerialUtils.class.getResourceAsStream("/" + utilName)) {
+        try (InputStream in = PocketComputerSerialUtils.class.getResourceAsStream("/" + utilName)) {
             if (in == null) {
                 log.log(Level.SEVERE, "Could not find the setcom.bas resource");
                 return Collections.emptyList();

@@ -11,7 +11,7 @@ import java.util.logging.Level;
 /**
  * One line of a Basic program.
  * A line consists of a LineNumber, and a list of Statements.
- * The Line takes care of calculating the length of the line, which becomes part of the binary representation
+ * The Line also takes care of calculating the length of the line, which becomes part of the binary representation
  * of the LineNumber.
  */
 @Log

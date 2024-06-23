@@ -34,7 +34,7 @@ public class SharpFileLoader {
         try {
             lines = normalizeLines(Files.readAllLines(path));
             if (addUtils) {
-                List<String> util = Pc1600SerialUtils.getSerialUtilBasicApp(device);
+                List<String> util = PocketComputerSerialUtils.getSerialUtilBasicApp(device);
                 return Stream.concat(lines.stream(), util.stream()).toList();
             }
             return lines;

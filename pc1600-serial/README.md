@@ -91,14 +91,14 @@ The Sharp Communicator software will safe to disk whatever is being sent by the 
 * `CSAVE` / `SAVE COM1:` will give a binary file.
 
 Loading is different, though:
-* A file with a `.BAS` extension will be automatically converted to binary on the PC-1500, and must be loaded with `CLOAD`.
-* A file with any other extension is loaded as binary without conversion. It also needs to be loaded with `CLOAD`.
-* Finally, a `.BAS` file plus the option `--ascii` will not convert the file to binary, and it must be loaded with `CLOADa`.
-* Only for the PC-1600: Currently, the code cannot convert a PC-1600 file to binary, therefore a `.BAS` file will always be loaded as ASCII on the PC-1600.
+* A file with a `.BAS` extension will be automatically converted to binary, and in the case of the PC-1500 must be loaded with `CLOAD`.
+* A file with any other extension is loaded as binary without conversion. It also needs to be loaded with `CLOAD` on the PC-1500.
+* Finally, a `.BAS` file plus the option `--ascii` will not convert the file to binary, and it must be loaded with `CLOADa` on the PC-1500.
+
 
 With the above in mind, the options are:
 * `--load (-l)`: Load a file onto the PC-1500/1600. Before launching the tool, enter `LOAD "COM1:"` on the PC-1600, or `CLOAD` on the PC-1500.
-* `--save (-s)`: Save a file from the PC-1500/1600 to the PC. Launch the tool, and then enter `SAVE "COM1:",A` on the PC-1600, or `CSAVEa`on the PC-1500.
+* `--save (-s)`: Save a file from the PC-1500/1600 to the PC. Launch the tool, and then enter `SAVE "COM1:",A` on the PC-1600, or `CSAVEa` on the PC-1500.
 * `--ascii (-a)`: When loading, do not convert the `.BAS` file to binary, use `CLOADa` on the PC-1500 to load.
 * `--1500 (-5)`: Setup the tool to communicate with the PC-1500 (default is the PC-1600).
 * `--addutil (-u)`: Adds some shortcuts starting with line 61000 (`Def-J`: Init serial; `Def-S`: Save, `Def-L`: Load)
@@ -267,9 +267,6 @@ Loads a program from serial port.
 * Normalize the file when saving to PC (line breaks, EOF marker, leading / trailing blanks etc.)
   * also safe a binary loaded program (reverse-tokenize it, and remove the binary header) 
 * Allow to write a file back to the PC, instead of sending it to the Pocket Computer (-i and -o both specified)
-* Support tokenizing a Basic program, and then sending it in binary format (will be much faster than sending it in ASCII)
-  * Also add the binary header required for the PC-1500 / CE-158
-  * Check for PC-1600: Header? Additional Basic tokens?
 * Support loading a binary program to the PC-1500, i.e. add the necessary CE-158 header.
 * Define a format for "Reserve Keys" and support to load these (maybe even save)
   * This will also require tokenization support

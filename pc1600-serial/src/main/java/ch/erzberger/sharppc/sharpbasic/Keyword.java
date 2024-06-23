@@ -7,6 +7,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 
 @Log
+/**
+ * One Basic keyword, e.g. "LET" or "LLIST".
+ * The keyword lookup is delegated to the SharpPc1x00BasicKeywords helper classes.
+ */
 public class Keyword extends Token {
     private final String normalizedRepresentation;
     private final byte[] binaryRepresentation;

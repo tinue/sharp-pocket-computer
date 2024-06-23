@@ -2,6 +2,9 @@ package ch.erzberger.sharppc.sharpbasic;
 
 import ch.erzberger.commandline.PocketPcDevice;
 
+/**
+ * Wrapper around the two different Basic keyword lookup helpers.
+ */
 public class KeywordLookup {
     private KeywordLookup() {
         // Prevent instantiation

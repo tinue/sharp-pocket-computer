@@ -6,7 +6,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 
 /**
- * Represents "other" characters in-between of Basic keywords.
+ * Represents "other" characters in-between of Basic keywords. This is where a full parser / tokenizer would
+ * go much further, and distinguish between numbers, variables, labels etc. But for the purpose of making a binary
+ * file, this is not needed: Everything is just converted from ASCII to binary.
  */
 @Log public class Other extends Token{
     private final String otherString;

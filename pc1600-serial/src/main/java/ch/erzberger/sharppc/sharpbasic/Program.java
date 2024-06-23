@@ -12,7 +12,7 @@ import java.util.logging.Level;
 /**
  * Top-level token, represents the Basic program is its entirety.
  * A program consists of a program name (which is not a token), and a list of Lines.
- * The program takes care of writing the CE-158 header that is required when loading through the CE-158.
+ * The Program also takes care of making the CE-158 or PC-1600 header that is required when loading through serial.
  */
 @Log
 public class Program extends Token {
