@@ -261,6 +261,8 @@ Loads a program from serial port.
 `LOAD "<COM1:>"[,R]`
 * R: Auto-starts the program after loading.
 
+### Open issues
+* Just like after a REM, anything after a single quote must be ignored (to be verified for the PC-1500)
 
 ### Future software work
 * Allow to specify the serial port. Important if the port can't be autodetected.
