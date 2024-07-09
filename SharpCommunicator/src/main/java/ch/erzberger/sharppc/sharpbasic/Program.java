@@ -1,6 +1,7 @@
 package ch.erzberger.sharppc.sharpbasic;
 
 import ch.erzberger.commandline.PocketPcDevice;
+import ch.erzberger.sharppc.LineNormalizeHelper;
 import lombok.extern.java.Log;
 
 import java.io.UnsupportedEncodingException;

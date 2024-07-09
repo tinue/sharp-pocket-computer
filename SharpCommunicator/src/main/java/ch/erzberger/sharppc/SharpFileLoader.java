@@ -32,7 +32,7 @@ public class SharpFileLoader {
         }
         Path path = Paths.get(fileName);
         try {
-            lines = normalizeLines(Files.readAllLines(path));
+            lines = LineNormalizeHelper.normalizeLineBreaks(Files.readAllLines(path));
             if (addUtils) {
                 List<String> util = PocketComputerSerialUtils.getSerialUtilBasicApp(device);
                 return Stream.concat(lines.stream(), util.stream()).toList();
@@ -56,22 +56,6 @@ public class SharpFileLoader {
             logException(ex);
             return new byte[0];
         }
-    }
-
-    static List<String> normalizeLines(List<String> lines) {
-        List<String> normalizedLines = new ArrayList<>();
-        for (String line : lines) {
-            // Ignore empty lines, and the last line with only an EOF character
-            if (line.isEmpty() || (line.length() == 1 && 0x1A == line.charAt(0))) {
-                continue;
-            }
-            // Remove an EOF at the end of a non-empty line
-            if (0x1A == line.charAt(line.length() - 1)) {
-                line = line.substring(0, line.length() - 1);
-            }
-            normalizedLines.add(line);
-        }
-        return normalizedLines;
     }
 
     static byte[] convertStringIntoByteArray(String line, PocketPcDevice device) {

@@ -71,10 +71,6 @@
                 <version>${version.maven-assembly-plugin}</version>
                 <executions>
                     <execution>
-                        <id>default-jar</id>
-                        <phase>none</phase>
-                    </execution>
-                    <execution>
                         <id>sharp</id>
                         <phase>package</phase>
                         <goals>

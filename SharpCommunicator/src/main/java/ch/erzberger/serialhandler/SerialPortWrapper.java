@@ -206,7 +206,7 @@ public class SerialPortWrapper {
             // Copy the bytes into an appropriately sized array.
             byte[] realBytes = new byte[bytesRead];
             System.arraycopy(buffer, 0, realBytes, 0, bytesRead);
-            // Pass the bytes to the parser
+            // Pass the bytes to the converters
             byteProcessor.processBytes(realBytes);
         }
     }

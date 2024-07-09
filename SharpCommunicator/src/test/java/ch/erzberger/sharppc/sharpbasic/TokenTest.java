@@ -32,23 +32,17 @@ class TokenTest {
 
     @Test
     void lineNumber() {
-        examineLineNumbers(new LineNumber("10 FOR I = 1 TO 100"));
-        examineLineNumbers(new LineNumber("10:FOR I = 1 TO 100"));
-        examineLineNumbers(new LineNumber(" 10:FOR I = 1 TO 100"));
-        examineLineNumbers(new LineNumber("10 : FOR I = 1 TO 100"));
-        assertEquals("FOR I = 1 TO 100", new LineNumber("10 : FOR I = 1 TO 100").getInputMinusToken());
-        examineLineNumbers(new LineNumber("10   FOR I = 1 TO 100"));
-        assertEquals("FOR I = 1 TO 100", new LineNumber("10   FOR I = 1 TO 100").getInputMinusToken());
-        examineLineNumbers(new LineNumber("10FOR I = 1 TO 100"));
-        assertEquals("", new LineNumber("10 ").getInputMinusToken());
+        examineLineNumbers(new LineNumber("10FORI=1TO100"));
+        examineLineNumbers(new LineNumber("10:FORI=1TO100"));
+        assertEquals("", new LineNumber("10").getInputMinusToken());
         assertTrue(new LineNumber("10").isValid());
         assertFalse(new LineNumber(":").isValid());
         assertFalse(new LineNumber("LET").isValid());
         assertEquals("LET", new LineNumber("LET").getInputMinusToken());
         // Special case: Two colons after line number. The second colon must not be part of the line number
-        LineNumber result = new LineNumber("10:: FOR");
+        LineNumber result = new LineNumber("10::FOR");
         assertTrue(result.isValid());
-        assertEquals(": FOR", result.getInputMinusToken());
+        assertEquals(":FOR", result.getInputMinusToken());
         assertEquals((byte) 0x00, result.getBinaryRepresentation()[0]);
         assertEquals((byte) 0x0A, result.getBinaryRepresentation()[1]);
     }
@@ -59,7 +53,7 @@ class TokenTest {
         assertEquals((byte) 0x00, line.getBinaryRepresentation()[0]);
         assertEquals((byte) 0x0A, line.getBinaryRepresentation()[1]);
         assertEquals(" 10:", line.getNormalizedRepresentation());
-        assertEquals("FOR I = 1 TO 100", line.getInputMinusToken());
+        assertEquals("FORI=1TO100", line.getInputMinusToken());
     }
 
     @Test
@@ -75,6 +69,12 @@ class TokenTest {
         assertEquals("000A2C2242494F223AF1873AF0912242696F72687974686D2C20596561723F20223B4C2C224D6F6E74683F223B4D0D", HexFormat.of().formatHex(line.getBinaryRepresentation()).toUpperCase());
         line = new Line("310 CURSOR 15,2:INPUT \"Letter:\";L$", PocketPcDevice.PC1600);
         assertEquals("310:CURSOR 15,2:INPUT \"Letter:\";L$", line.getNormalizedRepresentation());
+        line = new Line("580: \"END\"UNLOCK:END", DEVICE);
+        assertEquals("580:\"END\"UNLOCK :END", line.getNormalizedRepresentation());
+        line = new Line("// This is a comment", DEVICE);
+        assertEquals("// This is a comment", line.getNormalizedRepresentation());
+        assertEquals(0, line.getBinaryRepresentation().length);
+        assertTrue(line.isValid());
     }
 
     @Test

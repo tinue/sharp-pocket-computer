@@ -34,7 +34,7 @@ public class CmdLineArgsChecker {
                 .hasArg().argName(FILEARG)
                 .build());
 
-        // create the command line parser and parse the arguments
+        // create the command line converters and parse the arguments
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
         try {

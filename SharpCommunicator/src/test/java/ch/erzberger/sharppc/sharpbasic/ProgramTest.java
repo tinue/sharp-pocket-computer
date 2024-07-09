@@ -30,7 +30,7 @@ class ProgramTest {
         assertEquals(" 10:REM Test program", normalizedRepresentation[0]);
         assertEquals(" 20:FOR I=1TO 100:PRINT I", normalizedRepresentation[1]);
         assertEquals("190:NEXT I", normalizedRepresentation[2]);
-        assertEquals("55555:END ", normalizedRepresentation[3]);
+        assertEquals("55555:END", normalizedRepresentation[3]);
     }
 
     @Test

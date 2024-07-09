@@ -6,8 +6,6 @@ import lombok.extern.java.Log;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * One Basic statement (e.g. "LET A=3", or "FOR I=1 TO 100")
@@ -80,26 +78,12 @@ public class Statement extends Token {
         return retVal;
     }
 
-    String normalizeStatement(String input) {
-        // Do we have a REM statement?
-        Pattern pattern = Pattern.compile("R *E *M *");
-        Matcher matcher = pattern.matcher(input);
-        if (matcher.find()) {
-            String remStatement = input.substring(matcher.end());
-            String firstPart = input.substring(0, matcher.end());
-            firstPart = firstPart.replaceAll("\\s+(?=([^\"]*\"[^\"]*\")*[^\"]*$)", "");//NOSONAR
-            return firstPart + remStatement;
-        }
-        return input.replaceAll("\\s+(?=([^\"]*\"[^\"]*\")*[^\"]*$)", ""); //NOSONAR
-    }
-
     String escapeBasicKeywords(String input, PocketPcDevice device) {
         /* Basic algorithm:
          * - Try each 8 char substring from left to right whether it matches or not
          *  - If so, replace it with the code
          * - Then try each 7 char substring, etc. until 2 char substrings are tested last
          */
-        input = normalizeStatement(input); // Remove blanks from input
         // Before parsing, the line must be checked for a "REM" statement
         String rem = null;
         int index = input.indexOf("REM");

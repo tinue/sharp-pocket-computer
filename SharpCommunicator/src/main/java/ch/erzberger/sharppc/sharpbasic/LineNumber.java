@@ -11,11 +11,8 @@ public class LineNumber extends Token {
     private final String normalizedRepresentation;
     private final byte[] binaryRepresentation;
     public LineNumber(String input) {
-        // In many listings, the line number ends with a colon. In other listing, it is separated
-        // from the rest of the statement with a blank. Also, the line number may be indented with blanks.
-        // The regex therefore extracts from the start:
-        //  0 or more blanks | 1 or more digits | 0 or more blanks | 0 or 1 colon | 0 or more blanks.
-        String lineNumberAsString = findSubstring(input, "^ *\\d+ *:? *");
+        // In many listings, the line number ends with a colon. Search for a number, optionally followed by one colon
+        String lineNumberAsString = findSubstring(input, "^\\d+:?");
         if (lineNumberAsString == null) {  // The String does not start with a line number
             normalizedRepresentation = "";
             binaryRepresentation = new byte[0];
@@ -23,7 +20,7 @@ public class LineNumber extends Token {
             return;
         }
         setInputMinusToken(input.substring(lineNumberAsString.length())); // Remove the line number part
-        lineNumberAsString = lineNumberAsString.replace(":","").trim(); // Remove colon, if present
+        lineNumberAsString = lineNumberAsString.replace(":",""); // Remove colon, if present
         int lineNumber = Integer.parseInt(lineNumberAsString);
         binaryRepresentation = new byte[3];
         byte[] pureLine = convertIntToTwoByteByteArray(lineNumber);
