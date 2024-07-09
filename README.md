@@ -5,7 +5,7 @@ If you have a Sharp PC-1500 or PC-1600 with a serial interface, then this softwa
 exchange Basic programs between a PC and the Pocket PC. The software is written in Java,
 and works whenever a Java VM 17 or later is available (PC, Mac, Raspberry Pi, etc.)
 
-See the [README.md](pc1600-serial/README.md) of the project for details.
+See the [README.md](SharpCommunicator/README.md) of the project for details.
 
 ## Other material
 The directories under `sharp-software` contain material that I found elsewhere. The Basic programs

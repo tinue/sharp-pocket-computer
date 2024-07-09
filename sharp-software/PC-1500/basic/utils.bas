@@ -17,14 +17,17 @@
 170 K$="low": IF PEEK&79F1=0 LET K$="good"
 180 PRINT "Battery ";K$
 190 END
-1000 "HEXPEEK": REM Returns 2 bytes hex value of addr. H as H$
-1010 REM Overwrites variables MM, MH, ML, MT$ and MM$
-1020 MM = PEEK H: GOSUB 1040: H$=MT$
-1030 MM = PEEK (H+1): GOSUB 1040: H$=H$+MT$: RETURN
-1040 MH = INT (MM/16): ML = MM - (16*MH)
-1050 MM=MH:GOSUB 1070:MT$=MM$
-1060 MM=ML:GOSUB 1070:MT$=MT$+MM$: RETURN
-1070 IF MM=0 LET MM$="0": RETURN
-1080 IF MM>9 GOTO 1100
-1090 MM$=CHR$ (MM+48): RETURN
-1100 MM$=CHR$ (MM+55): RETURN
+// Subroutine "Hex Peek": Returns 2 bytes from memory in Hex
+// - Input: H Memory Address to PEEK
+// - Output H$ PEEKed memory content in Hex.
+// - Used variables: MM, MH, ML, MT$ and MM$
+1000 "HEXPEEK"
+1010 MM = PEEK H: GOSUB 1030: H$=MT$
+1020 MM = PEEK (H+1): GOSUB 1030: H$=H$+MT$: RETURN
+1030 MH = INT (MM/16): ML = MM - (16*MH)
+1040 MM=MH:GOSUB 1060:MT$=MM$
+1050 MM=ML:GOSUB 1060:MT$=MT$+MM$: RETURN
+1060 IF MM=0 LET MM$="0": RETURN
+1070 IF MM>9 GOTO 1090
+1080 MM$=CHR$ (MM+48): RETURN
+1090 MM$=CHR$ (MM+55): RETURN

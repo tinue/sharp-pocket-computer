@@ -4,8 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>ch.erzberger.sharppc</groupId>
-    <artifactId>pc1600-serial</artifactId>
+    <parent>
+        <groupId>ch.erzberger.sharppc</groupId>
+        <artifactId>sharp-pocket-computer</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>SharpCommunicator</artifactId>
     <version>1.0.0</version>
 
     <properties>
@@ -66,13 +71,17 @@
                 <version>${version.maven-assembly-plugin}</version>
                 <executions>
                     <execution>
+                        <id>default-jar</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
                         <id>sharp</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <finalName>sharp</finalName>
+                            <finalName>SharpCommunicator</finalName>
                             <archive>
                                 <manifest>
                                     <mainClass>
