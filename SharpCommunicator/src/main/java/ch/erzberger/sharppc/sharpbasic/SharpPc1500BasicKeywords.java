@@ -10,9 +10,11 @@ import java.util.logging.Level;
 @Log
 public class SharpPc1500BasicKeywords {
     private static final Map<String, Integer> BASIC_KEYWORDS;
+    private static final Map<String, String> BASIC_ABBREV;
 
     static {
         BASIC_KEYWORDS = Collections.unmodifiableMap(makeBasicKeywordsMap());
+        BASIC_ABBREV = Collections.unmodifiableMap(makeBasicAbbrevMap());
     }
 
     private SharpPc1500BasicKeywords() {
@@ -50,8 +52,12 @@ public class SharpPc1500BasicKeywords {
         return -1;
     }
 
+    public static String getAbbreviation(String basicKeyword) {
+        return BASIC_ABBREV.get(basicKeyword);
+    }
+
     private static Map<String, Integer> makeBasicKeywordsMap() {
-        // Basic Tokens used in the PC-1500. Source: Sharp PC-1500 Technical Reference Manual, Page 115
+        // Basic Tokens used in the PC-1500. Source: Sharp PC-1500 Technical Reference Manual, Appendix A, Page 138
         Map<String, Integer> basicKeywords = new HashMap<>();
         basicKeywords.put("ABS", 0xF170);
         basicKeywords.put("ACS", 0xF174);
@@ -176,5 +182,133 @@ public class SharpPc1500BasicKeywords {
         basicKeywords.put("ZONE", 0xF0B4);
         basicKeywords.put("PROTOCOL", 0xE881); // This one is missing in the TechRef. It's used in the CE-158
         return basicKeywords;
+    }
+
+    private static Map<String, String> makeBasicAbbrevMap() {
+        // Abbreviations for Basic keywords, without the dot. Source: Sharp PC-1500 Technical Reference Manual, Page 115
+        Map<String, String> basicAbbrevs = new HashMap<>();
+        basicAbbrevs.put("ABS", "AB");
+        basicAbbrevs.put("ACS", "AC");
+        basicAbbrevs.put("AND", "AN");
+        basicAbbrevs.put("AREAD", "A");
+        basicAbbrevs.put("ARUN", "ARU");
+        basicAbbrevs.put("ASC", "ASC");
+        basicAbbrevs.put("ASN", "AS");
+        basicAbbrevs.put("ATN", "AT");
+        basicAbbrevs.put("BEEP", "B");
+        basicAbbrevs.put("BREAK", "BREAK");
+        basicAbbrevs.put("CALL", "CA");
+        basicAbbrevs.put("CHAIN", "CHA");
+        basicAbbrevs.put("CHR$", "CH");
+        basicAbbrevs.put("CLEAR", "CL");
+        basicAbbrevs.put("CLOAD", "CLO");
+        basicAbbrevs.put("CLS", "CLS");
+        basicAbbrevs.put("COM$", "COM$");
+        basicAbbrevs.put("CONSOLE", "CONSOLE");
+        basicAbbrevs.put("CONT", "C");
+        basicAbbrevs.put("COLOR", "COL");
+        basicAbbrevs.put("COS", "COS");
+        basicAbbrevs.put("CSAVE", "CS");
+        basicAbbrevs.put("CSIZE", "CSI");
+        basicAbbrevs.put("CURSOR", "CU");
+        basicAbbrevs.put("DATA", "DA");
+        basicAbbrevs.put("DEG", "DEG");
+        basicAbbrevs.put("DEGREE", "DE");
+        basicAbbrevs.put("DEV$", "DEV$");
+        basicAbbrevs.put("DIM", "D");
+        basicAbbrevs.put("DMS", "DM");
+        basicAbbrevs.put("DTE", "DTE");
+        basicAbbrevs.put("END", "E");
+        basicAbbrevs.put("ERL", "ERL");
+        basicAbbrevs.put("ERN", "ERN");
+        basicAbbrevs.put("ERROR", "ER");
+        basicAbbrevs.put("EXP", "EX");
+        basicAbbrevs.put("FEED", "FEED");
+        basicAbbrevs.put("FOR", "F");
+        basicAbbrevs.put("GCURSOR", "GCU");
+        basicAbbrevs.put("GLCURSOR", "GL");
+        basicAbbrevs.put("GOSUB", "GOS");
+        basicAbbrevs.put("GOTO", "G");
+        basicAbbrevs.put("GPRINT", "GP");
+        basicAbbrevs.put("GRAD", "GR");
+        basicAbbrevs.put("GRAPH", "GRAP");
+        basicAbbrevs.put("IF", "IF");
+        basicAbbrevs.put("INKEY$", "INK");
+        basicAbbrevs.put("INPUT", "I");
+        basicAbbrevs.put("INSTAT", "INSTAT");
+        basicAbbrevs.put("INT", "INT");
+        basicAbbrevs.put("LCURSOR", "LCU");
+        basicAbbrevs.put("LEFT$", "LEF");
+        basicAbbrevs.put("LEN", "LEN");
+        basicAbbrevs.put("LET", "LE");
+        basicAbbrevs.put("LF", "LF");
+        basicAbbrevs.put("LINE", "LIN");
+        basicAbbrevs.put("LIST", "L");
+        basicAbbrevs.put("LLIST", "LL");
+        basicAbbrevs.put("LN", "LN");
+        basicAbbrevs.put("LOCK", "LOC");
+        basicAbbrevs.put("LOG", "LO");
+        basicAbbrevs.put("LPRINT", "LP");
+        basicAbbrevs.put("MEM", "M");
+        basicAbbrevs.put("MERGE", "MER");
+        basicAbbrevs.put("MID$", "MI");
+        basicAbbrevs.put("NEW", "NEW");
+        basicAbbrevs.put("NEXT", "N");
+        basicAbbrevs.put("NOT", "NO");
+        basicAbbrevs.put("OFF", "OFF");
+        basicAbbrevs.put("ON", "O");
+        basicAbbrevs.put("OPN", "OPN");
+        basicAbbrevs.put("OR", "OR");
+        basicAbbrevs.put("OUTSTAT", "OUTSTAT");
+        basicAbbrevs.put("PAUSE", "PA");
+        basicAbbrevs.put("PEEK", "PEEK");
+        basicAbbrevs.put("PEEK#", "PE");
+        basicAbbrevs.put("PI", "PI");
+        basicAbbrevs.put("POINT", "POI");
+        basicAbbrevs.put("POKE", "POKE");
+        basicAbbrevs.put("POKE#", "PO");
+        basicAbbrevs.put("PRINT", "P");
+        basicAbbrevs.put("RADIAN", "RAD");
+        basicAbbrevs.put("RANDOM", "RA");
+        basicAbbrevs.put("READ", "REA");
+        basicAbbrevs.put("REM", "REM");
+        basicAbbrevs.put("RESTORE", "RES");
+        basicAbbrevs.put("RETURN", "RE");
+        basicAbbrevs.put("RIGHT$", "RI");
+        basicAbbrevs.put("RINKEY$", "RINKEY$");
+        basicAbbrevs.put("RLINE", "RL");
+        basicAbbrevs.put("RMT", "RM");
+        basicAbbrevs.put("RND", "RN");
+        basicAbbrevs.put("ROTATE", "RO");
+        basicAbbrevs.put("RUN", "R");
+        basicAbbrevs.put("SETCOM", "SETCOM");
+        basicAbbrevs.put("SETDEV", "SETDEV");
+        basicAbbrevs.put("SGN", "SG");
+        basicAbbrevs.put("SIN", "SI");
+        basicAbbrevs.put("SORGN", "SO");
+        basicAbbrevs.put("SPACE$", "SPACE$");
+        basicAbbrevs.put("SQR", "SQ");
+        basicAbbrevs.put("STATUS", "STA");
+        basicAbbrevs.put("STEP", "STE");
+        basicAbbrevs.put("STOP", "S");
+        basicAbbrevs.put("STR$", "STR");
+        basicAbbrevs.put("TAB", "TAB");
+        basicAbbrevs.put("TAN", "TA");
+        basicAbbrevs.put("TERMINAL", "TERMINAL");
+        basicAbbrevs.put("TEST", "TE");
+        basicAbbrevs.put("TEXT", "TEX");
+        basicAbbrevs.put("THEN", "T");
+        basicAbbrevs.put("TIME", "TI");
+        basicAbbrevs.put("TO", "TO");
+        basicAbbrevs.put("TRANSMIT", "TRANSMIT");
+        basicAbbrevs.put("TROFF", "TROF");
+        basicAbbrevs.put("TRON", "TR");
+        basicAbbrevs.put("UNLOCK", "UN");
+        basicAbbrevs.put("USING", "U");
+        basicAbbrevs.put("VAL", "V");
+        basicAbbrevs.put("WAIT", "W");
+        basicAbbrevs.put("ZONE", "ZONE");
+        basicAbbrevs.put("PROTOCOL", "PROTOCOL"); // This one is missing in the TechRef. It's used in the CE-158
+        return basicAbbrevs;
     }
 }

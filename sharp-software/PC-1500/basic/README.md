@@ -20,7 +20,9 @@ For a quick success, use these parameters:
 * Step: 6
 * Transparency: N
 
-![Earth](pictures/Earth.jpg)
+|Earth pained by CE-150| Earth painted in emulator                        |
+|---|--------------------------------------------------|
+|![Earth](pictures/Earth.jpg)| ![Earth by Emulator](pictures/EarthEmulator.jpg) |
 
 ## commando.bas
 I found this in a [Facebook post](https://www.facebook.com/groups/sharpcasioworld/posts/3807908649533793/).

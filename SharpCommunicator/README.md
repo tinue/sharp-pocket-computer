@@ -267,7 +267,7 @@ Loads a program from serial port.
 ### Future software work
 * Allow to specify the serial port. Important if the port can't be autodetected.
 * Normalize the file when saving to PC (line breaks, EOF marker, leading / trailing blanks etc.)
-  * also safe a binary loaded program (reverse-tokenize it, and remove the binary header) 
+  * also safe a binary loaded program (reverse-tokenize it, and remove the binary header)
 * Allow to write a file back to the PC, instead of sending it to the Pocket Computer (-i and -o both specified)
 * Support loading a binary program to the PC-1500, i.e. add the necessary CE-158 header.
 * Define a format for "Reserve Keys" and support to load these (maybe even save)
@@ -277,6 +277,13 @@ Loads a program from serial port.
 * Support a "terminal" mode, where input from the keyboard is sent to the Pocket Computer,
   and output is shown on the screen.
   * As part of the terminal mode, support both `MODE 0` and `MODE 1` codepages correctly.
+* Emulator support: Emulators usually allow to "enter" code by simulating key presses. Just as with a real calculator,
+  some lines are "too long" to be entered in one go. While this can't be fixed entirely, the impact can be lowered by
+  these measures:
+  * Remove all blanks that are not necessary (i.e. all except Strings and REM statements).
+  * Replace Basic keywords with their abbreviation (e.g. `LPRINT` with `LP.`, saving 3 key presses).
+  * Print out the numbers of the lines that are still too long after these conversions, so that they can be corrected
+    manually later.
 
 ### Hardware Idea: Use a Raspberry Pi Pico instead of a USB / UART adapter
 A Raspberry Pi Pico has a USB connector, serial pins, and 264k RAM. It should
