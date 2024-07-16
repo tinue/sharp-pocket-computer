@@ -28,5 +28,5 @@
 400 X$=STR$ T: IF LEN X$ = 1 THEN LET X$=" "+X$
 410 X$=" "+X$:RETURN
 500 DATA "Mo","Di", "Mi", "Do", "Fr", "Sa", "So", "Januar", 31, "Februar", 28, "Maerz", 31
-510 DATA "April", 30, "Mai", 31, "Juni", 30, "Juni", 31, "August", 31, "September", 30
+510 DATA "April", 30, "Mai", 31, "Juni", 30, "Juli", 31, "August", 31, "September", 30
 520 DATA "Oktober", 31, "November", 30, "Dezember", 31
