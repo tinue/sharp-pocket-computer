@@ -19,6 +19,7 @@ class TokenTest {
         assertEquals((byte) 0xF1, keyword.getBinaryRepresentation()[0]);
         assertEquals((byte) 0xA0, keyword.getBinaryRepresentation()[1]);
         assertEquals("POKE# ", keyword.getNormalizedRepresentation());
+        assertEquals("PO.", keyword.getShortRepresentation());
         assertEquals("&FFFF,X", keyword.getInputMinusToken());
         keyword = new Keyword("{REMBla Bla}", DEVICE);
         assertEquals("REM Bla Bla", keyword.getNormalizedRepresentation());

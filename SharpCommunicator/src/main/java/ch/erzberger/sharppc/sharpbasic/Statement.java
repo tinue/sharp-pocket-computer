@@ -84,6 +84,7 @@ public class Statement extends Token {
          *  - If so, replace it with the code
          * - Then try each 7 char substring, etc. until 2 char substrings are tested last
          */
+        SharpBasicKeywordLookup lookup = new SharpBasicKeywordLookup(device);
         // Before parsing, the line must be checked for a "REM" statement
         String rem = null;
         int index = input.indexOf("REM");
@@ -98,8 +99,8 @@ public class Statement extends Token {
             String dummy = new String(new char[wordLength]).replace('\0', '#'); // Cache dummy for this length
             for (int currentPos = 0; currentPos <= input.length() - wordLength; currentPos++) { // Go through the input, be sure not to overstep
                 String searchWord = input.substring(currentPos, currentPos + wordLength); // Extract the search word
-                Integer code = KeywordLookup.getCode(searchWord, device); // Check if a code can be found for the search word.
-                if (code != null) {
+                int code = lookup.getCodeFromKeyword(searchWord); // Check if a code can be found for the search word.
+                if (code != 0x0000) {
                     // A code could be found -> We have a keyword.
                     // Find the same match in the result, must not yet have been escaped before, i.e. not preceded with '{'
                     // Some Basic keywords have a dollar sign in them, which means something in a REGEX. It needs to be escaped
