@@ -69,6 +69,18 @@ public class Statement extends Token {
     }
 
     @Override
+    public String getShortRepresentation() {
+        if (!isValid()) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (Token token : tokenList) {
+            sb.append(token.getShortRepresentation());
+        }
+        return sb.toString();
+    }
+
+    @Override
     public byte[] getBinaryRepresentation() {
         byte[] retVal = new byte[0];
         for (Token token : tokenList) {

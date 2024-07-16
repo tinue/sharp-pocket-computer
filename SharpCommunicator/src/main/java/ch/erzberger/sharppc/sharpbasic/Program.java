@@ -44,6 +44,16 @@ public class Program extends Token {
     }
 
     @Override
+    public String getShortRepresentation() {
+        StringBuilder sb = new StringBuilder();
+        for (Line line : lines) {
+            sb.append(line.getShortRepresentation());
+            sb.append(System.lineSeparator());
+        }
+        return sb.toString();
+    }
+
+    @Override
     public byte[] getBinaryRepresentation() {
         byte[] program = new byte[0];
         for (Line line : lines) {

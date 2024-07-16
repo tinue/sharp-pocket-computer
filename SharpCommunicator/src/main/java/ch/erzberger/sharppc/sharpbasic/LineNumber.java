@@ -9,12 +9,14 @@ package ch.erzberger.sharppc.sharpbasic;
  */
 public class LineNumber extends Token {
     private final String normalizedRepresentation;
+    private final String shortRepresentation;
     private final byte[] binaryRepresentation;
     public LineNumber(String input) {
         // In many listings, the line number ends with a colon. Search for a number, optionally followed by one colon
         String lineNumberAsString = findSubstring(input, "^\\d+:?");
         if (lineNumberAsString == null) {  // The String does not start with a line number
             normalizedRepresentation = "";
+            shortRepresentation = "";
             binaryRepresentation = new byte[0];
             setInputMinusToken(input);
             return;
@@ -29,12 +31,18 @@ public class LineNumber extends Token {
         binaryRepresentation[2] = 0;
         // Use the LLIST format for the line number, i.e. indented to three digits, and a colon as separator
         normalizedRepresentation = String.format("%3d", lineNumber) + ":";
+        shortRepresentation = lineNumberAsString;
         validate();
     }
 
     @Override
     public String getNormalizedRepresentation() {
         return normalizedRepresentation;
+    }
+
+    @Override
+    public String getShortRepresentation() {
+        return shortRepresentation;
     }
 
     @Override

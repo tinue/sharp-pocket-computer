@@ -29,6 +29,7 @@ public abstract class Token {
     }
 
     public abstract String getNormalizedRepresentation();
+    public abstract String getShortRepresentation();
     public abstract byte[] getBinaryRepresentation();
 
     byte[] convertIntToTwoByteByteArray(int value) {

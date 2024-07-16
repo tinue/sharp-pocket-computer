@@ -30,6 +30,11 @@ import java.util.logging.Level;
     }
 
     @Override
+    public String getShortRepresentation() {
+        return getNormalizedRepresentation(); // No difference
+    }
+
+    @Override
     public byte[] getBinaryRepresentation() {
         try {
             return otherString.getBytes("Cp437");

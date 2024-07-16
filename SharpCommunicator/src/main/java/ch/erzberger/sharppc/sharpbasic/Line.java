@@ -71,6 +71,18 @@ public class Line extends Token {
     }
 
     @Override
+    public String getShortRepresentation() {
+        if (rawComment != null) {
+            return rawComment;
+        }
+        StringJoiner joiner = new StringJoiner(":");
+        for (Statement statement : statements) {
+            joiner.add(statement.getShortRepresentation());
+        }
+        return lineNumber.getShortRepresentation() + joiner.toString().trim();
+    }
+
+    @Override
     public byte[] getBinaryRepresentation() {
         if (rawComment != null) {
             return new byte[0];

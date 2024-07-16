@@ -66,6 +66,7 @@ public class Keyword extends Token {
         return normalizedRepresentation;
     }
 
+    @Override
     public String getShortRepresentation() {
         return shortRepresentation;
     }
