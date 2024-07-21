@@ -5,9 +5,9 @@ import lombok.Data;
 @Data
 public class CmdLineArgs {
     private String inputFile = null;
+    private FileFormat inputFormat = null;
     private String outputFile = null;
+    private FileFormat outputFormat = null;
     private PocketPcDevice device = null;
-    private boolean ascii = false;
-    private boolean util = false;
-    private boolean compact = false;
+    private boolean util = false; // Default
 }

@@ -43,6 +43,14 @@ public class Program extends Token {
         return sb.toString();
     }
 
+    public List<String> getNormalizedRepresentationAsList() {
+        List<String> result = new ArrayList<>();
+        for (Line line : lines) {
+            result.add(line.getNormalizedRepresentation());
+        }
+        return result;
+    }
+
     @Override
     public String getShortRepresentation() {
         StringBuilder sb = new StringBuilder();
@@ -51,6 +59,14 @@ public class Program extends Token {
             sb.append(System.lineSeparator());
         }
         return sb.toString();
+    }
+
+    public List<String> getShortRepresentationAsList() {
+        List<String> result = new ArrayList<>();
+        for (Line line : lines) {
+            result.add(line.getShortRepresentation());
+        }
+        return result;
     }
 
     @Override

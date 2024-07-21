@@ -1,4 +1,4 @@
-package ch.erzberger.sharppc;
+package ch.erzberger.filehandling;
 
 import ch.erzberger.commandline.PocketPcDevice;
 import lombok.extern.java.Log;
@@ -11,19 +11,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 
 /**
  * Helper to fetch the serial utils Basic program to be appended to the loaded Basic program.
  */
 @Log
-public class PocketComputerSerialUtils {
-    private PocketComputerSerialUtils() {
+public class UtilsHandler {
+    private UtilsHandler() {
         // Prevent instantiation
     }
 
     public static List<String> getSerialUtilBasicApp(PocketPcDevice device) {
         String utilName = PocketPcDevice.PC1500.equals(device) ? "setcom1500.bas" : "setcom1600.bas";
-        try (InputStream in = PocketComputerSerialUtils.class.getResourceAsStream("/" + utilName)) {
+        try (InputStream in = UtilsHandler.class.getResourceAsStream("/" + utilName)) {
             if (in == null) {
                 log.log(Level.SEVERE, "Could not find the setcom.bas resource");
                 return Collections.emptyList();
@@ -39,5 +40,12 @@ public class PocketComputerSerialUtils {
             log.log(Level.SEVERE, "Could not find the setcom.bas resource", e);
             return Collections.emptyList();
         }
+    }
+
+    public static List<String> addSerialUtilBasicApp(List<String> program, PocketPcDevice device) {
+        Stream<String> combinedStream = Stream.concat(
+                program.stream(),
+                getSerialUtilBasicApp(device).stream());
+        return combinedStream.toList();
     }
 }

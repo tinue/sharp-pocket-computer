@@ -1,10 +1,12 @@
 package ch.erzberger.serialhandler;
 
+import ch.erzberger.commandline.PocketPcDevice;
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
 import lombok.extern.java.Log;
 
+import java.nio.charset.Charset;
 import java.util.logging.Level;
 
 import static com.fazecast.jSerialComm.SerialPort.FLOW_CONTROL_CTS_ENABLED;
@@ -124,8 +126,9 @@ public class SerialPortWrapper {
 
     /**
      * Writes a block of bytes, slowing down as desired.
+     *
      * @param bytesToWrite The bytes to write
-     * @param delay Delay between writing individual bytes
+     * @param delay        Delay between writing individual bytes
      * @return Number of bytes written
      */
     public int writeBytes(byte[] bytesToWrite, long delay) {
@@ -145,6 +148,28 @@ public class SerialPortWrapper {
 
     public int writeBytes(byte[] bytesToWrite) {
         return port.writeBytes(bytesToWrite, bytesToWrite.length);
+    }
+
+    public int writeAscii(String stringToWrite, PocketPcDevice device) {
+        boolean isPc1600 = PocketPcDevice.PC1600.equals(device);
+        if (stringToWrite == null || stringToWrite.isEmpty()) {
+            log.log(Level.SEVERE, "Line is null or empty");
+            return 0;
+        }
+        // Java Strings are UTF-8, but we need the Sharp Charset. CP437 is close enough for Basic programs.
+        byte[] lineBytes = stringToWrite.getBytes(Charset.forName("Cp437"));
+        // Allocate a new buffer. Size is old buffer plus room for the end of line char(s)
+        int sizeOfEol = isPc1600 ? 2 : 1;
+        byte[] newlineBytes = new byte[lineBytes.length + sizeOfEol];
+        // Copy the buffer into the new buffer
+        System.arraycopy(lineBytes, 0, newlineBytes, 0, lineBytes.length);
+        // Add the carriage return
+        newlineBytes[lineBytes.length] = 0x0D;
+        if (isPc1600) {
+            newlineBytes[lineBytes.length + 1] = 0x0A;
+        }
+        // Transmit the line including the device specific line ending.
+        return writeBytes(newlineBytes);
     }
 
     public void flush() {

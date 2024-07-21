@@ -1,34 +1,8 @@
 package ch.erzberger.sharppc;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class LineNormalizeHelper {
     private LineNormalizeHelper() {
         // Prevent instantiation
-    }
-
-    /**
-     * Deals with platform specific line breaks and empty lines. It will remove any empty or null lines,
-     * and it will remove an end of file character that may be present in PC-1600 files.
-     *
-     * @param lines Lines to clean up
-     * @return Cleaned up lines
-     */
-    public static List<String> normalizeLineBreaks(List<String> lines) {
-        List<String> normalizedLines = new ArrayList<>();
-        for (String line : lines) {
-            // Ignore empty lines, and the last line with only an EOF character
-            if (line.isEmpty() || (line.length() == 1 && 0x1A == line.charAt(0))) {
-                continue;
-            }
-            // Remove an EOF at the end of a non-empty line
-            if (0x1A == line.charAt(line.length() - 1)) {
-                line = line.substring(0, line.length() - 1);
-            }
-            normalizedLines.add(line);
-        }
-        return normalizedLines;
     }
 
     /**
@@ -57,7 +31,7 @@ public class LineNormalizeHelper {
             }
             // Next, toggle the "in quote" state if necessary
             if (currentChar == '\"') inQuotes = !inQuotes;
-            // Then remove whitespace
+                // Then remove whitespace
             else if (Character.isWhitespace(currentChar) && !inQuotes) {
                 sb.append(input, start, current);
                 start = current + 1;
@@ -71,13 +45,13 @@ public class LineNormalizeHelper {
         if (Character.isWhitespace(characterToCheck)) {
             return numMatched;
         }
-        if (numMatched == 0 && characterToCheck == 'R'){
+        if (numMatched == 0 && characterToCheck == 'R') {
             return 1;
         }
-        if (numMatched == 1 && characterToCheck == 'E'){
+        if (numMatched == 1 && characterToCheck == 'E') {
             return 2;
         }
-        if (numMatched == 2 && characterToCheck == 'M'){
+        if (numMatched == 2 && characterToCheck == 'M') {
             return 3;
         }
         return 0;

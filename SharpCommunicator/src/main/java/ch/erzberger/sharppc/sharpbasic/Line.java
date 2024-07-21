@@ -67,7 +67,11 @@ public class Line extends Token {
         for (Statement statement : statements) {
             joiner.add(statement.getNormalizedRepresentation());
         }
-        return lineNumber.getNormalizedRepresentation() + joiner.toString().trim();
+        String retVal = lineNumber.getNormalizedRepresentation() + joiner.toString().trim();
+        if (retVal.length() >= 80) {
+            System.err.println(lineNumber.getNormalizedRepresentation() + " " + retVal.substring(79));
+        }
+        return retVal;
     }
 
     @Override
@@ -79,7 +83,11 @@ public class Line extends Token {
         for (Statement statement : statements) {
             joiner.add(statement.getShortRepresentation());
         }
-        return lineNumber.getShortRepresentation() + joiner.toString().trim();
+        String retVal = lineNumber.getShortRepresentation() + joiner.toString().trim();
+        if (retVal.length() >= 80) {
+            System.err.println(lineNumber.getNormalizedRepresentation() + " " + retVal.substring(79));
+        }
+        return retVal;
     }
 
     @Override

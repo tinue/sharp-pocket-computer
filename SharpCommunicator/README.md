@@ -1,12 +1,13 @@
 # Sharp Pocket Computer Communicator
-The purpose of this program is to safe and load Basic programs that are stored on your computer in
-human readable format from and to Sharp PC-1500 and PC-1600 devices through a serial interface.
+The purpose of this program is to safe and load Basic programs that are stored on your computer
+from and to Sharp PC-1500 and PC-1600 devices through a _serial interface_.
 
 The program takes care of the peculiarities of the two Pocket Computer devices, such as the different line
 ending formats used, or the end of file marker. It also slows down communication if necessary
 for the PC-1500, so that it can keep up.
 
-## Hardware
+
+## Serial cable and/or interface
 ### PC-1600: USB Serial Adapter
 
 The Sharp PC-1600 has a serial device built in. It uses fairly standard 5V logic, and can be interfaced
@@ -74,11 +75,32 @@ to have Java installed (at least v17), and access to a command line.
 
 The tool is launched as follows:
 
-`java -jar SharpCommunicator.jar <options> [filename]`
+`java -jar SharpCommunicator.jar <options>`
+
+The options are:
+* `--infile (-i)`: Load a file onto the PC-1500/1600. Before launching the tool, enter `LOAD "COM1:"` on the PC-1600, or `CLOAD` / `CLOADa` on the PC-1500.
+* `--outfile (-o)`: Save a file from the PC-1500/1600 to the PC. Launch the tool, and then enter `SAVE "COM1:"` / `SAVE "COM1:", A` on the PC-1600, or `CSAVE` / `CSAVEa` on the PC-1500.
+  Note that the special filename `clip` is reserved for the clipboard.
+* `--informat ascii`: Force the infile to be read as ASCII (default for any `.BAS` file, or when reading from the clipboard).
+* `--informat binary`: Force the infile to be read as binary (default for any file except `.BAS`)
+* `--outformat ascii` Force the outfile to be ASCII (default for any `.BAS` file, or when writing to the clipboard).
+* `--outformat asciicompact` Force the outfile to be ASCII, and shrink it (e.g. `10: PRINT I` becomes `10P.I`). This will currently not work if the infile is binary.
+* `--device pc1500`: Assume the input or output device to be a PC-1500 (default).
+* `--device pc1500a`: Assume the input or output device to be a PC-1500a. The software behaves identically for the PC-1500 and PC-1500a, so you can leave the default when using a PC-1500a. 
+* `--device pc1600`: Assume the input or output device to be a PC-1600.
+* `--addutil (-u)`: Adds some shortcuts starting with line 61000 (`Def-J`: Init serial; `Def-S`: Save, `Def-L`: Load)
 
 Software for the PC-1500 or PC-1600 can come in two formats:
-* ASCII, which is readable / editable on the PC (e.g. `10 FOR I=1 to 100`)
-* Binary, which can't be edited. Binary files can be exchanged much more quickly with the Pocket Computer than ASCII files
+* ASCII: Basic programs, readable / editable on the PC (e.g. `10 FOR I=1 to 100`).
+* Binary: This can be a machine language program, the contents of the reserve area, or a tokenized Basic program.
+
+The pocket computers can read and write both ASCII and binary programs. Reading an ASCII program is comparable to
+entering the program on the Pocket Computers keyboard, and has similar limitations in terms of maximum line size. The
+PC-1500 also needs time to parse and tokenize every line, and s delay after every line feed is necessary.
+
+Binary programs are comparable to cassette I/O. No parsing is required, and they can be sent to the Pocket Computer
+at a constant speed. A binary file needs a header that tells the Pocket Computer about the type and the length
+of the file content. Such a header is added automatically by the SharpCommunicator, if it is missing in the file.
 
 To load ASCII files, the PC-1500 needs to be told that an ASCII file is to be expected, by adding an `a`: `CLOADa`.
 The same is true for saving: `CSAVEa`.
@@ -86,29 +108,37 @@ The same is true for saving: `CSAVEa`.
 The PC-1600 can detect on its own that an ASCII file is being received, and a simple `LOAD "COM1:"` will do.
 Saving on the other hand must be specified with `SAVE "COM1:",A`.
 
-The Sharp Communicator software will safe to disk whatever is being sent by the Pocket Computer:
-* `CSAVEa` / `SAVE COM1:,A` will result in an ASCII file on the disk.
-* `CSAVE` / `SAVE COM1:` will give a binary file.
+When a file it transferred from the Pocket Computer to the PC (`--outputfile` parameter), the Sharp Communicator software 
+currently does not try to detect if an ASCII or binary program is being received, and will simply save the file
+unchanged to disk. If the option `--outputformat asciicompact` is given, and if the input file is ASCII, then the
+output file is shrunk before writing it to disk / clipboard.
+* `CSAVEa` / `SAVE COM1:,A` will thus result in an ASCII file on the disk.
+* `CSAVE` / `SAVE COM1:` on the other hand will give a binary file.
 
-Loading is different, though:
-* A file with a `.BAS` extension will be automatically converted to binary, and in the case of the PC-1500 must be loaded with `CLOAD`.
-* A file with any other extension is loaded as binary without conversion. It also needs to be loaded with `CLOAD` on the PC-1500.
-* Finally, a `.BAS` file plus the option `--ascii` will not convert the file to binary, and it must be loaded with `CLOADa` on the PC-1500.
+When a file is sent to the pocket computer (`--inputfile` parameter), ASCII and binary files are treated differently:
+* ASCII files are converted to tokenized Basic and in the case of the PC-1500 must be loaded with `CLOAD`.
+* This can be overwritten with `--outputformat ascii` or `--outputformat asciicompact`. In this case, the file is 
+  sent line by line, with the necessary pauses after every line. It must be loaded with `CLOADa` on the PC-1500.
+* Binary files are loaded without pauses, and the binary header is added if necessary. It needs to be loaded with `CLOAD` on the PC-1500.
 
+Note: If both `--inputfile`and `--outputfile` are given, then no transfer from/to a Pocket Computer happens. This way,
+one can for example convert an ASCII `.BAS` file into a tokenized binary version.
 
-With the above in mind, the options are:
-* `--load (-l)`: Load a file onto the PC-1500/1600. Before launching the tool, enter `LOAD "COM1:"` on the PC-1600, or `CLOAD` on the PC-1500.
-* `--save (-s)`: Save a file from the PC-1500/1600 to the PC. Launch the tool, and then enter `SAVE "COM1:",A` on the PC-1600, or `CSAVEa` on the PC-1500.
-* `--ascii (-a)`: When loading, do not convert the `.BAS` file to binary, use `CLOADa` on the PC-1500 to load.
-* `--1500 (-5)`: Setup the tool to communicate with the PC-1500 (default is the PC-1600).
-* `--addutil (-u)`: Adds some shortcuts starting with line 61000 (`Def-J`: Init serial; `Def-S`: Save, `Def-L`: Load)
+Or take this example:
+`java -jar SharpCommunicator.jar --inputfile globe.bas --outputfile clip --outputformat asciicompact`. This
+will put a file into the clipboard that can be pasted into an emulator, such as Pockemul, using its keyboard emulator. On stderr
+one can see that three lines are still a bit too long, and these lines must then be fixed manually on the emulator.
+Compare this to using the original `globe.bas`: A lot of lines are too long, and one can't see which ones. It will take
+a hours or so to manually check and fix every line in the emulator.
 
 ### Limitations
 ## Abbreviations are not supported
-According to the PC-1500 manual, many Basic commands can be abbreviated. For example, `PRINT` can be abbreviated as
-`P.`, `PR.`, `PRI.` or `PRIN.`. Even though this would be simple to implement, it is not done. The reason is this:
-When listing a program with `LLIST`, all abbreviations get expanded into the full keyword. Therefore, one never finds any old source
-code in magazines etc. that actually use these abbreviations.
+Many Basic commands can be abbreviated. In fact, this is what the option `--outputformat asciicompact` does.
+For example, `PRINT` can be abbreviated as `P.`, `PR.`, `PRI.` or `PRIN.`. Even though this would be simple to implement,
+it is not done. The reason is this: When listing a program with `LLIST`, all abbreviations get expanded into the
+full keyword. Therefore, one never finds any old source code in magazines etc. that actually use these abbreviations.
+
+Note that such files can still be loaded to a Pocket Computer as ASCII, they just can't be converted into tokenized Basic.
 
 ### Enabling the Sharp PC-1600 serial port
 After a reset / power loss of the PC-1600, these commands need to be entered
