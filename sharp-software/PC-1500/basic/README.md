@@ -10,17 +10,27 @@ The classical biorhythm program for the CE-150 plotter. Compared to the original
 output.
 
 ## globe.bas
-Plots a globe with the CE-150 plotter. Start with `Def-Z`.
-For a quick success, use these parameters:
-* Radius: 22
-* Alpha: 20
-* Beta: 0
-* Phi: 0
-* Grid: 45
-* Step: 6
-* Transparency: N
+For more details about this really nice application, check [globe.md](globe.md).
 
-|Earth pained by CE-150| Earth painted in emulator                        |
+The parameters are:
+* Radius: Size of the picture. Anything more than 22 will cut at the edges of the paper.
+* Alpha: Tilt in degrees. Zero is upright, and 90 would tilt the North Pole towards the viewer.
+* Beta: Rotation along the tilted globe in degrees, eastwards.
+* Phi: Rotation along the earth axis, eastwards.
+* Grid: Distance between longitude / latitude lines
+* Step: Fineness of the lines
+* Transparency: If `Y`, then the backside of the globe is also visible
+* Colour: If `Y`, then the various parts of the globe are painted in different colours.
+
+Note that all values in degrees can also be entered in the negative. For example, instead of going 312.9 degrees east,
+you can go -74.1 degrees west. This way, one can directly use coordinates from online mapping software.
+
+If one has the coordinates of a location, one can place this location into the center of the map. For example:
+* New York: 40.6 North, 47.1 West: Use Alpha 40.6 and Phi -74.1 (Beta zero).
+* Syndey: 33.8 South, 151.3 East: Use Alpha -33.8 and Phi 151.3 (Beta zero)
+* Zürich: 47.4 North, 8.5 East: Use Alpha 47.4 and Phi 8.5 (Beta zero)
+
+|Earth pained by CE-150| Earth painted in PockEmul emulator               |
 |---|--------------------------------------------------|
 |![Earth](pictures/Earth.jpg)| ![Earth by Emulator](pictures/EarthEmulator.jpg) |
 
