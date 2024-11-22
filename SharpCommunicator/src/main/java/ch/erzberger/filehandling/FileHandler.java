@@ -74,6 +74,7 @@ public class FileHandler {
 
     public static void writeTextFile(String fileName, List<String> text) {
         if ("clip".equalsIgnoreCase(fileName)) {
+            log.log(Level.INFO, "Output goes to clipboard");
             // Place the text to the clipboard
             String textBlock = String.join("\n", text);
             StringSelection stringSelection = new StringSelection(textBlock);
