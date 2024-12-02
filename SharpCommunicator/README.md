@@ -78,17 +78,17 @@ The tool is launched as follows:
 `java -jar SharpCommunicator.jar <options>`
 
 The options are:
-* `--infile (-i)`: Load a file onto the PC-1500/1600. Before launching the tool, enter `LOAD "COM1:"` on the PC-1600, or `CLOAD` / `CLOADa` on the PC-1500.
-* `--outfile (-o)`: Save a file from the PC-1500/1600 to the PC. Launch the tool, and then enter `SAVE "COM1:"` / `SAVE "COM1:", A` on the PC-1600, or `CSAVE` / `CSAVEa` on the PC-1500.
+* `--in-file (-i)`: Load a file onto the PC-1500/1600. Before launching the tool, enter `LOAD "COM1:"` on the PC-1600, or `CLOAD` / `CLOADa` on the PC-1500.
+* `--out-file (-o)`: Save a file from the PC-1500/1600 to the PC. Launch the tool, and then enter `SAVE "COM1:"` / `SAVE "COM1:", A` on the PC-1600, or `CSAVE` / `CSAVEa` on the PC-1500.
   Note that the special filename `clip` is reserved for the clipboard.
-* `--informat ascii`: Force the infile to be read as ASCII (default for any `.BAS` file, or when reading from the clipboard).
-* `--informat binary`: Force the infile to be read as binary (default for any file except `.BAS`)
-* `--outformat ascii` Force the outfile to be ASCII (default for any `.BAS` file, or when writing to the clipboard).
-* `--outformat asciicompact` Force the outfile to be ASCII, and shrink it (e.g. `10: PRINT I` becomes `10P.I`). This will currently not work if the infile is binary.
+* `--in-format ascii`: Force the infile to be read as ASCII (default for any `.BAS` file, or when reading from the clipboard).
+* `--in-format binary`: Force the infile to be read as binary (default for any file except `.BAS`)
+* `--out-format ascii` Force the outfile to be ASCII (default for any `.BAS` file, or when writing to the clipboard).
+* `--out-format asciicompact` Force the outfile to be ASCII, and shrink it (e.g. `10: PRINT I` becomes `10P.I`). This will currently not work if the infile is binary.
 * `--device pc1500`: Assume the input or output device to be a PC-1500 (default).
 * `--device pc1500a`: Assume the input or output device to be a PC-1500a. The software behaves identically for the PC-1500 and PC-1500a, so you can leave the default when using a PC-1500a. 
 * `--device pc1600`: Assume the input or output device to be a PC-1600.
-* `--addutil (-u)`: Adds some shortcuts starting with line 61000 (`Def-J`: Init serial; `Def-S`: Save, `Def-L`: Load)
+* `--add-utils (-u)`: Adds some shortcuts starting with line 61000 (`Def-J`: Init serial; `Def-S`: Save, `Def-L`: Load)
 
 Software for the PC-1500 or PC-1600 can come in two formats:
 * ASCII: Basic programs, readable / editable on the PC (e.g. `10 FOR I=1 to 100`).
