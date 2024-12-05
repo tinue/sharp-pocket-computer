@@ -45,7 +45,7 @@ require_clean_work_tree () {
 }
 
 # Get build information
-VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+VERSION=$(mvn -f SharpCommunicator/pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 HASH=$(git rev-parse --short=7 HEAD)
 
@@ -55,8 +55,8 @@ if [[ "$BRANCH" == "develop" ]]; then
   if [[ $REPLY =~ ^[Yy]$ ]]
   then
     mvn clean package
-    cp target/SharpCommunicator-jar-with-dependencies.jar SharpCommunicator.jar
-    gh release create v$VERSION-$HASH SharpCommunicator.jar -d --notes-file ReleaseNotes.md --title $VERSION-prerelease
+    cp SharpCommunicator/target/SharpCommunicator-jar-with-dependencies.jar SharpCommunicator.jar
+    gh release create v$VERSION-$HASH SharpCommunicator.jar -d --notes-file SharpCommunicator/ReleaseNotes.md --title $VERSION-prerelease
     rm SharpCommunicator.jar
     echo Done
     exit 0
@@ -70,8 +70,8 @@ if [[ "$BRANCH" == "main" ]]; then
   if [[ $REPLY =~ ^[Yy]$ ]]
   then
     mvn clean package
-    cp target/SharpCommunicator-jar-with-dependencies.jar SharpCommunicator.jar
-    gh release create v$VERSION SharpCommunicator.jar --notes-file ReleaseNotes.md --title $VERSION
+    cp SharpCommunicator/target/SharpCommunicator-jar-with-dependencies.jar SharpCommunicator.jar
+    gh release create v$VERSION SharpCommunicator.jar --notes-file SharpCommunicator/ReleaseNotes.md --title $VERSION
     rm SharpCommunicator.jar
     echo Done
     exit 0
