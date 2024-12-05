@@ -41,8 +41,9 @@ public class SharpCommunicator {
         if (cmdLineArgs.getInputFile() == null) {
             // Read from PocketPC
             ReadFromPocketPc byteProcessor = new ReadFromPocketPc(cmdLineArgs.getDevice());
-            initPort(cmdLineArgs.getDevice(), byteProcessor);
+            SerialPortWrapper wrapper = initPort(cmdLineArgs.getDevice(), byteProcessor);
             inputFileBytes = byteProcessor.getDataWhenReady();
+            wrapper.closePort();
         } else {
             // Read from File
             if (FileFormat.BINARY.equals(cmdLineArgs.getInputFormat())) {

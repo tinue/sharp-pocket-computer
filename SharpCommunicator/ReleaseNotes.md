@@ -1,5 +1,10 @@
 # Release Notes
-- 202x-xx-xx / 2.0.1: Placeholder for a patch release. NOTE: Prereleases have a very high log level, use with caution!
-- 2024-12-05 / 2.0.0: Streamlined command line options make this release incompatible to the previous ones, hence the new major number. This release has been used by a few more people, and a number of bugs could be found and corrected.
-- 2024-06-25 / 1.1.0: Add Tokenization support for Basic programs
-- 2024-05-12 / 1.0.0: First release
+- 202x-xx-xx / 2.0.1
+  - Fix for not exiting after load from PocketPC; more
+- 2024-12-05 / 2.0.0
+  - Command line options rework, hence new major version number
+  - Compact ASCII output mode, see README
+- 2024-06-25 / 1.1.0
+  - Add Tokenization support for Basic programs
+- 2024-05-12 / 1.0.0
+  - First release
