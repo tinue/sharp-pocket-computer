@@ -1,13 +1,13 @@
 # Quick Start Guide
 
-## Computer -> Sharp PC-1500 (using CE-158X)
+## Load a file from your computer onto the Sharp PC-1500 (using CE-158X via USB)
 First, prepare the PC-1500 by entering:
 * `SETDEV U1,CI,CO`
 * `CLOAD`
 
-Then, send the program with: `java -jar SharpCommunicator.jar --in-file globe.bas`
+Then, send the program from your PC with: `java -jar SharpCommunicator.jar --in-file globe.bas`
 
-## Computer -> Sharp PC-1600 (using USB-UART)
+## Load a file from your computer onto the Sharp PC-1600 (using USB-UART)
 First, prepare the PC-1600 by entering:
 * `SETCOM "COM1:",9600,8,N,1,N,N`
 * `INIT "COM1:",4096`
@@ -15,11 +15,11 @@ First, prepare the PC-1600 by entering:
 * `RCVSTAT "COM1:",24`
 * `LOAD "COM1:`
 
-Then, send the program with: `java -jar SharpCommunicator.jar --in-file globe.bas --device pc1600`
+Then, send the program from your PC with: `java -jar SharpCommunicator.jar --in-file globe.bas --device pc1600`
 
-## Sharp PC-1500 -> Computer (using CE-158X)
+## Sharp PC-1500 -> Computer (using CE-158X via USB)
 * First, prepare the PC-1500 by entering `SETDEV U1,CI,CO`
-* Next, start the receiver on the PC with: `java -jar SharpCommunicator.jar --out-file globe.bas`
+* Next, start the receiver on the PC with: `java -jar SharpCommunicator.jar --out-file globe.bas --out-format binary`
 * Last, save the program on the PC-1500 with: `CSAVEa`
 
 ## Shrink a Basic program

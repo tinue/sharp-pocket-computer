@@ -1,7 +1,6 @@
 package ch.erzberger.sharppc.sharpbasic;
 
 import ch.erzberger.commandline.PocketPcDevice;
-import ch.erzberger.sharppc.LineNormalizeHelper;
 import lombok.extern.java.Log;
 
 import java.io.UnsupportedEncodingException;
@@ -23,7 +22,7 @@ public class Program extends Token {
 
     public Program(String programName, List<String> lineInput, PocketPcDevice device) {
         this.device = device;
-        this.programName = programName;
+        this.programName = programName == null || programName.trim().isEmpty() ? "BASIC" : programName.trim();
         List<Line> tempLines = new ArrayList<>();
         for (String line : lineInput) {
             tempLines.add(new Line(line, device));
@@ -105,15 +104,15 @@ public class Program extends Token {
     byte[] make1600header(int size) {
         // See PC-1600 Technical Reference Manual, Page 45
         byte[] header = new byte[16];
-        header[0] = (byte)0xFF; // Indicates that a header is present
-        header[1] = (byte)0x10; // ID Code, must be 0x10
-        header[4] = (byte)0x21; // Mode, 0x21 is Basic program
+        header[0] = (byte) 0xFF; // Indicates that a header is present
+        header[1] = (byte) 0x10; // ID Code, must be 0x10
+        header[4] = (byte) 0x21; // Mode, 0x21 is Basic program
         byte[] sizeBytes = convertIntToFourByteByteArray(size);
         header[5] = sizeBytes[3]; // Size, low byte
         header[6] = sizeBytes[2]; // Size, middle byte
         header[7] = sizeBytes[1]; // Size, high byte
-        header[14] = (byte)0x00; // Reserved
-        header[15] = (byte)0xF0; // Reserved
+        header[14] = (byte) 0x00; // Reserved
+        header[15] = (byte) 0xF0; // Reserved
         return header;
     }
 }

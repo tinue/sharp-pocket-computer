@@ -59,7 +59,8 @@ public class SharpCommunicator {
         if (inputFileBytes != null) {
             // A binary input can only be sent to a binary output. Currently, the software cannot parse a binary file into ASCII
             if (!FileFormat.BINARY.equals(cmdLineArgs.getOutputFormat())) {
-                log.log(Level.SEVERE, "A binary input cannot currently be converted to an ASCII output");
+                log.log(Level.SEVERE, "A binary input cannot currently be converted to an ASCII output (save " +
+                        "to a .bin file, or for a '.bas' file use '--out-format binary'");
                 System.exit(-1);
             } else {
                 outputFileBytes = inputFileBytes;
@@ -75,7 +76,7 @@ public class SharpCommunicator {
                 inputFileLines = UtilsHandler.addSerialUtilBasicApp(inputFileLines, cmdLineArgs.getDevice());
             }
             // Next, parse everything into a Program
-            Program theProgram = new Program(cmdLineArgs.getOutputFile(), inputFileLines, cmdLineArgs.getDevice());
+            Program theProgram = new Program(cmdLineArgs.getInputFile(), inputFileLines, cmdLineArgs.getDevice());
             // Now it depends on the output file type
             switch (cmdLineArgs.getOutputFormat()) {
                 case BINARY:
