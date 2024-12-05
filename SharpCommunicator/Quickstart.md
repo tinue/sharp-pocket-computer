@@ -2,25 +2,25 @@
 
 ## Load a file from your computer onto the Sharp PC-1500 (using CE-158X via USB)
 First, prepare the PC-1500 by entering:
-* `SETDEV U1,CI,CO`
-* `CLOAD`
+- `SETDEV U1,CI,CO`
+- `CLOAD`
 
 Then, send the program from your PC with: `java -jar SharpCommunicator.jar --in-file globe.bas`
 
 ## Load a file from your computer onto the Sharp PC-1600 (using USB-UART)
 First, prepare the PC-1600 by entering:
-* `SETCOM "COM1:",9600,8,N,1,N,N`
-* `INIT "COM1:",4096`
-* `OUTSTAT "COM1:"`
-* `RCVSTAT "COM1:",24`
-* `LOAD "COM1:`
+- `SETCOM "COM1:",9600,8,N,1,N,N`
+- `INIT "COM1:",4096`
+- `OUTSTAT "COM1:"`
+- `RCVSTAT "COM1:",24`
+- `LOAD "COM1:`
 
 Then, send the program from your PC with: `java -jar SharpCommunicator.jar --in-file globe.bas --device pc1600`
 
 ## Sharp PC-1500 -> Computer (using CE-158X via USB)
-* First, prepare the PC-1500 by entering `SETDEV U1,CI,CO`
-* Next, start the receiver on the PC with: `java -jar SharpCommunicator.jar --out-file globe.bas --out-format binary`
-* Last, save the program on the PC-1500 with: `CSAVEa`
+- First, prepare the PC-1500 by entering `SETDEV U1,CI,CO`
+- Next, start the receiver on the PC with: `java -jar SharpCommunicator.jar --out-file globe.bas --out-format binary`
+- Last, save the program on the PC-1500 with: `CSAVEa`
 
 ## Shrink a Basic program
 Take the file `globe.bas` from the PC-1500 Basic programs: Line 90 seemingly can't be keyed in!

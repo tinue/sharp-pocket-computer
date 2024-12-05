@@ -15,7 +15,7 @@ With the CE1638 installed, the memory map of a PC-1500 is as follows (all adress
 |7C01|7FFF|||1|PC-1500A Machine language area|Cannot be used for Basic. The manual explicitly says 7C01, not 7C00, but it's unclear whether this is correct|
 
 Additional remarks:
-* Because of incomplete decoding, part of the system memory located 7600-77FF can also be addresses as 7000-71FF, 7200-73FF or 7400-75FF. In some PC-1500 models
+- Because of incomplete decoding, part of the system memory located 7600-77FF can also be addresses as 7000-71FF, 7200-73FF or 7400-75FF. In some PC-1500 models
 the memory 7800-7BFF is also addressable as 7C00-7FFF.
 
 ### Bank switching
@@ -29,9 +29,9 @@ This can lead to unecpected side effects: As far as the PC-1500 is concerned, th
 However, we know that the first 16KiB can be one of eight pages, while the top 2KiB are always the same.
 
 Imagine this scenario:
-* Bank 0 is active, and a very large Basic program is entered, covering the entire 18KiB of memory.
-* Switch to Bank 1, and enter another very big program.
-* Switch back to Bank 0: While the first 16KiB are restored fine, the top 2KiB will be wrong. The Basic program won't work anymore.
+- Bank 0 is active, and a very large Basic program is entered, covering the entire 18KiB of memory.
+- Switch to Bank 1, and enter another very big program.
+- Switch back to Bank 0: While the first 16KiB are restored fine, the top 2KiB will be wrong. The Basic program won't work anymore.
 
 
 ## System RAM
@@ -44,18 +44,18 @@ One would have to re-init the system with `NEW 0`, which defies the purpose of b
 The other extreme - a fully transparent bank switch - requires a backup/restore of the entire System area. This would use up 1.5 KiB RAM of every Bank.
 
 The firmware for the CE1638 opts for a middle ground. It backups/restores the three pointers that are absolutely necessary:
-* 7865/66: Start of Basic (used for partitioning the user memory into machine language and Basic part)
-* 7867/68: End of Basic (every line Basic code that is entered increases this pointer)
-* 1869/6A: Start of Edit (MERGE, or next line entered on the keyboard goes to this address)
+- 7865/66: Start of Basic (used for partitioning the user memory into machine language and Basic part)
+- 7867/68: End of Basic (every line Basic code that is entered increases this pointer)
+- 1869/6A: Start of Edit (MERGE, or next line entered on the keyboard goes to this address)
 
 This means that for example the variables A-Z and A$-Z$ are shared amongst the banks:
-* Bank 0: `A=10`
-* Switch to Bank 1, then `A=4`
-* Switch back to Bank 0: `A` will now be 4, not 10.
+- Bank 0: `A=10`
+- Switch to Bank 1, then `A=4`
+- Switch back to Bank 0: `A` will now be 4, not 10.
 
-### Variables
+## Variables
 The variables are part of the System RAM, and not bank switched.
-#### String variables
+### String variables
 |Variable|Address|Variable|Address|Variable|Address|Variable|Address|
 |---|---|---|---|---|---|---|---|
 |A$|78C0-CF|H$|7680-8F|O$|76F0-FF|V$|77B0-BF|
@@ -66,7 +66,7 @@ The variables are part of the System RAM, and not bank switched.
 |F$|7660-6F|M$|76D0-DF|T$|7790-9F|||
 |G$|7670-7F|N$|76E0-EF|U$|77A0-AF|||
 
-#### Fixed variables
+### Fixed variables
 |Variable|Address|Variable|Address|Variable|Address|Variable|Address|
 |---|---|---|---|---|---|---|---|
 |A|7900-07|H|7938-3F|O|7970-77|V|79A8-AF|
@@ -77,12 +77,12 @@ The variables are part of the System RAM, and not bank switched.
 |F|7928-2F|M|7960-67|T|7998-9A|||
 |G|7930-37|N|7968-6F|U|79A0-A7|||
 
-#### DIMed variables
+### DIMed variables
 The `DIM`ed variables, and the two letter variables are lost after a bank switch: They are allocated starting from the top of RAM, which is shared.
 They may or may not reach "down" into the bank switched part. The firmware could be updated to backup/restore the "Start of Variables" pointer (7899/9A),
 but only if this pointer is still high enough in the shared area. Given that a `RUN` command clears these variables anyway, it is probably
 not worth the hassle.
 
 ## Links
-* CE1638 Purchase: [https://www.soigeneris.com/sharp-pc-1500-memory-modules](https://www.soigeneris.com/sharp-pc-1500-memory-modules)
-* CE1638 Support: Same page, select the tab "Downloads and Video"
+- CE1638 Purchase: [https://www.soigeneris.com/sharp-pc-1500-memory-modules](https://www.soigeneris.com/sharp-pc-1500-memory-modules)
+- CE1638 Support: Same page, select the tab "Downloads and Video"

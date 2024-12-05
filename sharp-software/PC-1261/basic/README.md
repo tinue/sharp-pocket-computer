@@ -10,13 +10,13 @@ Watch out for those dangerous days.
 
 ## Contents
 Input:
-* name
-* date of birth
-* desired year, month
-* The date of birth and the year, month to be analyzed are input in the western calender.
+- name
+- date of birth
+- desired year, month
+- The date of birth and the year, month to be analyzed are input in the western calender.
 
 Output:
-* The biorhythm curve of the month to be analyzed is printed out using
+- The biorhythm curve of the month to be analyzed is printed out using
   the characters "S", "K", and "C"
 
 From the date of birth the biorhythm cycle for the physical is 23 days, for emotions 28 days,
@@ -27,6 +27,6 @@ and for intellect 33 days.
 name, date of birth, year and month to be analyzed. After the above informations
 are input the biorhytm is printed out using "S", "K", and "C".
 
-* S: Physical
-* K: Emotional
-* C: Intellectual
+- S: Physical
+- K: Emotional
+- C: Intellectual

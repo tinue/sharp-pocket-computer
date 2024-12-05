@@ -13,22 +13,22 @@ output.
 For more details about this really nice application, check [globe.md](globe.md).
 
 The parameters are:
-* Radius: Size of the picture. Anything more than 22 will cut at the edges of the paper.
-* Alpha: Tilt in degrees. Zero is upright, and 90 would tilt the North Pole towards the viewer.
-* Beta: Rotation along the tilted globe in degrees, eastwards.
-* Phi: Rotation along the earth axis, eastwards.
-* Grid: Distance between longitude / latitude lines
-* Step: Fineness of the lines
-* Transparency: If `Y`, then the backside of the globe is also visible
-* Colour: If `Y`, then the various parts of the globe are painted in different colours.
+- Radius: Size of the picture. Anything more than 22 will cut at the edges of the paper.
+- Alpha: Tilt in degrees. Zero is upright, and 90 would tilt the North Pole towards the viewer.
+- Beta: Rotation along the tilted globe in degrees, eastwards.
+- Phi: Rotation along the earth axis, eastwards.
+- Grid: Distance between longitude / latitude lines
+- Step: Fineness of the lines
+- Transparency: If `Y`, then the backside of the globe is also visible
+- Colour: If `Y`, then the various parts of the globe are painted in different colours.
 
 Note that all values in degrees can also be entered in the negative. For example, instead of going 312.9 degrees east,
 you can go -74.1 degrees west. This way, one can directly use coordinates from online mapping software.
 
 If one has the coordinates of a location, one can place this location into the center of the map. For example:
-* New York: 40.6 North, 47.1 West: Use Alpha 40.6 and Phi -74.1 (Beta zero).
-* Syndey: 33.8 South, 151.3 East: Use Alpha -33.8 and Phi 151.3 (Beta zero)
-* Zürich: 47.4 North, 8.5 East: Use Alpha 47.4 and Phi 8.5 (Beta zero)
+- New York: 40.6 North, 47.1 West: Use Alpha 40.6 and Phi -74.1 (Beta zero).
+- Syndey: 33.8 South, 151.3 East: Use Alpha -33.8 and Phi 151.3 (Beta zero)
+- Zürich: 47.4 North, 8.5 East: Use Alpha 47.4 and Phi 8.5 (Beta zero)
 
 |Earth pained by CE-150| Earth painted in PockEmul emulator               |
 |---|--------------------------------------------------|
@@ -42,10 +42,10 @@ So far I haven't figured out how it works. Here is an automated translation of t
 My name is Command, a man who once participated in Vietnam. One day, my girlfriend was kidnapped by an organization. So I stood up to the organization alone.
 ### Content
 Keys:
-* 4 / 6: Left / Right
-* 7 / 9: Left / Right
-* 2 / 8: Crouch / Stand up
-* 5: Use Sword
+- 4 / 6: Left / Right
+- 7 / 9: Left / Right
+- 2 / 8: Crouch / Stand up
+- 5: Use Sword
 
 Please move the command and break the enemy's young land. Jump left and right in country 6, left and right in country 6. Put it in 2 and stand up at 8. You can't move when you're busy. I pretend to be in control with the national key. If there is joy next to you, you can defeat it. Also, the number on the left is damage, and if it is less than 0, one person will die. There are the first three commands. The damage increases when it collides with acid and when the handball is emitted near you. However, even if it is confirmed nearby, if you put it off, you can reduce the damage, and if you put it next to the first obstacle, you will not receive damage.
 
@@ -54,11 +54,11 @@ To a certain extent, if you go to the right (a little to the left of the buildin
 ## deskclock.bas
 I found this nice program in an old German magazine. I translated it into English and moved it into the 21st century (the current year is hardcoded, and was set to 1986).
 This is how it works:
-* Def-A or "RUN" starts the program
-* Down arrow stops it (if you BREAK out of it, type "UNLOCK" to re-enable the MODE key).
-* Press and hold "S" to set the time,
-* "B" to set/clear an hourly beep,
-* "A" to enable/disable auto power off.
+- Def-A or "RUN" starts the program
+- Down arrow stops it (if you BREAK out of it, type "UNLOCK" to re-enable the MODE key).
+- Press and hold "S" to set the time,
+- "B" to set/clear an hourly beep,
+- "A" to enable/disable auto power off.
 
 ## donkey.bas
 Untested so far.

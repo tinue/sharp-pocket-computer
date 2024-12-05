@@ -13,4 +13,4 @@ are not written by me, and are probably copyrighted by other people. Please cont
 you are the author of an application, and want it to be removed, or if you want to be credited.
 
 ## Useful links
-* [How to build various Sharp Pocket PC tools for MacOS](https://gist.github.com/tinue/c6c4fc4dc6ca26dd3dbfa44704a373a0?fbclid=IwZXh0bgNhZW0CMTAAAR06xbYNoRf3ujzYc1ZlEonfYnalcrhVKveew2URx7ZLgsq5bUz2E7U0Wlw_aem_eEHWBrRQY9ftLYI3JJ8d0Q)
+- [How to build various Sharp Pocket PC tools for MacOS](https://gist.github.com/tinue/c6c4fc4dc6ca26dd3dbfa44704a373a0?fbclid=IwZXh0bgNhZW0CMTAAAR06xbYNoRf3ujzYc1ZlEonfYnalcrhVKveew2URx7ZLgsq5bUz2E7U0Wlw_aem_eEHWBrRQY9ftLYI3JJ8d0Q)
