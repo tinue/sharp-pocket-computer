@@ -14,8 +14,10 @@ import lombok.extern.java.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 @Log
 public class SharpCommunicator {
@@ -33,6 +35,16 @@ public class SharpCommunicator {
         CmdLineArgs cmdLineArgs = new CmdLineArgsChecker().checkArgs(args);
         if (cmdLineArgs == null) {
             System.exit(-1);
+        }
+        // Update log level if necessary
+        Level logLevel = cmdLineArgs.isDebug() ? Level.FINEST : cmdLineArgs.isVerbose() ? Level.FINE : null;
+        if (logLevel != null) {
+            Logger appLogger = LogManager.getLogManager().getLogger("ch.erzberger");
+            appLogger.setLevel(logLevel);
+            for (Handler h : appLogger.getHandlers()) {
+                h.setLevel(logLevel);
+            }
+            log.log(logLevel, "Log level is {0}", logLevel);
         }
         // The result will be in one of these variables:
         byte[] inputFileBytes = null;

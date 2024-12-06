@@ -26,6 +26,7 @@ public class ReadFromPocketPc implements ByteProcessor {
             timeout = 500L;
         }
         buffer = new ByteArrayOutputStream();
+        log.log(Level.FINE, "Reading from PocketPc, set timeout to {0}ms", timeout);
     }
 
     @Override
@@ -65,6 +66,7 @@ public class ReadFromPocketPc implements ByteProcessor {
      */
     public synchronized byte[] getDataWhenReady() {
         // Wait for the data to become ready
+        log.log(Level.FINE, "Waiting for data from the PocketPc");
         while (!dataReady) {
             try {
                 wait();

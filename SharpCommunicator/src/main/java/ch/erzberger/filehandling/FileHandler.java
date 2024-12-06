@@ -41,6 +41,7 @@ public class FileHandler {
         }
         Path path = Paths.get(fileName);
         try {
+            log.log(Level.FINEST, "Reading text file {0}", path);
             return normalizeLineBreaks(Files.readAllLines(path));
         } catch (IOException ex) {
             logException(ex);
@@ -65,6 +66,7 @@ public class FileHandler {
         }
         Path path = Paths.get(fileName);
         try {
+            log.log(Level.FINEST, "Reading binary file {0}", path);
             return Files.readAllBytes(path);
         } catch (IOException ex) {
             logException(ex);
@@ -74,7 +76,7 @@ public class FileHandler {
 
     public static void writeTextFile(String fileName, List<String> text) {
         if ("clip".equalsIgnoreCase(fileName)) {
-            log.log(Level.INFO, "Output goes to clipboard");
+            log.log(Level.INFO, "Text output goes to clipboard");
             // Place the text to the clipboard
             String textBlock = String.join("\n", text);
             StringSelection stringSelection = new StringSelection(textBlock);
@@ -83,6 +85,7 @@ public class FileHandler {
         } else {
             Path newFilePath = Paths.get(fileName);
             try {
+                log.log(Level.FINEST, "Writing text file {0}", newFilePath);
                 Files.deleteIfExists(newFilePath);
                 Files.createFile(newFilePath);
                 Files.write(newFilePath, text);
@@ -96,6 +99,7 @@ public class FileHandler {
         // Java does not seem to support copying binary data to the system clipboard. As a compromise,
         // send the data in base64 format as text.
         if ("clip".equalsIgnoreCase(fileName)) {
+            log.log(Level.INFO, "Binary output goes to clipboard");
             String encoded = Base64.getEncoder().encodeToString(binaryData);
             StringSelection stringSelection = new StringSelection(encoded);
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -103,6 +107,7 @@ public class FileHandler {
         } else {
             Path newFilePath = Paths.get(fileName);
             try {
+                log.log(Level.FINEST, "Writing binary file {0}", newFilePath);
                 Files.deleteIfExists(newFilePath);
                 Files.createFile(newFilePath);
                 Files.write(newFilePath, binaryData);
@@ -121,6 +126,7 @@ public class FileHandler {
      * @return Cleaned up lines
      */
     public static List<String> normalizeLineBreaks(List<String> lines) {
+        log.log(Level.FINEST, "Normalizing line breaks; Number of lines to normalize: {0}", lines.size());
         List<String> normalizedLines = new ArrayList<>();
         for (String line : lines) {
             // Ignore empty lines, and the last line with only an EOF character
@@ -133,6 +139,7 @@ public class FileHandler {
             }
             normalizedLines.add(line);
         }
+        log.log(Level.FINEST, "Finished normalizing line breaks; Number of lines after normalization: {0}", normalizedLines.size());
         return normalizedLines;
     }
 

@@ -20,6 +20,7 @@ public class Watchdog {
     }
 
     public void start() {
+        log.log(Level.FINEST, "Watchdog starting");
         timerThread = new Thread(() -> {
             try {
                 log.log(Level.FINEST, "Watchdog thread starts to sleep for {0} ms", delay);
@@ -38,6 +39,7 @@ public class Watchdog {
 
     public void reset() {
         if (timerThread != null) {
+            log.log(Level.FINEST, "Watchdog resetting");
             timerThread.interrupt();
             this.start();
         }

@@ -12,11 +12,17 @@ public class CmdLineArgsChecker {
     public static final String UTILARG = "add-utils";
     public static final String TOOLNAME = "SharpCommunicator";
     public static final String DEVICE = "device";
+    public static final String VERBOSEARG = "verbose";
+    public static final String DEBUGARG = "debug";
+    public static final String VERSIONARG = "version";
 
     public CmdLineArgs checkArgs(String[] args) { //NOSONAR: Complexity dealt with using unit tests
         // Set up the command line parameters
         Options options = new Options();
         options.addOption(new Option("h", "help", false, "Print usage."));
+        options.addOption(new Option("v", VERBOSEARG, false, "Verbose mode (more logging)."));
+        options.addOption(new Option("vv", DEBUGARG, false, "Debug mode (even more logging)."));
+        options.addOption(new Option("V", VERSIONARG, false, "Prints version information."));
         options.addOption(new Option("u", UTILARG, false, "Add the serial utilities when loading the Basic program."));
         options.addOption(Option.builder("d").longOpt(DEVICE)
                 .desc("Device to use (pc1500, pc1500a or pc1600). Default is pc1500.")
@@ -46,6 +52,15 @@ public class CmdLineArgsChecker {
         try {
             // parse the command line arguments, start with the simple ones
             CommandLine line = parser.parse(options, args);
+            if (line.hasOption(VERBOSEARG)) {
+                cmdLineArgs.setVerbose(true);
+            }
+            if (line.hasOption(DEBUGARG)) {
+                cmdLineArgs.setDebug(true);
+            }
+            if (line.hasOption(VERSIONARG)) {
+                cmdLineArgs.setVersion(true);
+            }
             if (line.hasOption(UTILARG)) {
                 cmdLineArgs.setUtil(true);
             }

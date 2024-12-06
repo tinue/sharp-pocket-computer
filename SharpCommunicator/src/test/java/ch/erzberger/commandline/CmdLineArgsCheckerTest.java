@@ -113,6 +113,34 @@ class CmdLineArgsCheckerTest {
     }
 
     @Test
+    void simpleargs() {
+        CmdLineArgsChecker checker = new CmdLineArgsChecker();
+        // All defaults
+        CmdLineArgs cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas"});
+        assertFalse(cmdLineArgs.isVerbose());
+        assertFalse(cmdLineArgs.isVersion());
+        // Lower case options
+        cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "-v"});
+        assertTrue(cmdLineArgs.isVerbose());
+        assertFalse(cmdLineArgs.isVersion());
+        cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "-V"});
+        assertFalse(cmdLineArgs.isVerbose());
+        assertTrue(cmdLineArgs.isVersion());
+        cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "-v", "-V"});
+        assertTrue(cmdLineArgs.isVerbose());
+        assertTrue(cmdLineArgs.isVersion());
+        // Long
+        cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "--verbose", "--version"});
+        assertTrue(cmdLineArgs.isVerbose());
+        assertTrue(cmdLineArgs.isVersion());
+        // Debug arg
+        cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "-vv"});
+        assertTrue(cmdLineArgs.isDebug());
+        cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "--debug"});
+        assertTrue(cmdLineArgs.isDebug());
+    }
+
+    @Test
     void input() {
         CmdLineArgsChecker checker = new CmdLineArgsChecker();
         CmdLineArgs cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--in-file", "theSaveFile.bas"});

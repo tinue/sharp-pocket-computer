@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -34,6 +35,7 @@ public class UtilsHandler {
                 while (reader.ready()) {
                     result.add(reader.readLine());
                 }
+                log.log(Level.FINEST, "Successfully read the file {0}", utilName);
                 return result;
             }
         } catch (IOException e) {
@@ -43,9 +45,12 @@ public class UtilsHandler {
     }
 
     public static List<String> addSerialUtilBasicApp(List<String> program, PocketPcDevice device) {
+        log.log(Level.FINEST, "Adding serial util bas. Program size before: {0}", program.size());
         Stream<String> combinedStream = Stream.concat(
                 program.stream(),
                 getSerialUtilBasicApp(device).stream());
-        return combinedStream.toList();
+        List<String> combinedList = combinedStream.toList();
+        log.log(Level.FINEST, "Finished adding serial util bas. Program size after: {0}", combinedList.size());
+        return combinedList;
     }
 }
