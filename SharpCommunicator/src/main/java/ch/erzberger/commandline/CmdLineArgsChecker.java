@@ -1,7 +1,12 @@
 package ch.erzberger.commandline;
 
+import ch.erzberger.filehandling.ManifestHandler;
 import lombok.extern.java.Log;
 import org.apache.commons.cli.*;
+
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Log
 public class CmdLineArgsChecker {
@@ -50,27 +55,34 @@ public class CmdLineArgsChecker {
         HelpFormatter formatter = new HelpFormatter();
         CmdLineArgs cmdLineArgs = new CmdLineArgs();
         try {
-            // parse the command line arguments, start with the simple ones
+            // Parse the command line arguments, start with the ones that cause direct action here in this method.
             CommandLine line = parser.parse(options, args);
-            // Version is like help: No other arguments are even checked.
-            if (line.hasOption(VERSIONARG)) {
-                cmdLineArgs.setVersion(true);
-                return cmdLineArgs;
-            }
-            if (line.hasOption(VERBOSEARG)) {
-                cmdLineArgs.setVerbose(true);
-            }
-            if (line.hasOption(DEBUGARG)) {
-                cmdLineArgs.setDebug(true);
-            }
-            if (line.hasOption(UTILARG)) {
-                cmdLineArgs.setUtil(true);
-            }
+            // First, check for help. Dump and exit.
             if (line.hasOption("help")) {
                 formatter.printHelp(TOOLNAME, options);
                 return null;
             }
-            // Now the ones with a parameter
+            // Version is like help: No other arguments are even checked. Just dump the version and exit.
+            if (line.hasOption(VERSIONARG)) {
+                String version = ManifestHandler.getVersionFromManifest();
+                log.log(Level.INFO, "SharpCommunicator, Version {0}", version);
+                return null;
+            }
+            // Update log level if necessary.
+            Level logLevel = line.hasOption(DEBUGARG) ? Level.FINEST : (line.hasOption(VERBOSEARG)) ? Level.FINE : null;
+            if (logLevel != null) {
+                Logger appLogger = Logger.getLogger("ch.erzberger");
+                appLogger.setLevel(logLevel);
+                for (Handler h : appLogger.getHandlers()) {
+                    h.setLevel(logLevel);
+                }
+                log.log(logLevel, "Log level is {0}", logLevel);
+                return null;
+            }
+            // From here and further down, populate the arguments that actually go into CmdLineArgs
+            if (line.hasOption(UTILARG)) {
+                cmdLineArgs.setUtil(true);
+            }
             if (line.hasOption(DEVICE)) {
                 switch (line.getOptionValue(DEVICE)) {
                     case "pc1600":

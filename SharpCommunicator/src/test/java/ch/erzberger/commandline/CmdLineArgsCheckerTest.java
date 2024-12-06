@@ -1,10 +1,14 @@
 package ch.erzberger.commandline;
 
+import lombok.extern.java.Log;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.logging.Level;
+
 import static org.junit.jupiter.api.Assertions.*;
 
+@Log
 class CmdLineArgsCheckerTest {
 
     @BeforeEach
@@ -30,15 +34,15 @@ class CmdLineArgsCheckerTest {
     void fromPcToPc() {
         CmdLineArgsChecker checker = new CmdLineArgsChecker();
         // All defaults
-        CmdLineArgs cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas","--in-file", "theSaveFile.bas"});
+        CmdLineArgs cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "--in-file", "theSaveFile.bas"});
         assertEquals(FileFormat.ASCII, cmdLineArgs.getInputFormat());
         assertEquals(FileFormat.ASCIICOMPACT, cmdLineArgs.getOutputFormat());
         // Output given
-        cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas","--in-file", "theSaveFile.bas", "--out-format", "BINARY"});
+        cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "--in-file", "theSaveFile.bas", "--out-format", "BINARY"});
         assertEquals(FileFormat.ASCII, cmdLineArgs.getInputFormat());
         assertEquals(FileFormat.BINARY, cmdLineArgs.getOutputFormat());
         // Input invalid
-        cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas","--in-file", "theSaveFile.bas", "--in-format", "BINARY"});
+        cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "--in-file", "theSaveFile.bas", "--in-format", "BINARY"});
         assertNull(cmdLineArgs);
     }
 
@@ -113,31 +117,32 @@ class CmdLineArgsCheckerTest {
     }
 
     @Test
-    void simpleargs() {
+    void actionargs() {
+        // These arguments can only be checked indirectly, because they do not update CmdLineArgs. They cause direct
+        // action in the parser, such as increasing the log level.
         CmdLineArgsChecker checker = new CmdLineArgsChecker();
         // All defaults
         CmdLineArgs cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas"});
-        assertFalse(cmdLineArgs.isVerbose());
-        assertFalse(cmdLineArgs.isVersion());
-        // Lower case options
+        assertNotNull(cmdLineArgs);
+        assertEquals(Level.INFO, getCurrentLogLevel());
+        // Log Levels
         cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "-v"});
-        assertTrue(cmdLineArgs.isVerbose());
-        assertFalse(cmdLineArgs.isVersion());
-        cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "-V"});
-        assertFalse(cmdLineArgs.isVerbose());
-        assertTrue(cmdLineArgs.isVersion());
-        cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "-v", "-V"});
-        assertFalse(cmdLineArgs.isVerbose());
-        assertTrue(cmdLineArgs.isVersion());
-        // Long
-        cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "--verbose", "--version"});
-        assertFalse(cmdLineArgs.isVerbose());
-        assertTrue(cmdLineArgs.isVersion());
-        // Debug arg
+        assertNull(cmdLineArgs);
+        assertEquals(Level.FINE, getCurrentLogLevel());
         cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "-vv"});
-        assertTrue(cmdLineArgs.isDebug());
+        assertNull(cmdLineArgs);
+        assertEquals(Level.FINEST, getCurrentLogLevel());
+        cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "--verbose"});
+        assertNull(cmdLineArgs);
+        assertEquals(Level.FINE, getCurrentLogLevel());
         cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "--debug"});
-        assertTrue(cmdLineArgs.isDebug());
+        assertNull(cmdLineArgs);
+        assertEquals(Level.FINEST, getCurrentLogLevel());
+        // Version
+        cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "-V"});
+        assertNull(cmdLineArgs);
+        cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "--version"});
+        assertNull(cmdLineArgs);
     }
 
     @Test
@@ -159,5 +164,9 @@ class CmdLineArgsCheckerTest {
     void missingFilename() {
         CmdLineArgsChecker checker = new CmdLineArgsChecker();
         assertNull(checker.checkArgs(new String[]{"SharpCommunicator", "--in-file"}));
+    }
+
+    private Level getCurrentLogLevel() {
+        return log.getParent().getLevel();
     }
 }

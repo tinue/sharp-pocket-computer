@@ -5,7 +5,6 @@ import ch.erzberger.commandline.CmdLineArgsChecker;
 import ch.erzberger.commandline.FileFormat;
 import ch.erzberger.commandline.PocketPcDevice;
 import ch.erzberger.filehandling.FileHandler;
-import ch.erzberger.filehandling.ManifestHandler;
 import ch.erzberger.filehandling.UtilsHandler;
 import ch.erzberger.serialhandler.ByteProcessor;
 import ch.erzberger.serialhandler.SerialPortWrapper;
@@ -15,10 +14,8 @@ import lombok.extern.java.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 @Log
 public class SharpCommunicator {
@@ -36,22 +33,6 @@ public class SharpCommunicator {
         CmdLineArgs cmdLineArgs = new CmdLineArgsChecker().checkArgs(args);
         if (cmdLineArgs == null) {
             System.exit(-1);
-        }
-        // If the version argument is present, do nothing but dump the version information
-        if (cmdLineArgs.isVersion()) {
-            String version = ManifestHandler.getVersionFromManifest();
-            log.log(Level.INFO, "SharpCommunicator, Version {0}", version);
-            System.exit(0);
-        }
-        // Update log level if necessary
-        Level logLevel = cmdLineArgs.isDebug() ? Level.FINEST : cmdLineArgs.isVerbose() ? Level.FINE : null;
-        if (logLevel != null) {
-            Logger appLogger = LogManager.getLogManager().getLogger("ch.erzberger");
-            appLogger.setLevel(logLevel);
-            for (Handler h : appLogger.getHandlers()) {
-                h.setLevel(logLevel);
-            }
-            log.log(logLevel, "Log level is {0}", logLevel);
         }
         // The result will be in one of these variables:
         byte[] inputFileBytes = null;

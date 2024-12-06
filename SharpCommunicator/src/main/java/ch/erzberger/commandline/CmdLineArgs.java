@@ -10,7 +10,4 @@ public class CmdLineArgs {
     private FileFormat outputFormat = null;
     private PocketPcDevice device = null;
     private boolean util = false; // Default
-    private boolean verbose = false;
-    private boolean debug = false;
-    private boolean version = false;
 }
