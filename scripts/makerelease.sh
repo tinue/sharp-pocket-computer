@@ -56,7 +56,7 @@ if [[ "$BRANCH" == "develop" ]]; then
   then
     mvn clean package
     cp SharpCommunicator/target/SharpCommunicator-jar-with-dependencies.jar SharpCommunicator.jar
-    gh release create v$VERSION-$HASH SharpCommunicator.jar -d --notes-file SharpCommunicator/ReleaseNotes.md --title $VERSION-prerelease
+    gh release create v$VERSION-$HASH SharpCommunicator.jar -p --target develop --notes-file SharpCommunicator/ReleaseNotes.md --title $VERSION-prerelease
     rm SharpCommunicator.jar
     echo Done
     exit 0
