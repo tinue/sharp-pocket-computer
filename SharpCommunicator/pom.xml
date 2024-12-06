@@ -21,8 +21,10 @@
         <version.commons-cli>1.9.0</version.commons-cli>
         <version.junit>5.11.3</version.junit>
         <version.maven-assembly-plugin>3.7.1</version.maven-assembly-plugin>
+        <version.maven-jar-plugin>3.4.2</version.maven-jar-plugin>
         <version.maven-compiler-plugin>3.13.0</version.maven-compiler-plugin>
         <version.maven-surefire-plugin>3.5.2</version.maven-surefire-plugin>
+        <build.time></build.time>
     </properties>
 
     <dependencies>
@@ -77,6 +79,21 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${version.maven-jar-plugin}</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Build-Time>${build.time}</Build-Time>
+                        </manifestEntries>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>${version.maven-assembly-plugin}</version>
                 <executions>
@@ -90,10 +107,12 @@
                             <finalName>SharpCommunicator</finalName>
                             <archive>
                                 <manifest>
-                                    <mainClass>
-                                        ch.erzberger.sharppc.SharpCommunicator
-                                    </mainClass>
+                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                    <mainClass>ch.erzberger.sharppc.SharpCommunicator</mainClass>
                                 </manifest>
+                                <manifestEntries>
+                                    <Build-Time>${build.time}</Build-Time>
+                                </manifestEntries>
                             </archive>
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>

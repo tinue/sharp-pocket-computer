@@ -127,11 +127,11 @@ class CmdLineArgsCheckerTest {
         assertFalse(cmdLineArgs.isVerbose());
         assertTrue(cmdLineArgs.isVersion());
         cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "-v", "-V"});
-        assertTrue(cmdLineArgs.isVerbose());
+        assertFalse(cmdLineArgs.isVerbose());
         assertTrue(cmdLineArgs.isVersion());
         // Long
         cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "--verbose", "--version"});
-        assertTrue(cmdLineArgs.isVerbose());
+        assertFalse(cmdLineArgs.isVerbose());
         assertTrue(cmdLineArgs.isVersion());
         // Debug arg
         cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "-vv"});

@@ -52,14 +52,16 @@ public class CmdLineArgsChecker {
         try {
             // parse the command line arguments, start with the simple ones
             CommandLine line = parser.parse(options, args);
+            // Version is like help: No other arguments are even checked.
+            if (line.hasOption(VERSIONARG)) {
+                cmdLineArgs.setVersion(true);
+                return cmdLineArgs;
+            }
             if (line.hasOption(VERBOSEARG)) {
                 cmdLineArgs.setVerbose(true);
             }
             if (line.hasOption(DEBUGARG)) {
                 cmdLineArgs.setDebug(true);
-            }
-            if (line.hasOption(VERSIONARG)) {
-                cmdLineArgs.setVersion(true);
             }
             if (line.hasOption(UTILARG)) {
                 cmdLineArgs.setUtil(true);

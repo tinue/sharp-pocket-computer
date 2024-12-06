@@ -48,15 +48,16 @@ require_clean_work_tree () {
 VERSION=$(mvn -f SharpCommunicator/pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 HASH=$(git rev-parse --short=7 HEAD)
+BUILDTIME=$(date '+%Y-%m-%d %H:%M:%S')
 
 # Check branch. Develop will create a pre-release, and main a release
 if [[ "$BRANCH" == "develop" ]]; then
   read -p "Creating a pre-release, continue? " -n 1 -r
   if [[ $REPLY =~ ^[Yy]$ ]]
   then
-    mvn clean package
+    mvn clean package -Dbuild.time="$BUILDTIME"
     cp SharpCommunicator/target/SharpCommunicator-jar-with-dependencies.jar SharpCommunicator.jar
-    gh release create v$VERSION-$HASH SharpCommunicator.jar -p --target develop --notes-file SharpCommunicator/ReleaseNotes.md --title $VERSION-prerelease
+    gh release create v$VERSION-$HASH SharpCommunicator.jar -p --target develop --notes-file SharpCommunicator/ReleaseNotes.md --title "$VERSION / $BUILDTIME"
     rm SharpCommunicator.jar
     echo Done
     exit 0
@@ -66,14 +67,14 @@ fi
 if [[ "$BRANCH" == "main" ]]; then
   require_clean_work_tree
   echo "Please check that the main branch has been merged with develop!"
-  read -p "Creating a release, continue? " -n 1 -r
+  read -p "Drafting a release, continue? " -n 1 -r
   if [[ $REPLY =~ ^[Yy]$ ]]
   then
     mvn clean package
     cp SharpCommunicator/target/SharpCommunicator-jar-with-dependencies.jar SharpCommunicator.jar
-    gh release create v$VERSION SharpCommunicator.jar --notes-file SharpCommunicator/ReleaseNotes.md --title $VERSION
+    gh release create v$VERSION SharpCommunicator.jar --notes-file SharpCommunicator/ReleaseNotes.md --title $VERSION -d
     rm SharpCommunicator.jar
-    echo Done
+    echo "Done! Next: Go to Github and finish publishing the release (it is currently in draft state)."
     exit 0
   fi
 fi

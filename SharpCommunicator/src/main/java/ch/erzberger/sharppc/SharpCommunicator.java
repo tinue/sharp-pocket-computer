@@ -5,6 +5,7 @@ import ch.erzberger.commandline.CmdLineArgsChecker;
 import ch.erzberger.commandline.FileFormat;
 import ch.erzberger.commandline.PocketPcDevice;
 import ch.erzberger.filehandling.FileHandler;
+import ch.erzberger.filehandling.ManifestHandler;
 import ch.erzberger.filehandling.UtilsHandler;
 import ch.erzberger.serialhandler.ByteProcessor;
 import ch.erzberger.serialhandler.SerialPortWrapper;
@@ -35,6 +36,12 @@ public class SharpCommunicator {
         CmdLineArgs cmdLineArgs = new CmdLineArgsChecker().checkArgs(args);
         if (cmdLineArgs == null) {
             System.exit(-1);
+        }
+        // If the version argument is present, do nothing but dump the version information
+        if (cmdLineArgs.isVersion()) {
+            String version = ManifestHandler.getVersionFromManifest();
+            log.log(Level.INFO, "SharpCommunicator, Version {0}", version);
+            System.exit(0);
         }
         // Update log level if necessary
         Level logLevel = cmdLineArgs.isDebug() ? Level.FINEST : cmdLineArgs.isVerbose() ? Level.FINE : null;
