@@ -8,6 +8,7 @@ import ch.erzberger.filehandling.FileHandler;
 import ch.erzberger.filehandling.UtilsHandler;
 import ch.erzberger.serialhandler.ByteProcessor;
 import ch.erzberger.serialhandler.SerialPortWrapper;
+import ch.erzberger.serialhandler.SerialToDeviceSender;
 import ch.erzberger.sharppc.sharpbasic.Program;
 import lombok.extern.java.Log;
 
@@ -34,27 +35,29 @@ public class SharpCommunicator {
         if (cmdLineArgs == null) {
             System.exit(-1);
         }
-        // The result will be in one of these variables:
+        // The input will either be loaded into a byte array, or into a List of Strings. Declare both variables.
         byte[] inputFileBytes = null;
         List<String> inputFileLines = null;
-        // First, read the file from either a file or from a PocketPC
-        if (cmdLineArgs.getInputFile() == null) {
-            // Read from PocketPC
+        // Step one: Read the file
+        String inputFileName = cmdLineArgs.getInputFile();
+        if (inputFileName == null) {
+            // If there is no input file, it will be loaded from the PocketPC
             ReadFromPocketPc byteProcessor = new ReadFromPocketPc(cmdLineArgs.getDevice());
             SerialPortWrapper wrapper = initPort(cmdLineArgs.getDevice(), byteProcessor);
             inputFileBytes = byteProcessor.getDataWhenReady();
             wrapper.closePort();
         } else {
-            // Read from File
+            // Read from the File given on the command line
             if (FileFormat.BINARY.equals(cmdLineArgs.getInputFormat())) {
-                // Binary read
-                inputFileBytes = FileHandler.readBinaryFile(cmdLineArgs.getInputFile());
+                // Binary read into the byte array
+                inputFileBytes = FileHandler.readBinaryFile(inputFileName);
             } else {
-                // ASCII read
-                inputFileLines = FileHandler.readTextFile(cmdLineArgs.getInputFile());
+                // ASCII read into the List of Strings
+                inputFileLines = FileHandler.readTextFile(inputFileName);
             }
         }
-        // Next, convert the input if necessary
+        // Step two: Convert the input if necessary
+        // The result will either be in a bte array, or in a List of Strings. Declare the variables.
         byte[] outputFileBytes = null;
         List<String> outputFileLines = null;
         if (inputFileBytes != null) {
@@ -91,72 +94,22 @@ public class SharpCommunicator {
                     break;
             }
         }
-        // 3rd step: Output the result into a file, or to the PocketPC.
+        // Step three: Output the result into a file, or to the PocketPC.
         // Sanity check
         if (outputFileBytes == null && outputFileLines == null) {
             log.log(Level.SEVERE, "Broken program logic, both outputs are null");
             System.exit(-1);
         }
         if (cmdLineArgs.getOutputFile() == null) {
-            // Output goes to PocketPC device
+            // No output file was given, so the output goes to the PocketPC
             SerialPortWrapper wrapper = initPort(cmdLineArgs.getDevice(), null);
+            SerialToDeviceSender sender = new SerialToDeviceSender(wrapper, cmdLineArgs.getDevice());
             if (outputFileBytes != null) {
                 // Binary output
-                if (PocketPcDevice.PC1500.equals(cmdLineArgs.getDevice())) {
-                    // The PC-1500 needs two things:
-                    // 1. The first 28 bytes are a header, and after the header a pause is required (at least 100ms)
-                    // 2. It can't keep up with the fixed 19200 baud of the CE-158X. A pause is required between bytes.
-                    // Split into header and program
-                    byte[] header = new byte[28];
-                    byte[] programBytes = new byte[outputFileBytes.length - 28];
-                    System.arraycopy(outputFileBytes, 0, header, 0, 28);
-                    System.arraycopy(outputFileBytes, 28, programBytes, 0, programBytes.length);
-                    // Write the header. It can be sent with full speed, 28 bytes seem to not be an issue
-                    wrapper.writeBytes(header);
-                    // Now wait for the header to be processed
-                    try {
-                        Thread.sleep(200L);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-                    // Next, send the program byte by byte and wait 1ms after each byte
-                    wrapper.writeBytes(programBytes, 1L);
-                    // Wait a bit after the last byte before closing the port.
-                    try {
-                        Thread.sleep(500L);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-                } else {
-                    // The PC-1600 has no issues with full speed sending. Its 16 byte header is just loaded along with the rest
-                    wrapper.writeBytes(outputFileBytes);
-                }
+                sender.sendData(outputFileBytes);
             } else {
                 // ASCII output
-                for (String line : outputFileLines) {
-                    wrapper.writeAscii(line, cmdLineArgs.getDevice());
-                    // The PC-1500 needs more time to handle one line. Add some wait.
-                    if (PocketPcDevice.PC1500.equals(cmdLineArgs.getDevice())) {
-                        try {
-                            Thread.sleep(500L);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
-                    }
-                }
-                // To finalize, send an End-Of-File marker
-                if (PocketPcDevice.PC1500.equals(cmdLineArgs.getDevice())) {
-                    // The PC-1500 stops receiving when two CRs are received in a row
-                    wrapper.writeBytes(new byte[]{0x0D});
-                } else {
-                    // The PC-1600 stops on an EOF ASCII code
-                    wrapper.writeBytes(new byte[]{0x1A});
-                }
-                try {
-                    Thread.sleep(500L);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
+                sender.sendData(outputFileLines);
             }
             wrapper.closePort();
         } else {
