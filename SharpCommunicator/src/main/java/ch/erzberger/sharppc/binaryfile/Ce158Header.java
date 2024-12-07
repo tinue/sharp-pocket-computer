@@ -29,6 +29,14 @@ public class Ce158Header {
     private int length;
     private int runAddr;
 
+    /**
+     * Create a header from given values
+     * @param type Header type (@ or A or B)
+     * @param filename Given filename
+     * @param startAddr For binary programs: Where to load the program to
+     * @param length Length of the Basic program, Reserve area or binary program that comes after the header
+     * @param runAddr For binary programs: Start address of the program (autorun after load)
+     */
     public Ce158Header(String type, String filename, int startAddr, int length, int runAddr) {
         this.type = checkType(type); // Throw a NoClassDefFoundError if an invalid type is given
         this.filename = filename;
@@ -37,6 +45,20 @@ public class Ce158Header {
         this.runAddr = "B".equals(type) ? runAddr : 0; // Ignore the value if the type is not binary
     }
 
+    /**
+     * Convenience constructor for Basic and Reserve
+     * @param type Header type (@ or A)
+     * @param filename Given filename
+     * @param length Length of the Basic program or Reserve area that comes after the header
+     */
+    public Ce158Header(String type, String filename, int length) {
+        this(type, filename, 0, length, 0);
+    }
+
+    /**
+     * Create a header from its binary representation
+     * @param header Validated header with all fields set.
+     */
     public Ce158Header(byte[] header) {
         // Start by checking if this can be a header in the first place.
         // First, length: A header is 27 bytes, so anything short can't be a header
@@ -107,6 +129,13 @@ public class Ce158Header {
         return type;
     }
 
+    /**
+     * Build a binary CE-158 header from the variables given in the constructor. Note that if the instance
+     * is created using the binary constructor, the resulting binary header may be different. This is because
+     * the fields that are declared "don't care" in the manual are always filled with zeroes, even if the input
+     * binary contained some other value.
+     * @return 27 bit CE-158 header binary representation.
+     */
     public byte[] getHeader() {
         // Trim the filename to 16 chars (limit of CE-158 header)
         String normalizedFilename = filename;

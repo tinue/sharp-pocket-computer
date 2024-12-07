@@ -1,6 +1,7 @@
 package ch.erzberger.sharppc.sharpbasic;
 
 import ch.erzberger.commandline.PocketPcDevice;
+import ch.erzberger.sharppc.binaryfile.Ce158Header;
 import lombok.extern.java.Log;
 
 import java.io.UnsupportedEncodingException;
@@ -77,28 +78,8 @@ public class Program extends Token {
         if (PocketPcDevice.PC1600.equals(device)) {
             return appendBytes(make1600header(program.length), program);
         } else {
-            return appendBytes(make1500header(programName, program.length), program);
+            return appendBytes(new Ce158Header("@", programName, program.length-1).getHeader(), program);
         }
-    }
-
-    byte[] make1500header(String programName, int size) {
-        if (programName.length() > 16) {
-            programName = programName.substring(0, 16);
-        }
-        String normalizedProgramName = "@COM" + programName.toUpperCase();
-        byte[] progName = new byte[]{0x01};
-        try {
-            progName = appendBytes(progName, normalizedProgramName.getBytes("Cp437"));
-        } catch (UnsupportedEncodingException e) {
-            log.log(Level.SEVERE, "Codepage 437 not found");
-            System.exit(-1);
-        }
-        byte[] sizePartOfHeader = new byte[27 - progName.length];
-        byte[] retVal = appendBytes(progName, sizePartOfHeader);
-        byte[] sizeBytes = convertIntToTwoByteByteArray(size - 1);
-        retVal[23] = sizeBytes[0];
-        retVal[24] = sizeBytes[1];
-        return retVal;
     }
 
     byte[] make1600header(int size) {
