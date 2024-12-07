@@ -77,7 +77,6 @@ public class CmdLineArgsChecker {
                     h.setLevel(logLevel);
                 }
                 log.log(logLevel, "Log level is {0}", logLevel);
-                return null;
             }
             // From here and further down, populate the arguments that actually go into CmdLineArgs
             if (line.hasOption(UTILARG)) {

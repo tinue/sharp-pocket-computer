@@ -127,16 +127,16 @@ class CmdLineArgsCheckerTest {
         assertEquals(Level.INFO, getCurrentLogLevel());
         // Log Levels
         cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "-v"});
-        assertNull(cmdLineArgs);
+        assertNotNull(cmdLineArgs);
         assertEquals(Level.FINE, getCurrentLogLevel());
         cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "-vv"});
-        assertNull(cmdLineArgs);
+        assertNotNull(cmdLineArgs);
         assertEquals(Level.FINEST, getCurrentLogLevel());
         cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "--verbose"});
-        assertNull(cmdLineArgs);
+        assertNotNull(cmdLineArgs);
         assertEquals(Level.FINE, getCurrentLogLevel());
         cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "--debug"});
-        assertNull(cmdLineArgs);
+        assertNotNull(cmdLineArgs);
         assertEquals(Level.FINEST, getCurrentLogLevel());
         // Version
         cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--out-file", "theSaveFile.bas", "-V"});
