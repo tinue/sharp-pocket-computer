@@ -6,6 +6,7 @@ import lombok.extern.java.Log;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -31,6 +32,21 @@ public class Program extends Token {
         this.lines = Collections.unmodifiableList(tempLines);
         validate(); // Set the token as valid.
         setInputMinusToken(""); // Should not be necessary, because each line does this of its own.
+    }
+
+    public Program(String programName, byte[] programBytes, PocketPcDevice device) {
+        this(programName, convertByteArrayToList(programBytes), device);
+    }
+
+    private static List<String> convertByteArrayToList(byte[] bytes) {
+        String fullProgram;
+        try {
+            fullProgram = new String(bytes, "Cp437");
+        } catch (UnsupportedEncodingException e) {
+            throw new NoClassDefFoundError("Codepage 437 does not exist on your platform");
+        }
+        String[] lines = fullProgram.split("\\r");  // Sharp uses a CR only for line end
+        return Arrays.stream(lines).toList();
     }
 
     @Override
