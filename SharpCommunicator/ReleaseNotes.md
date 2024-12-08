@@ -1,6 +1,8 @@
 # Release Notes
 - 202x-xx-xx / 2.0.1
-  - Fix for not exiting after load from PocketPC; more
+  - Fix for not exiting after load from PocketPC
+  - Fix for tokenization error
+  - tbd, could be more before this becomes a release
 - 2024-12-05 / 2.0.0
   - Command line options rework, hence new major version number
   - Compact ASCII output mode, see README
