@@ -54,14 +54,29 @@ public abstract class Token {
         }
     }
 
-    int findIndexOfSubstring(String input, String regex) {
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(input);
-        if (matcher.find()) {
-            return matcher.start();
-        } else {
-            return -1;
+    /**
+     * Find the first index of a substring, but do not search inside of already escaped keywords.
+     * @param source String to find something inside
+     * @param toFind String to find
+     * @return First index of found keyword, -1 if nothing was found.
+     */
+    int findIndexOfSubstring(String source, String toFind) {
+        boolean insideCurly = false;
+        StringBuilder masked = new StringBuilder();
+        for (char c : source.toCharArray()) {
+            if ('{' == c) {
+                insideCurly = true;
+            }
+            if (insideCurly) {
+                masked.append('#');
+                if ('}' == c) {
+                    insideCurly = false;
+                }
+            } else {
+                masked.append(c);
+            }
         }
+        return masked.toString().indexOf(toFind);
     }
 
     static byte[] appendBytes(byte[] source, byte[] toAppend) {

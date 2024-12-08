@@ -5,28 +5,31 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HexFormat;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class StatementTest {
     private final PocketPcDevice DEVICE = PocketPcDevice.PC1500;
 
     @Test
     void escapeBasicKeywords() {
-        testEscape("{IF}{INKEY$}<>\"\"{AND}C$=\"BEGIN\"{GOTO}260","IFINKEY$<>\"\"ANDC$=\"BEGIN\"GOTO260");
+        testEscape("{IF}{INKEY$}<>\"\"{AND}C$=\"BEGIN\"{GOTO}260", "IFINKEY$<>\"\"ANDC$=\"BEGIN\"GOTO260");
         testEscape("{INPUT}\"Letter:\";L$", "INPUT\"Letter:\";L$");
-        testEscape("{FOR}{PRINT}","FORPRINT");
+        testEscape("{FOR}{PRINT}", "FORPRINT");
         testEscape("{CHR$}", "CHR$");
-        testEscape("{PRINT}{FOR}{PRINT}","PRINTFORPRINT");
-        testEscape("{PRINT}{PRINT}{PRINT}","PRINTPRINTPRINT");
-        testEscape("{FOR}I=1{TO}100","FORI=1TO100");
-        testEscape("A{FOR}{LET}","AFORLET");
-        testEscape("{FOR}I","FORI");
-        testEscape("A=10{REMThis is a test}","A=10REMThis is a test");
-        testEscape("{LPRINT}AB","LPRINTAB");
-        testEscape("{LPRINT}\"Hi there\"","LPRINT\"Hi there\"");
-        testEscape("10*5{PROTOCOL}{IF}3*3","10*5PROTOCOLIF3*3");
-        testEscape("\"A\"","\"A\"");
-        testEscape("77*100","77*100");
+        testEscape("{PRINT}{FOR}{PRINT}", "PRINTFORPRINT");
+        testEscape("{PRINT}{PRINT}{PRINT}", "PRINTPRINTPRINT");
+        testEscape("{FOR}I=1{TO}100", "FORI=1TO100");
+        testEscape("A{FOR}{LET}", "AFORLET");
+        testEscape("{FOR}I", "FORI");
+        testEscape("A=10{REMThis is a test}", "A=10REMThis is a test");
+        testEscape("{LPRINT}AB", "LPRINTAB");
+        testEscape("{LPRINT}\"Hi there\"", "LPRINT\"Hi there\"");
+        testEscape("10*5{PROTOCOL}{IF}3*3", "10*5PROTOCOLIF3*3");
+        testEscape("\"A\"", "\"A\"");
+        testEscape("77*100", "77*100");
+        // Defect
+        testEscape("{PRINT}{INT}", "PRINTINT");
+        testEscape("R={POINT}94,S=S+{INT}(A/4)", "R=POINT94,S=S+INT(A/4)");
     }
 
     @Test
@@ -47,6 +50,11 @@ class StatementTest {
         assertEquals("IF INKEY$ <>\"\"AND C$=\"BEGIN\"GOTO 260", statement.getNormalizedRepresentation());
         statement = new Statement("INPUT\"Letter:\";L$", PocketPcDevice.PC1600);
         assertEquals("INPUT \"Letter:\";L$", statement.getNormalizedRepresentation());
+        // Defect
+        statement = new Statement("R=POINT 93,A=1,B=L-4,C=299,S=0", PocketPcDevice.PC1500);
+        assertEquals("R=POINT  93,A=1,B=L-4,C=299,S=0", statement.getNormalizedRepresentation());
+        statement = new Statement("R=POINT 94,S=S+INT (A/4)", PocketPcDevice.PC1500);
+        assertEquals("R=POINT  94,S=S+INT  (A/4)", statement.getNormalizedRepresentation());
     }
 
     private void testEscape(String expectedResult, String input) {
