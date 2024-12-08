@@ -91,7 +91,7 @@ public class Program extends Token {
             progName = appendBytes(progName, normalizedProgramName.getBytes("Cp437"));
         } catch (UnsupportedEncodingException e) {
             log.log(Level.SEVERE, "Codepage 437 not found");
-            System.exit(-1);
+            System.exit(1);
         }
         byte[] sizePartOfHeader = new byte[27 - progName.length];
         byte[] retVal = appendBytes(progName, sizePartOfHeader);

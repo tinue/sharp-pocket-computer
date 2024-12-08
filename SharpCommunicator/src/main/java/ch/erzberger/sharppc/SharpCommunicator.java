@@ -35,7 +35,7 @@ public class SharpCommunicator {
     public static void main(String[] args) {
         CmdLineArgs cmdLineArgs = new CmdLineArgsChecker().checkArgs(args);
         if (cmdLineArgs == null) {
-            System.exit(-1);
+            System.exit(1);
         }
         // If the version argument is present, do nothing but dump the version information
         if (cmdLineArgs.isVersion()) {
@@ -81,7 +81,7 @@ public class SharpCommunicator {
             if (!FileFormat.BINARY.equals(cmdLineArgs.getOutputFormat())) {
                 log.log(Level.SEVERE, "A binary input cannot currently be converted to an ASCII output (save " +
                         "to a .bin file, or for a '.bas' file use '--out-format binary'");
-                System.exit(-1);
+                System.exit(1);
             } else {
                 outputFileBytes = inputFileBytes;
             }
@@ -89,7 +89,7 @@ public class SharpCommunicator {
             // The input is ASCII, but better doublecheck if not both are null
             if (inputFileLines == null) {
                 log.log(Level.SEVERE, "Both binary and ascii input is null, the software is seriously broken");
-                System.exit(-1);
+                System.exit(1);
             }
             // If desired, add the serial utilities, which are device specific.
             if (cmdLineArgs.isUtil()) {
@@ -112,9 +112,10 @@ public class SharpCommunicator {
         }
         // 3rd step: Output the result into a file, or to the PocketPC.
         // Sanity check
-        if (outputFileBytes == null && outputFileLines == null) {
-            log.log(Level.SEVERE, "Broken program logic, both outputs are null");
-            System.exit(-1);
+        if ((outputFileBytes != null && outputFileBytes.length == 0) || (outputFileLines != null && outputFileLines.isEmpty()) ||
+                (outputFileBytes == null && outputFileLines == null)) {
+            log.log(Level.FINE, "There was an error loading or converting the program, aborting");
+            System.exit(1);
         }
         if (cmdLineArgs.getOutputFile() == null) {
             // Output goes to PocketPC device
@@ -123,13 +124,13 @@ public class SharpCommunicator {
                 // Binary output
                 if (PocketPcDevice.PC1500.equals(cmdLineArgs.getDevice())) {
                     // The PC-1500 needs two things:
-                    // 1. The first 28 bytes are a header, and after the header a pause is required (at least 100ms)
+                    // 1. The first 27 bytes are a header, and after the header a pause is required (at least 100ms)
                     // 2. It can't keep up with the fixed 19200 baud of the CE-158X. A pause is required between bytes.
                     // Split into header and program
-                    byte[] header = new byte[28];
-                    byte[] programBytes = new byte[outputFileBytes.length - 28];
-                    System.arraycopy(outputFileBytes, 0, header, 0, 28);
-                    System.arraycopy(outputFileBytes, 28, programBytes, 0, programBytes.length);
+                    byte[] header = new byte[27];
+                    byte[] programBytes = new byte[outputFileBytes.length - 27];
+                    System.arraycopy(outputFileBytes, 0, header, 0, 27);
+                    System.arraycopy(outputFileBytes, 27, programBytes, 0, programBytes.length);
                     // Write the header. It can be sent with full speed, 28 bytes seem to not be an issue
                     wrapper.writeBytes(header);
                     // Now wait for the header to be processed

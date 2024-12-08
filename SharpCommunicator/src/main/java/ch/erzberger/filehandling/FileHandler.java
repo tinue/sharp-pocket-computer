@@ -144,6 +144,6 @@ public class FileHandler {
     }
 
     static void logException(Throwable e) {
-        log.log(Level.SEVERE, "Could not read the file.", e);
+        log.log(Level.SEVERE, "An error occurred while reading the file. Reason: {0}", new Object[]{e});
     }
 }
