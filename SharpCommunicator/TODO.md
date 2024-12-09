@@ -3,6 +3,7 @@ Please note that this is not a promise to delivers anything at all! The list ist
 
 ## Known defects
 - Just like after a REM, anything after a single quote must be ignored (to be verified for the PC-1500)
+- Binary file load only works if the .bin file already has a CE-158 header present.
 
 ## Future software work
 - Restructure the README file. Start with the software part, and put the hardware stuff into its own file.

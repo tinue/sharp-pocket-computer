@@ -85,7 +85,7 @@ public class Program extends Token {
         if (programName.length() > 16) {
             programName = programName.substring(0, 16);
         }
-        String normalizedProgramName = "@COM" + programName.toUpperCase();
+        String normalizedProgramName = "@COM" + programName;
         byte[] progName = new byte[]{0x01};
         try {
             progName = appendBytes(progName, normalizedProgramName.getBytes("Cp437"));

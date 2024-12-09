@@ -14,6 +14,8 @@ import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -95,8 +97,11 @@ public class SharpCommunicator {
             if (cmdLineArgs.isUtil()) {
                 inputFileLines = UtilsHandler.addSerialUtilBasicApp(inputFileLines, cmdLineArgs.getDevice());
             }
+            // Produce a meaningful filename
+            Path path = Paths.get(cmdLineArgs.getInputFile());
+            String filename = path.getFileName().toString().substring(0, path.getFileName().toString().lastIndexOf('.'));
             // Next, parse everything into a Program
-            Program theProgram = new Program(cmdLineArgs.getInputFile(), inputFileLines, cmdLineArgs.getDevice());
+            Program theProgram = new Program(filename, inputFileLines, cmdLineArgs.getDevice());
             // Now it depends on the output file type
             switch (cmdLineArgs.getOutputFormat()) {
                 case BINARY:
