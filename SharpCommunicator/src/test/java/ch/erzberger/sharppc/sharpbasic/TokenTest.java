@@ -80,6 +80,10 @@ class TokenTest {
         line = new Line("175 \"SP\"Q=R,R=POINT 94,S=S+INT (A/4)", DEVICE);
         assertTrue(line.isValid());
         assertEquals("175:\"SP\"Q=R,R=POINT 94,S=S+INT (A/4)", line.getNormalizedRepresentation());
+        // Another defect
+        line = new Line("40: INPUT \"REM. RATE (%)\";O", DEVICE);
+        assertTrue(line.isValid());
+        assertEquals(" 40:INPUT \"REM. RATE (%)\";O", line.getNormalizedRepresentation());
     }
 
     @Test

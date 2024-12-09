@@ -12,13 +12,20 @@ import java.util.regex.Pattern;
  * This is only done up to a level necessary to create a binary version of the program, for the purpose of quicker loading.
  * The instance hierarchy is as follows:
  * Program --> *Line --> LineNumber
- *                   --> *Statement --> *Keyword
- *                                  --> *Other
+ * --> *Statement --> *Keyword
+ * --> *Other
  */
 @Getter
 public abstract class Token {
     private String inputMinusToken;
     private boolean valid = false;
+
+    static byte[] appendBytes(byte[] source, byte[] toAppend) {
+        byte[] retVal = new byte[source.length + toAppend.length];
+        System.arraycopy(source, 0, retVal, 0, source.length);
+        System.arraycopy(toAppend, 0, retVal, source.length, toAppend.length);
+        return retVal;
+    }
 
     protected void validate() {
         this.valid = true;
@@ -29,7 +36,9 @@ public abstract class Token {
     }
 
     public abstract String getNormalizedRepresentation();
+
     public abstract String getShortRepresentation();
+
     public abstract byte[] getBinaryRepresentation();
 
     byte[] convertIntToTwoByteByteArray(int value) {
@@ -56,11 +65,12 @@ public abstract class Token {
 
     /**
      * Find the first index of a substring, but do not search inside of already escaped keywords.
+     *
      * @param source String to find something inside
      * @param toFind String to find
      * @return First index of found keyword, -1 if nothing was found.
      */
-    int findIndexOfSubstring(String source, String toFind) {
+    int findIndexOfSubstringExcludeCurly(String source, String toFind) {
         boolean insideCurly = false;
         StringBuilder masked = new StringBuilder();
         for (char c : source.toCharArray()) {
@@ -79,10 +89,27 @@ public abstract class Token {
         return masked.toString().indexOf(toFind);
     }
 
-    static byte[] appendBytes(byte[] source, byte[] toAppend) {
-        byte[] retVal = new byte[source.length + toAppend.length];
-        System.arraycopy(source, 0, retVal, 0, source.length);
-        System.arraycopy(toAppend, 0, retVal, source.length, toAppend.length);
-        return retVal;
+    /**
+     * Find the first index of a substring, but do not search inside of already escaped keywords.
+     *
+     * @param source String to find something inside
+     * @param toFind String to find
+     * @return First index of found keyword, -1 if nothing was found.
+     */
+    int findIndexOfSubstringExcludeQuoted(String source, String toFind) {
+        boolean insideQuotes = false;
+        StringBuilder masked = new StringBuilder();
+        for (char c : source.toCharArray()) {
+            // Quote reached: Either enable or disable the "inside quotes" mode. In any case, append a masking char
+            if ('"' == c) {
+                insideQuotes = !insideQuotes;
+                masked.append('#');
+            } else {
+                if (!insideQuotes) {
+                    masked.append(c);
+                }
+            }
+        }
+        return masked.toString().indexOf(toFind);
     }
 }

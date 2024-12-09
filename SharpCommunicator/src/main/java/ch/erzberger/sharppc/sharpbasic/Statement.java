@@ -99,7 +99,7 @@ public class Statement extends Token {
         SharpBasicKeywordLookup lookup = new SharpBasicKeywordLookup(device);
         // Before parsing, the line must be checked for a "REM" statement
         String rem = null;
-        int index = input.indexOf("REM");
+        int index = findIndexOfSubstringExcludeQuoted(input, "REM");
         if (index != -1) {
             rem = "{" + input.substring(index) + "}";
             input = input.substring(0, index);
@@ -115,7 +115,7 @@ public class Statement extends Token {
                 if (code != 0x0000) {
                     // A code could be found -> We have a keyword.
                     // Find the same match in the result, must not yet have been escaped before, i.e. not inside curly braces
-                    int startMatchInResult = findIndexOfSubstring(result, searchWord);
+                    int startMatchInResult = findIndexOfSubstringExcludeCurly(result, searchWord);
                     // Add everything before the match, then the escaped keyword, then everything after the match
                     result = result.substring(0, startMatchInResult) + "{" + searchWord + "}" + result.substring(startMatchInResult + searchWord.length());
                     // To avoid a re-match with a shorter keyword (FOR -> OR), replace the found keyword with a dummy of the same length
