@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.IOException;
+import java.nio.charset.MalformedInputException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -43,6 +44,9 @@ public class FileHandler {
         try {
             log.log(Level.FINEST, "Reading text file {0}", path);
             return normalizeLineBreaks(Files.readAllLines(path));
+        } catch (MalformedInputException e) {
+            log.log(Level.SEVERE, "File \"{0}\" contains invalid characters.", fileName);
+            return Collections.emptyList();
         } catch (IOException ex) {
             logException(ex);
             return Collections.emptyList();
@@ -144,6 +148,6 @@ public class FileHandler {
     }
 
     static void logException(Throwable e) {
-        log.log(Level.SEVERE, "Could not read the file.", e);
+        log.log(Level.SEVERE, "An error occurred while reading the file. Reason: {0}", new Object[]{e});
     }
 }

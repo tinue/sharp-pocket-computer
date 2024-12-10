@@ -51,13 +51,13 @@ HASH=$(git rev-parse --short=7 HEAD)
 BUILDTIME=$(date '+%Y-%m-%d %H:%M:%S')
 
 # Check branch. Develop will create a pre-release, and main a release
-if [[ "$BRANCH" == "develop" ]]; then
+if [[ "$BRANCH" == "develop" || "$BRANCH" == dev/* ]]; then
   read -p "Creating a pre-release, continue? " -n 1 -r
   if [[ $REPLY =~ ^[Yy]$ ]]
   then
     mvn clean package -Dbuild.time="$BUILDTIME"
     cp SharpCommunicator/target/SharpCommunicator-jar-with-dependencies.jar SharpCommunicator.jar
-    gh release create v$VERSION-$HASH SharpCommunicator.jar -p --target develop --notes-file SharpCommunicator/ReleaseNotes.md --title "$VERSION / $BUILDTIME"
+    gh release create v$VERSION-$HASH SharpCommunicator.jar -p --notes-file SharpCommunicator/ReleaseNotes.md --title "$VERSION / $BUILDTIME"
     rm SharpCommunicator.jar
     echo Done
     exit 0

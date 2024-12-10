@@ -14,6 +14,8 @@ import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -33,7 +35,7 @@ public class SharpCommunicator {
     public static void main(String[] args) {
         CmdLineArgs cmdLineArgs = new CmdLineArgsChecker().checkArgs(args);
         if (cmdLineArgs == null) {
-            System.exit(-1);
+            System.exit(1);
         }
         // The input will either be loaded into a byte array, or into a List of Strings. Declare both variables.
         byte[] inputFileBytes = null;
@@ -65,7 +67,7 @@ public class SharpCommunicator {
             if (!FileFormat.BINARY.equals(cmdLineArgs.getOutputFormat())) {
                 log.log(Level.SEVERE, "A binary input cannot currently be converted to an ASCII output (save " +
                         "to a .bin file, or for a '.bas' file use '--out-format binary'");
-                System.exit(-1);
+                System.exit(1);
             } else {
                 outputFileBytes = inputFileBytes;
             }
@@ -73,14 +75,17 @@ public class SharpCommunicator {
             // The input is ASCII, but better doublecheck if not both are null
             if (inputFileLines == null) {
                 log.log(Level.SEVERE, "Both binary and ascii input is null, the software is seriously broken");
-                System.exit(-1);
+                System.exit(1);
             }
             // If desired, add the serial utilities, which are device specific.
             if (cmdLineArgs.isUtil()) {
                 inputFileLines = UtilsHandler.addSerialUtilBasicApp(inputFileLines, cmdLineArgs.getDevice());
             }
+            // Produce a meaningful filename
+            Path path = Paths.get(cmdLineArgs.getInputFile());
+            String filename = path.getFileName().toString().substring(0, path.getFileName().toString().lastIndexOf('.'));
             // Next, parse everything into a Program
-            Program theProgram = new Program(cmdLineArgs.getInputFile(), inputFileLines, cmdLineArgs.getDevice());
+            Program theProgram = new Program(filename, inputFileLines, cmdLineArgs.getDevice());
             // Now it depends on the output file type
             switch (cmdLineArgs.getOutputFormat()) {
                 case BINARY:
@@ -96,9 +101,10 @@ public class SharpCommunicator {
         }
         // Step three: Output the result into a file, or to the PocketPC.
         // Sanity check
-        if (outputFileBytes == null && outputFileLines == null) {
-            log.log(Level.SEVERE, "Broken program logic, both outputs are null");
-            System.exit(-1);
+        if ((outputFileBytes != null && outputFileBytes.length == 0) || (outputFileLines != null && outputFileLines.isEmpty()) ||
+                (outputFileBytes == null && outputFileLines == null)) {
+            log.log(Level.FINE, "There was an error loading or converting the program, aborting");
+            System.exit(1);
         }
         if (cmdLineArgs.getOutputFile() == null) {
             // No output file was given, so the output goes to the PocketPC

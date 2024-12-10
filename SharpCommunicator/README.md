@@ -55,8 +55,8 @@ as binary to disk.
 
 If the option `--out-format asciicompact` is given, and if the input file is ASCII, then the
 output file is shrunk before writing it to disk / clipboard.
-- `CSAVEa` / `SAVE COM1:,A` will thus result in an ASCII file on the disk.
-- `CSAVE` / `SAVE COM1:` on the other hand will give a binary file.
+- `CSAVEa` / `SAVE "COM1:",A` will thus result in an ASCII file on the disk.
+- `CSAVE` / `SAVE "COM1:"` on the other hand will give a binary file.
 
 When a file is sent to the pocket computer (`--in-file` parameter), ASCII and binary files are treated differently:
 - ASCII files are converted to tokenized Basic and in the case of the PC-1500 must be loaded with `CLOAD`.
