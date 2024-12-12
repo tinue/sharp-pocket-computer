@@ -19,14 +19,15 @@ public class BinaryFileAnalyzer {
     public static FileType analyze(byte[] data) {
         // Check for a CE-158 header
         try {
-            Ce158Header header = new Ce158Header(data);
-            log.log(Level.INFO, "CE-158 header, type {0}", header.getType());
-            return switch (header.getType()) {
-                case "@" -> FileType.PC1500_BINARY_BASIC;
-                case "A" -> FileType.PC1500_BINARY_RESERVE;
-                case "B" -> FileType.PC1500_BINARY_MACHINE;
-                default -> FileType.UNKNOWN;
-            };
+            SerialHeader header = SerialHeader.makeHeader(data);
+            log.log(Level.INFO, "Serial header, type {0}", header == null ? "null" : header.getType());
+            if (header instanceof Ce158Header) {
+                return switch (header.getType()) {
+                    case BASIC -> FileType.PC1500_BINARY_BASIC;
+                    case RESERVE -> FileType.PC1500_BINARY_RESERVE;
+                    case MACHINE -> FileType.PC1500_BINARY_MACHINE;
+                };
+            }
         } catch (IllegalArgumentException ex) {
             log.log(Level.FINE, "The file does not start with a CE-158 header");
         }
