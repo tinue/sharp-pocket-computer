@@ -1,4 +1,6 @@
 # Release Notes
+- 202x-xx-xx / 2.1.0
+  - Better handling of headers for CE-158 and PC-1600 serial
 - 2024-12-15 / 2.0.1
   - Fix for not exiting after load from PocketPC
   - Fix for multiple tokenization errors

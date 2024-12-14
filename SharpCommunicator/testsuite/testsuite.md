@@ -22,7 +22,7 @@ Notes:
   - Having to use `-of binary` is a known bug, it should be the default.
 
 ## PC-1600
-- Load a Basic ASCII program with utilities (`LOAD "COM1:"` / `sc -i depreciation.bas -u`)
+- Load a Basic ASCII program with utilities (`LOAD "COM1:"` / `sc -i depreciation.bas -u -d pc1600`)
 - Re-init the COM port (`Def-J`)
 - Save it back to the PC (`sc -o deptest.bas -of binary -d pc1600` / `Def-S`)
 - Save it back to the PC, tokenized (`sc -o deptest.bin -d pc1600` / `SAVE"COM1:"`)
