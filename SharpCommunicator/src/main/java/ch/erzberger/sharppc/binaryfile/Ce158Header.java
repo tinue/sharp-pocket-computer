@@ -1,11 +1,9 @@
 package ch.erzberger.sharppc.binaryfile;
 
-import lombok.Getter;
+import ch.erzberger.commandline.PocketPcDevice;
 import lombok.extern.java.Log;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.logging.Level;
 
@@ -21,45 +19,20 @@ import java.util.logging.Level;
  * - 0x17 Length of data (2 bytes)
  * - 0x19 Binary run address (2 bytes, only for BCOM)
  */
-@Log @Getter
-public class Ce158Header {
-    private String type;
-    private String filename;
-    private int startAddr;
-    private int length;
-    private int runAddr;
-
+@Log
+public class Ce158Header extends SerialHeader {
     /**
-     * Create a header from given values
-     * @param type Header type (@ or A or B)
-     * @param filename Given filename
-     * @param startAddr For binary programs: Where to load the program to
-     * @param length Length of the Basic program, Reserve area or binary program that comes after the header
-     * @param runAddr For binary programs: Start address of the program (autorun after load)
+     * Internally used constructor
      */
-    public Ce158Header(String type, String filename, int startAddr, int length, int runAddr) {
-        this.type = checkType(type); // Throw a NoClassDefFoundError if an invalid type is given
-        this.filename = filename;
-        this.startAddr = "B".equals(type) ? startAddr : 0; // Ignore the value if the type is not binary
-        this.length = length; // The length is always required.
-        this.runAddr = "B".equals(type) ? runAddr : 0; // Ignore the value if the type is not binary
+    protected Ce158Header(FileType type, String filename, int startAddr, int length, int runAddr) {
+        super(type, filename, startAddr, length, runAddr);
+        super.device = PocketPcDevice.PC1500;
     }
 
     /**
-     * Convenience constructor for Basic and Reserve
-     * @param type Header type (@ or A)
-     * @param filename Given filename
-     * @param length Length of the Basic program or Reserve area that comes after the header
+     * Internally used constructor
      */
-    public Ce158Header(String type, String filename, int length) {
-        this(type, filename, 0, length, 0);
-    }
-
-    /**
-     * Create a header from its binary representation
-     * @param header Validated header with all fields set.
-     */
-    public Ce158Header(byte[] header) {
+    protected Ce158Header(byte[] header) {
         // Start by checking if this can be a header in the first place.
         // First, length: A header is 27 bytes, so anything short can't be a header
         if (header.length < 27) {
@@ -70,8 +43,8 @@ public class Ce158Header {
         if (!(header[0] == 1 && header[2] == 0x43 && header[3] == 0x4F && header[4] == 0x4D)) {
             throw new IllegalArgumentException("Not a header, magic marker is missing");
         }
-        // The header is plausible, continue
-        this.type=String.valueOf((char)header[1]);
+        // The header is plausible, determine the file type
+        super.type = getFileType((char) header[1]);
         // Filename
         byte[] stringBytes = Arrays.copyOfRange(header, 0x05, 0x15);
         try {
@@ -79,54 +52,9 @@ public class Ce158Header {
         } catch (UnsupportedEncodingException e) {
             throw new NoClassDefFoundError("Code page 437 is invalid on your system");
         }
-        this.startAddr = "B".equals(type) ? makeInt(header, 0x15) : 0;
+        this.startAddr = FileType.MACHINE.equals(type) ? makeInt(header, 0x15) : 0;
         this.length = makeInt(header, 0x17);
-        this.runAddr = "B".equals(type) ? makeInt(header, 0x19) : 0;
-    }
-
-    /**
-     * Helper class to append a byte array to another byte array
-     *
-     * @param source   Byte array to append to
-     * @param toAppend Byte array that is being appended at the end of the source
-     * @return Combined array
-     */
-    static byte[] appendBytes(byte[] source, byte[] toAppend) {
-        byte[] retVal = new byte[source.length + toAppend.length];
-        System.arraycopy(source, 0, retVal, 0, source.length);
-        System.arraycopy(toAppend, 0, retVal, source.length, toAppend.length);
-        return retVal;
-    }
-
-    /**
-     * Very specific Sharp helper. Java doesn't know 2 byte Integers, Sharp does. This
-     * helper converts the Java Integer into a two byte array. There is no check for overflow,
-     * so use this helper with care.
-     *
-     * @param source   Byte array to append to
-     * @param toAppend Integer that is being converted and appended at the end of the source
-     * @return Combined array
-     */
-    static byte[] appendInt(byte[] source, int toAppend) {
-        byte[] intermediary = ByteBuffer.allocate(4).putInt(toAppend).array();
-        byte[] byteToAppend = new byte[2];
-        byteToAppend[0] = intermediary[2];
-        byteToAppend[1] = intermediary[3];
-        return appendBytes(source, byteToAppend);
-    }
-
-    /**
-     * Simple helper, because Java does not allow complex logic in a constructor.
-     * The helper checks if the type is valid, and throws an error if not.
-     *
-     * @param type Header type ("@", “A", and "B" are valid types).
-     * @return The input, if it is valid. Throws an exception if not.
-     */
-    static String checkType(String type) {
-        if (!("@".equals(type) || "A".equals(type) || "B".equals(type))) {
-            throw new IllegalArgumentException("Invalid type: " + type);
-        }
-        return type;
+        this.runAddr = FileType.MACHINE.equals(type) ? makeInt(header, 0x19) : 0;
     }
 
     /**
@@ -134,6 +62,7 @@ public class Ce158Header {
      * is created using the binary constructor, the resulting binary header may be different. This is because
      * the fields that are declared "don't care" in the manual are always filled with zeroes, even if the input
      * binary contained some other value.
+     *
      * @return 27 bit CE-158 header binary representation.
      */
     public byte[] getHeader() {
@@ -143,7 +72,7 @@ public class Ce158Header {
             normalizedFilename = normalizedFilename.substring(0, 16);
         }
         // Start with the magic marker, 0x01 + COMx. Append to this the filename.
-        String typeAndFileName = type + "COM" + normalizedFilename;
+        String typeAndFileName = getTypeChar(type) + "COM" + normalizedFilename;
         byte[] headerBytes = new byte[]{0x01};
         try {
             headerBytes = appendBytes(headerBytes, typeAndFileName.getBytes("Cp437"));
@@ -163,18 +92,20 @@ public class Ce158Header {
         return headerBytes;
     }
 
-    static int makeInt(byte[] source, int start) {
-        if (start > source.length -2) {
-            log.log(Level.SEVERE, "Invalid start index: " + start);
-            return 0;
-        }
-        byte[] temp = new byte[2];
-        temp[0] = source[start];
-        temp[1] = source[start+1];
-        ByteBuffer wrapped = ByteBuffer.wrap(temp);
-        // Java does not have a 2 byte unsigned int (short is 2 bytes, but signed), therefore using an int (4 bytes)
-        // so that even 0xFFFF remains positive. Autoboxing converts 0xFFFF into a negative 1 int, therefore
-        // use bit arithmetic to remove the upper half, leaving us with the 2 byte unsigned short that we want.
-        return wrapped.getShort() & 0xFFFF;
+    char getTypeChar(FileType type) {
+        return switch (type) {
+            case BASIC -> '@';
+            case RESERVE -> 'A';
+            case MACHINE -> 'B';
+        };
+    }
+
+    FileType getFileType(char typeChar) {
+        return switch (typeChar) {
+            case '@' -> FileType.BASIC;
+            case 'A' -> FileType.RESERVE;
+            case 'B' -> FileType.MACHINE;
+            default -> throw new IllegalArgumentException("Not a header, unknown file type: " + typeChar);
+        };
     }
 }

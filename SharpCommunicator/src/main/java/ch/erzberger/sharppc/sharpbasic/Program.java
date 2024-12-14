@@ -2,6 +2,7 @@ package ch.erzberger.sharppc.sharpbasic;
 
 import ch.erzberger.commandline.PocketPcDevice;
 import ch.erzberger.sharppc.binaryfile.Ce158Header;
+import ch.erzberger.sharppc.binaryfile.SerialHeader;
 import lombok.extern.java.Log;
 
 import java.io.UnsupportedEncodingException;
@@ -9,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * Top-level token, represents the Basic program is its entirety.
@@ -94,7 +94,7 @@ public class Program extends Token {
         if (PocketPcDevice.PC1600.equals(device)) {
             return appendBytes(make1600header(program.length), program);
         } else {
-            return appendBytes(new Ce158Header("@", programName, program.length-1).getHeader(), program);
+            return appendBytes(SerialHeader.makeHeader(PocketPcDevice.PC1500, programName, program.length - 1).getHeader(), program);
         }
     }
 
