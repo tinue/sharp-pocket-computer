@@ -151,7 +151,6 @@ public class SerialPortWrapper {
     }
 
     public int writeAscii(String stringToWrite, PocketPcDevice device) {
-        boolean isPc1600 = PocketPcDevice.PC1600.equals(device);
         if (stringToWrite == null || stringToWrite.isEmpty()) {
             log.log(Level.SEVERE, "Line is null or empty");
             return 0;
@@ -159,13 +158,13 @@ public class SerialPortWrapper {
         // Java Strings are UTF-8, but we need the Sharp Charset. CP437 is close enough for Basic programs.
         byte[] lineBytes = stringToWrite.getBytes(Charset.forName("Cp437"));
         // Allocate a new buffer. Size is old buffer plus room for the end of line char(s)
-        int sizeOfEol = isPc1600 ? 2 : 1;
+        int sizeOfEol = device.isPC1500() ? 2 : 1;
         byte[] newlineBytes = new byte[lineBytes.length + sizeOfEol];
         // Copy the buffer into the new buffer
         System.arraycopy(lineBytes, 0, newlineBytes, 0, lineBytes.length);
         // Add the carriage return
         newlineBytes[lineBytes.length] = 0x0D;
-        if (isPc1600) {
+        if (device.isPC1600()) {
             newlineBytes[lineBytes.length + 1] = 0x0A;
         }
         // Transmit the line including the device specific line ending.

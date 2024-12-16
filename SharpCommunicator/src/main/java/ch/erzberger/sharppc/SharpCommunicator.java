@@ -112,6 +112,35 @@ public class SharpCommunicator {
             SerialToDeviceSender sender = new SerialToDeviceSender(wrapper, cmdLineArgs.getDevice());
             if (outputFileBytes != null) {
                 // Binary output
+                if (cmdLineArgs.getDevice().isPC1500()) {
+                    // The PC-1500 needs two things:
+                    // 1. The first 27 bytes are a header, and after the header a pause is required (at least 100ms)
+                    // 2. It can't keep up with the fixed 19200 baud of the CE-158X. A pause is required between bytes.
+                    // Split into header and program
+                    byte[] header = new byte[27];
+                    byte[] programBytes = new byte[outputFileBytes.length - 27];
+                    System.arraycopy(outputFileBytes, 0, header, 0, 27);
+                    System.arraycopy(outputFileBytes, 27, programBytes, 0, programBytes.length);
+                    // Write the header. It can be sent with full speed, 28 bytes seem to not be an issue
+                    wrapper.writeBytes(header);
+                    // Now wait for the header to be processed
+                    try {
+                        Thread.sleep(200L);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                    // Next, send the program byte by byte and wait 1ms after each byte
+                    wrapper.writeBytes(programBytes, 1L);
+                    // Wait a bit after the last byte before closing the port.
+                    try {
+                        Thread.sleep(500L);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                } else {
+                    // The PC-1600 has no issues with full speed sending. Its 16 byte header is just loaded along with the rest
+                    wrapper.writeBytes(outputFileBytes);
+                }
                 sender.sendData(outputFileBytes);
             } else {
                 // ASCII output
@@ -134,7 +163,7 @@ public class SharpCommunicator {
         // Next two values are good for PC-1600
         int baudRate = 9600;
         boolean handShake = true;
-        if (PocketPcDevice.PC1500.equals(device)) {
+        if (device.isPC1500()) {
             // PC-1500 needs no handshake, and a higher baud rate
             baudRate = 19200;
             handShake = false;

@@ -1,9 +1,10 @@
 # Release Notes
-- 202x-xx-xx / 2.1.0
-  - Better handling of headers for CE-158 and PC-1600 serial
-- 2024-12-15 / 2.0.1
+- 202x-xx-xx / 2.1.0 (pre-release)
+    - Better handling of headers for CE-158 and PC-1600 serial
+- 2024-12-16 / 2.0.1
   - Fix for not exiting after load from PocketPC
   - Fix for multiple tokenization errors
+  - Fix for PC1500a device type
   - Add a manual test suite
 - 2024-12-05 / 2.0.0
   - Command line options rework, hence new major version number

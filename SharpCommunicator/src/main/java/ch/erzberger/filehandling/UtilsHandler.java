@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -24,7 +23,7 @@ public class UtilsHandler {
     }
 
     public static List<String> getSerialUtilBasicApp(PocketPcDevice device) {
-        String utilName = PocketPcDevice.PC1500.equals(device) ? "setcom1500.bas" : "setcom1600.bas";
+        String utilName = device.isPC1500() ? "setcom1500.bas" : "setcom1600.bas";
         try (InputStream in = UtilsHandler.class.getResourceAsStream("/" + utilName)) {
             if (in == null) {
                 log.log(Level.SEVERE, "Could not find the setcom.bas resource");
@@ -46,9 +45,7 @@ public class UtilsHandler {
 
     public static List<String> addSerialUtilBasicApp(List<String> program, PocketPcDevice device) {
         log.log(Level.FINEST, "Adding serial util bas. Program size before: {0}", program.size());
-        Stream<String> combinedStream = Stream.concat(
-                program.stream(),
-                getSerialUtilBasicApp(device).stream());
+        Stream<String> combinedStream = Stream.concat(program.stream(), getSerialUtilBasicApp(device).stream());
         List<String> combinedList = combinedStream.toList();
         log.log(Level.FINEST, "Finished adding serial util bas. Program size after: {0}", combinedList.size());
         return combinedList;

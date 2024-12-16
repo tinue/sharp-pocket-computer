@@ -91,7 +91,7 @@ public class Program extends Token {
         for (Line line : lines) {
             program = appendBytes(program, line.getBinaryRepresentation());
         }
-        if (PocketPcDevice.PC1600.equals(device)) {
+        if (device.isPC1600()) {
             return appendBytes(make1600header(program.length), program);
         } else {
             return appendBytes(SerialHeader.makeHeader(PocketPcDevice.PC1500, programName, program.length - 1).getHeader(), program);

@@ -18,7 +18,7 @@ public class ReadFromPocketPc implements ByteProcessor {
     private boolean dataReady = false;
 
     public ReadFromPocketPc(PocketPcDevice device) {
-        if (PocketPcDevice.PC1500.equals(device)) {
+        if (device.isPC1500()) {
             // Through trial and error, it looks line 3 Seconds is enough to write even a long line
             timeout = 3000L;
         } else {

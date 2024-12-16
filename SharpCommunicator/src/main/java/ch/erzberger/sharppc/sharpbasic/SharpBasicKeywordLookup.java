@@ -15,7 +15,7 @@ public class SharpBasicKeywordLookup {
     private final List<BasicKeyword> basicKeywords;
 
     public SharpBasicKeywordLookup(PocketPcDevice device) {
-        if (device.equals(PocketPcDevice.PC1500)) {
+        if (device.isPC1500()) {
             basicKeywords = SharpPc1500BasicKeywords.getBasicKeywords();
         } else {
             basicKeywords = SharpPc1600BasicKeywords.getBasicKeywords();
