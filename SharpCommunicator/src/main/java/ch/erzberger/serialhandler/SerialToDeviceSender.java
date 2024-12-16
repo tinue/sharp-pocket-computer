@@ -14,7 +14,7 @@ public class SerialToDeviceSender {
     }
 
     public void sendData(byte[] data) {
-        if (PocketPcDevice.PC1500.equals(device)) {
+        if (device.isPC1500()) {
             // The PC-1500 needs two things:
             // 1. The first 28 bytes are a header, and after the header a pause is required (at least 100ms)
             // 2. It can't keep up with the fixed 19200 baud of the CE-158X. A pause is required between bytes.
@@ -49,7 +49,7 @@ public class SerialToDeviceSender {
         for (String line : data) {
             serial.writeAscii(line, device);
             // The PC-1500 needs more time to handle one line. Add some wait.
-            if (PocketPcDevice.PC1500.equals(device)) {
+            if (device.isPC1500()) {
                 try {
                     Thread.sleep(500L);
                 } catch (InterruptedException e) {
@@ -58,7 +58,7 @@ public class SerialToDeviceSender {
             }
         }
         // To finalize, send an End-Of-File marker
-        if (PocketPcDevice.PC1500.equals(device)) {
+        if (device.isPC1500()) {
             // The PC-1500 stops receiving when two CRs are received in a row
             serial.writeBytes(new byte[]{0x0D});
         } else {
