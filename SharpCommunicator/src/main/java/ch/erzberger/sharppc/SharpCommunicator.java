@@ -127,7 +127,7 @@ public class SharpCommunicator {
             SerialPortWrapper wrapper = initPort(cmdLineArgs.getDevice(), null);
             if (outputFileBytes != null) {
                 // Binary output
-                if (PocketPcDevice.PC1500.equals(cmdLineArgs.getDevice())) {
+                if (cmdLineArgs.getDevice().isPC1500()) {
                     // The PC-1500 needs two things:
                     // 1. The first 27 bytes are a header, and after the header a pause is required (at least 100ms)
                     // 2. It can't keep up with the fixed 19200 baud of the CE-158X. A pause is required between bytes.
@@ -161,7 +161,7 @@ public class SharpCommunicator {
                 for (String line : outputFileLines) {
                     wrapper.writeAscii(line, cmdLineArgs.getDevice());
                     // The PC-1500 needs more time to handle one line. Add some wait.
-                    if (PocketPcDevice.PC1500.equals(cmdLineArgs.getDevice())) {
+                    if (cmdLineArgs.getDevice().isPC1500()) {
                         try {
                             Thread.sleep(500L);
                         } catch (InterruptedException e) {
@@ -170,7 +170,7 @@ public class SharpCommunicator {
                     }
                 }
                 // To finalize, send an End-Of-File marker
-                if (PocketPcDevice.PC1500.equals(cmdLineArgs.getDevice())) {
+                if (cmdLineArgs.getDevice().isPC1500()) {
                     // The PC-1500 stops receiving when two CRs are received in a row
                     wrapper.writeBytes(new byte[]{0x0D});
                 } else {
@@ -200,7 +200,7 @@ public class SharpCommunicator {
         // Next two values are good for PC-1600
         int baudRate = 9600;
         boolean handShake = true;
-        if (PocketPcDevice.PC1500.equals(device)) {
+        if (device.isPC1500()) {
             // PC-1500 needs no handshake, and a higher baud rate
             baudRate = 19200;
             handShake = false;
