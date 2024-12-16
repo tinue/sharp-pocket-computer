@@ -5,7 +5,6 @@ import ch.erzberger.sharppc.LineNormalizeHelper;
 import lombok.extern.java.Log;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.logging.Level;
@@ -114,6 +113,7 @@ public class Line extends Token {
 
     /**
      * Special helper to split a line into statements, ignoring the delimiter inside of quotes
+     *
      * @param input String to split
      * @return Statements
      */

@@ -1,7 +1,6 @@
 package ch.erzberger.sharppc.sharpbasic;
 
 import ch.erzberger.commandline.PocketPcDevice;
-import ch.erzberger.sharppc.binaryfile.Ce158Header;
 import ch.erzberger.sharppc.binaryfile.SerialHeader;
 import lombok.extern.java.Log;
 

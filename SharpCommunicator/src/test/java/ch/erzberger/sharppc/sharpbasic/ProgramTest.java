@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ProgramTest {
     List<String> theProgram;
@@ -42,6 +42,6 @@ class ProgramTest {
         Program program1600 = new Program("Test", theProgram, PocketPcDevice.PC1600);
         byte[] binary1500 = program1500.getBinaryRepresentation();
         byte[] binary1600 = program1600.getBinaryRepresentation();
-        assertEquals(11, binary1500.length-binary1600.length); // Header of PC-1500 is 27 bytes, PC-1600 is 16 bytes
+        assertEquals(11, binary1500.length - binary1600.length); // Header of PC-1500 is 27 bytes, PC-1600 is 16 bytes
     }
 }

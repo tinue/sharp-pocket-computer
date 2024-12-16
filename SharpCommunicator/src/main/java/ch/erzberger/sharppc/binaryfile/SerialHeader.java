@@ -39,12 +39,13 @@ public abstract class SerialHeader {
 
     /**
      * Factory method to create a serial header from parameters.
-     * @param device The device used
-     * @param type The type of header to be created (e.g. tokenized Basic program, or machine language program)
-     * @param filename The name of the program or file
+     *
+     * @param device    The device used
+     * @param type      The type of header to be created (e.g. tokenized Basic program, or machine language program)
+     * @param filename  The name of the program or file
      * @param startAddr For machine language programs, the address to load the program to
-     * @param length The length of the program
-     * @param runAddr When set, gives the start address of a machine language program
+     * @param length    The length of the program
+     * @param runAddr   When set, gives the start address of a machine language program
      * @return Populated and validated header
      */
     public static SerialHeader makeHeader(PocketPcDevice device, FileType type, String filename, int startAddr, int length, int runAddr) {
@@ -58,9 +59,10 @@ public abstract class SerialHeader {
 
     /**
      * Convenience factory method for tokenized Basic programs,
-     * @param device The device used
+     *
+     * @param device   The device used
      * @param filename The name of the Basic program
-     * @param length The length of the tokenized Basic program
+     * @param length   The length of the tokenized Basic program
      * @return Populated and validated header
      */
     public static SerialHeader makeHeader(PocketPcDevice device, String filename, int length) {
@@ -74,6 +76,7 @@ public abstract class SerialHeader {
 
     /**
      * Factory method to create a header from a binary representation.
+     *
      * @param headerBytes The bytes that make up the header. The array is allowed to contain much more than the header,
      *                    but it must start with the header in order to be recognized.
      * @return Populated and validated header
@@ -134,8 +137,8 @@ public abstract class SerialHeader {
      * Internal, very specific Sharp helper. Similar to the above method, a Java int is
      * created and directly returned (not appended to an array).
      *
-     * @param source   Byte array to append to
-     * @param start Integer that is being converted and appended at the end of the source
+     * @param source Byte array to append to
+     * @param start  Integer that is being converted and appended at the end of the source
      * @return Combined array
      */
     static int makeInt(byte[] source, int start) {
@@ -155,6 +158,7 @@ public abstract class SerialHeader {
 
     /**
      * Abstract method to convert between a FileType and the specific char in the header.
+     *
      * @param type The FileType
      * @return Char that represents the type in this specific device
      */
@@ -162,6 +166,7 @@ public abstract class SerialHeader {
 
     /**
      * bstract method to convert between a specific char in the header and the FileType.
+     *
      * @param typeChar Char that represents the type in this specific device
      * @return The matching FileType
      */

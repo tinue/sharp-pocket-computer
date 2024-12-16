@@ -11,6 +11,7 @@ public class LineNumber extends Token {
     private final String normalizedRepresentation;
     private final String shortRepresentation;
     private final byte[] binaryRepresentation;
+
     public LineNumber(String input) {
         // In many listings, the line number ends with a colon. Search for a number, optionally followed by one colon
         String lineNumberAsString = findSubstring(input, "^\\d+:?");
@@ -22,7 +23,7 @@ public class LineNumber extends Token {
             return;
         }
         setInputMinusToken(input.substring(lineNumberAsString.length())); // Remove the line number part
-        lineNumberAsString = lineNumberAsString.replace(":",""); // Remove colon, if present
+        lineNumberAsString = lineNumberAsString.replace(":", ""); // Remove colon, if present
         int lineNumber = Integer.parseInt(lineNumberAsString);
         binaryRepresentation = new byte[3];
         byte[] pureLine = convertIntToTwoByteByteArray(lineNumber);

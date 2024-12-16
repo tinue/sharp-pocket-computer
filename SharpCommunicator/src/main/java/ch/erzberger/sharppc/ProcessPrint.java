@@ -10,6 +10,7 @@ import java.util.logging.Level;
 @Log
 public class ProcessPrint implements ByteProcessor {
     private boolean previousWasCr = false;
+
     @Override
     public void processByte(byte byteReceived) {
         String byteInHex = HexFormat.of().formatHex(new byte[]{byteReceived});

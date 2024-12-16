@@ -1,17 +1,23 @@
 # Some extra information of PocketPC Devices
+
 ## PC/1600 commands relevant to serial communication
+
 ### INIT
+
 Sets the receive buffer size. Default is 40 bytes after power on.
 
 `INIT "COM1:" <buffer>`
+
 - buffer: Size of the buffer in bytes.
 
 Example: `INIT "COM1:",4096`
 
 ### SETCOM
+
 Sets the protocol settings for the serial port.
 
 `SETCOM "COM1:",[BR],[WL],[PR],[ST],[XO],[SI]`
+
 - BR: Baud rate (50 - 38400)
 - WL: Word length (5-8 bits)
 - PR: Parity (E, O, N)
@@ -22,9 +28,11 @@ Sets the protocol settings for the serial port.
 Example: `SETCOM "COM1:", 9600,8,N,1,N,N`
 
 ### OUTSTAT
+
 Force-sets the state of the control signals for the serial port.
 
 `OUTSTAT "COM1:" [,setting]`
+
 - setting means:
 
 |   | RTS  | DTR  |
@@ -38,6 +46,7 @@ Example: `OUTSTAT "COM1:"`, i.e. without setting, to make RTS/DTR work
 dynamically.
 
 ### INSTAT
+
 Returns the current settings of the control signals for the serial port.
 
 `INSTAT "COM1:"`
@@ -52,9 +61,11 @@ Values are inversed, i.e. `0` means `high`, and `1` means `low`.
 Example: `PRINT INSTAT "COM1:"`: Prints the current state
 
 ### SNDSTAT
+
 Sets the send handshake protocol, and the timeout for the serial port.
 
 `SNDSTAT "COM1:",<protocol>[,<timeout>]`
+
 - Timeout is between 0 and 255, in units of 0.5 seconds. 0 disables the timeout.
 - Protocol is as follows:
 
@@ -71,9 +82,11 @@ Examples:
 - `SNDSTAT "COM1:",28`: Disable all flow control.
 
 ### RCVSTAT
+
 Sets the receive handshake protocol and the timeout for the serial port
 
 `RCVSTAT "COM1:",<protocol>[,<timeout>]`
+
 - Timeout is between 0 and 255, in units of 0.5 seconds. 0 disables the timeout.
 - Protocol is as follows:
 
@@ -96,20 +109,24 @@ different numbers for "enable CTS", such as 59. This number also works, but 24 w
 the manual.
 
 ### SETDEV
+
 Specifies the serial port as input and output for some Basic commands.
 `SETDEV` without parameters releases the port and resets input / optput to
 keyboard / printer.
 
 `SETDEV "COM1:"[,KI][,PO]`
+
 - ,KI: Sets COM1: as device for the command `INPUT`.
 - ,PO: Sets COM1: as device for the commands `LPRINT`, `LLIST` and `LFILES`.
 
 Example: `SETDEV "COM1:",KI,PO`: Redirects both input and output to COM1
 
 ### PCONSOLE
+
 Set the line length and end of line code for communication through the serial port.
 
 `PCONSOLE "COM1:",[line length],[EOL code]`
+
 - Line length: 16-255 (0 means no limit)
 - EL Code: 0 = CR, 1 = LF, 2 = CR/LF
 
@@ -117,13 +134,17 @@ Example: `PCONSOLE "COM1:",80,2`: Set the line length to 80 chars, and use CR/LF
 (i.e. Windows style) for the line ending.
 
 ### SAVE
+
 Save a program via serial port.
 
 `SAVE "<COM1:>"[,A]`
+
 - A: ASCII format (instead of compressed binary format)
 
 ### LOAD
+
 Loads a program from serial port.
 
 `LOAD "<COM1:>"[,R]`
+
 - R: Auto-starts the program after loading.

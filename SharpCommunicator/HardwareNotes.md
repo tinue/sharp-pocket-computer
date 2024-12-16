@@ -1,4 +1,5 @@
 # Hardware for communication
+
 ## PC-1600: USB Serial Adapter
 
 The Sharp PC-1600 has a serial device built in. It uses fairly standard 5V logic, and can be interfaced
@@ -6,6 +7,7 @@ with currently available FTDI adapters. When using an original (non-cloned) FTDI
 logic chips or inverters are required.
 
 These are the components that I used:
+
 - 1mm pins, bent 90 degrees
 - A small board for soldering the pins. Search for "1.27mm 2.54mm Adapter Board" on the merchant site of your choice.
   While I found no 15 pin boards, 12 pins are enough for the signals that are required.
@@ -26,6 +28,7 @@ The wiring is as follows (pin 1 is the rightmost pin of the PC-1600's 15-pin ser
 | 4   | RTS            | CTS                                | brown               |
 | 5   | CTS            | RTS                                | green               |
 | 7   | TX             | Ground                             | black               |
+
 Note: Do not connect the red cable (5V) of the adapter. I simply cut the cable off.
 
 ![Pins and Adapter Plate](pictures/Pin_Adapter.jpg)
@@ -35,6 +38,7 @@ Note that I had to trim the edges of the board, because it would not have fit ot
 ![Calculator](pictures/Calculator.jpg)
 
 ### Problem with Apple Silicon Mac
+
 On a Mac with the Apple Silicon chip, the USB UART Adapter does not work as it should,
 probably due to a bug in the driver. The protocol that is used for flow control
 is "RTC/CTS". In this, the sender (i.e. the Mac) requests to send a byte by raising

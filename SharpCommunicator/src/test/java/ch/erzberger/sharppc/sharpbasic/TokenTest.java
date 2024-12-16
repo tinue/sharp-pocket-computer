@@ -97,11 +97,11 @@ class TokenTest {
 
     @Test
     void combineArrays() {
-        byte[] one = new byte[]{(byte)0x1A, (byte)0x2A};
-        byte[] two = new byte[]{(byte)0xFF};
+        byte[] one = new byte[]{(byte) 0x1A, (byte) 0x2A};
+        byte[] two = new byte[]{(byte) 0xFF};
         byte[] three = appendBytes(one, two);
         assertEquals(3, three.length);
-        assertEquals((byte)0x1A, three[0]);
-        assertEquals((byte)0xFF, three[2]);
+        assertEquals((byte) 0x1A, three[0]);
+        assertEquals((byte) 0xFF, three[2]);
     }
 }

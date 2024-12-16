@@ -10,13 +10,15 @@ import java.util.logging.Level;
  * go much further, and distinguish between numbers, variables, labels etc. But for the purpose of making a binary
  * file, this is not needed: Everything is just converted from ASCII to binary.
  */
-@Log public class Other extends Token{
+@Log
+public class Other extends Token {
     private final String otherString;
+
     public Other(String input) {
         String foundString = findSubstring(input, "^(?:(?!\\{).)*");
         if (foundString == null || foundString.isEmpty()) {
             // Not a String
-            this.otherString =null;
+            this.otherString = null;
             setInputMinusToken(input);
         } else {
             setInputMinusToken(input.substring(foundString.length()));
@@ -24,6 +26,7 @@ import java.util.logging.Level;
             validate();
         }
     }
+
     @Override
     public String getNormalizedRepresentation() {
         return otherString;

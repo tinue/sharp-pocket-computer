@@ -1,8 +1,11 @@
 # Background information on "globe.bas"
+
 ## Original article
+
 [Geographie dans l'espace](pictures/GeographieDanslEspace.pdf)
 
 ## English translation
+
 Note 99% automatic translation, with a bit of cleanup my me. For the mentioned figures, check the PDF.
 
 _“And yet it turns!”, Galileo would certainly have exclaimed if he had been able to see this program working. It in

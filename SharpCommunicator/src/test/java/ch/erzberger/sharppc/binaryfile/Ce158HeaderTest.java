@@ -2,13 +2,14 @@ package ch.erzberger.sharppc.binaryfile;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class Ce158HeaderTest {
-    private final byte[] binary = new byte[]{0x01,0x42,0x43,0x4F,0x4D,0x56,0x41,0x52,0x53,0,0,0,0,0,0,0,0,0,0,0,0,0x78,(byte)0xC0,0,0x1F,(byte)0xFF,(byte)0xFF};
-    private final byte[] basic = new byte[]{0x01,0x40,0x43,0x4F,0x4D,0x54,0x65,0x73,0x74,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0x0B,0,0};
-    private final byte[] reserve = new byte[]{0x01,0x41,0x43,0x4F,0x4D,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,(byte)0xBB,0,0};
-    private final byte[] reserveDoNotCare = new byte[]{0x01,0x41,0x43,0x4F,0x4D,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0x01,0x02,0,(byte)0xBB,(byte)0xA0,(byte)0xFF};
+    private final byte[] binary = new byte[]{0x01, 0x42, 0x43, 0x4F, 0x4D, 0x56, 0x41, 0x52, 0x53, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x78, (byte) 0xC0, 0, 0x1F, (byte) 0xFF, (byte) 0xFF};
+    private final byte[] basic = new byte[]{0x01, 0x40, 0x43, 0x4F, 0x4D, 0x54, 0x65, 0x73, 0x74, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x0B, 0, 0};
+    private final byte[] reserve = new byte[]{0x01, 0x41, 0x43, 0x4F, 0x4D, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (byte) 0xBB, 0, 0};
+    private final byte[] reserveDoNotCare = new byte[]{0x01, 0x41, 0x43, 0x4F, 0x4D, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x01, 0x02, 0, (byte) 0xBB, (byte) 0xA0, (byte) 0xFF};
 
     @Test
     void binary() {

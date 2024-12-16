@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class WatchdogTest {
-    private boolean timerFired = false;
-    private Watchdog watchdog;
     private static final long TIMEOUT_MS = 50L;
     private final TestTimerExpiryHandler handler = new TestTimerExpiryHandler();
+    private boolean timerFired = false;
+    private Watchdog watchdog;
 
     @BeforeEach
     void setUp() {

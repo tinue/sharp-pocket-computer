@@ -50,7 +50,7 @@ public class Keyword extends Token {
                 binaryRepresentation = binaryRepresentationTemp;
             }
             normalizedRepresentation = keyword.getName() + " " + remark;
-            shortRepresentation = keyword.getAbbreviation()+remark;
+            shortRepresentation = keyword.getAbbreviation() + remark;
             setInputMinusToken(input.substring(input.indexOf("}") + 1));
             validate();
         } else {

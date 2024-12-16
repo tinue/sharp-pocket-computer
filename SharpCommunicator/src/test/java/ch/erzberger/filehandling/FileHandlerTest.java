@@ -1,6 +1,5 @@
 package ch.erzberger.filehandling;
 
-import ch.erzberger.commandline.PocketPcDevice;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
