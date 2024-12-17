@@ -9,6 +9,7 @@ import ch.erzberger.filehandling.UtilsHandler;
 import ch.erzberger.serialhandler.ByteProcessor;
 import ch.erzberger.serialhandler.SerialPortWrapper;
 import ch.erzberger.serialhandler.SerialToDeviceSender;
+import ch.erzberger.sharppc.binaryfile.SerialHeader;
 import ch.erzberger.sharppc.sharpbasic.Program;
 import lombok.extern.java.Log;
 
@@ -59,7 +60,7 @@ public class SharpCommunicator {
             }
         }
         // Step two: Convert the input if necessary
-        // The result will either be in a bte array, or in a List of Strings. Declare the variables.
+        // The result will either be in a byte array, or in a List of Strings. Declare the variables.
         byte[] outputFileBytes = null;
         List<String> outputFileLines = null;
         if (inputFileBytes != null) {
@@ -69,7 +70,8 @@ public class SharpCommunicator {
                         "to a .bin file, or for a '.bas' file use '--out-format binary'");
                 System.exit(1);
             } else {
-                outputFileBytes = inputFileBytes;
+                // Prepend a serial header if necessary
+                outputFileBytes = SerialHeader.prependHeaderIfNecessary(inputFileBytes, cmdLineArgs.getStartAddr(), cmdLineArgs.getRunAddr(), cmdLineArgs.getDevice());
             }
         } else {
             // The input is ASCII, but better doublecheck if not both are null
@@ -125,7 +127,7 @@ public class SharpCommunicator {
                     wrapper.writeBytes(header);
                     // Now wait for the header to be processed
                     try {
-                        Thread.sleep(200L);
+                        Thread.sleep(300L);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                     }

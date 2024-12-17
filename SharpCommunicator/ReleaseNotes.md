@@ -1,7 +1,7 @@
 # Release Notes
 
 - 202x-xx-xx / 2.1.0 (pre-release)
-    - Better handling of headers for CE-158 and PC-1600 serial
+    - Possibility to load machine language programs to a PocketPC device
 - 2024-12-16 / 2.0.1
     - Fix for not exiting after load from PocketPC
     - Fix for multiple tokenization errors

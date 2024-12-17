@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.extern.java.Log;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.logging.Level;
 
 /**
@@ -50,8 +51,7 @@ public abstract class SerialHeader {
      */
     public static SerialHeader makeHeader(PocketPcDevice device, FileType type, String filename, int startAddr, int length, int runAddr) {
         if (PocketPcDevice.PC1600.equals(device)) {
-            return null;
-            //return new Pc1600Header(type, filename, startAddr, length, runAddr);
+            return new Pc1600Header(type, filename, startAddr, length, runAddr);
         } else {
             return new Ce158Header(type, filename, startAddr, length, runAddr);
         }
@@ -67,6 +67,7 @@ public abstract class SerialHeader {
      */
     public static SerialHeader makeHeader(PocketPcDevice device, String filename, int length) {
         if (PocketPcDevice.PC1600.equals(device)) {
+            // TODO: PC-1600
             return null;
             //return new Pc1600Header(FileType.BASIC, filename, 0, length, 0);
         } else {
@@ -93,13 +94,45 @@ public abstract class SerialHeader {
             return header;
         }
         try {
-            header = null;
-            //header = new Pc1600Header(headerBytes);
+            header = new Pc1600Header(headerBytes);
         } catch (IllegalArgumentException ex) {
             log.log(Level.SEVERE, "Not a Serial header");
             log.log(Level.FINEST, "Stack Trace", ex);
         }
         return header;
+    }
+
+    /**
+     * Checks the input, and prepends a header if necessary
+     * @param inputBytes The program as loaded, it may or may not contain a header
+     * @param startAddr Address to load the machine language program to
+     * @param runAddr Auto-run address of the machine language program
+     * @return Program with a header (if applicable)
+     */
+    public static byte[] prependHeaderIfNecessary(byte[] inputBytes, Integer startAddr, Integer runAddr, PocketPcDevice device) {
+        // Only consider adding a header if an address is passed
+        if (startAddr == null) {
+            log.log(Level.FINE, "startAddr is null, not adding a header");
+            return inputBytes;
+        }
+        // Analyze the byte array that is passed in and check if it already has a header
+        try {
+            SerialHeader.makeHeader(inputBytes);
+            // If this line is reached,a good header is already present. Log and return the original array.
+            log.log(Level.FINE, "No header required, one is already present");
+            return inputBytes;
+        } catch (IllegalArgumentException e) {
+            // There is no header present, so one can be added
+            SerialHeader newHeader = SerialHeader.makeHeader(device, FileType.MACHINE, "", startAddr, inputBytes.length, runAddr);
+            // TODO: PC-1600 handling is missing.
+            if (newHeader == null) {
+                throw new IllegalArgumentException("PC-1600 device is not yet supported");
+            }
+            byte[] newHeaderBytes = newHeader.getHeader();
+            byte[] outputBytes = Arrays.copyOf(newHeaderBytes, inputBytes.length + newHeaderBytes.length);
+            System.arraycopy(inputBytes, 0, outputBytes, newHeaderBytes.length, inputBytes.length);
+            return outputBytes;
+        }
     }
 
     /**
@@ -141,19 +174,35 @@ public abstract class SerialHeader {
      * @param start  Integer that is being converted and appended at the end of the source
      * @return Combined array
      */
-    static int makeInt(byte[] source, int start) {
-        if (start > source.length - 2) {
+    static int makeInt(byte[] source, int start, int length) {
+        if (length < 1 || length > 3) {
+            throw new IllegalArgumentException("Length must be between 1 and 3");
+        }
+        if (start > source.length - length) {
             log.log(Level.SEVERE, "Invalid start index: " + start);
             return 0;
         }
-        byte[] temp = new byte[2];
-        temp[0] = source[start];
-        temp[1] = source[start + 1];
+        byte[] temp = new byte[4];
+        for (int i = start; i < start + length; i++) {
+            temp[i-start+(4-length)] = source[i];
+        }
         ByteBuffer wrapped = ByteBuffer.wrap(temp);
-        // Java does not have a 2 byte unsigned int (short is 2 bytes, but signed), therefore using an int (4 bytes)
-        // so that even 0xFFFF remains positive. Autoboxing converts 0xFFFF into a negative 1 int, therefore
-        // use bit arithmetic to remove the upper half, leaving us with the 2 byte unsigned short that we want.
-        return wrapped.getShort() & 0xFFFF;
+        // Java does not have a 2 or three byte unsigned int (short is 2 bytes, but signed), therefore using an int (4 bytes)
+        // so that even 0xFFFF or 0xFFFFFF remains positive. Autoboxing converts already a 0xFFFF into a negative 1 int, therefore
+        // use bit arithmetic to remove unused left bits, leaving us with the 2 or 3 byte unsigned short that we want.
+        int mask = (1 << (length << 3)) -1;
+        return wrapped.getInt() & mask;
+    }
+
+    static byte[] convertIntToThreeByteByteArray(int value) {
+        return ByteBuffer.allocate(3).putInt(value).array();
+    }
+
+    static int convertThreeByteByteArrayToInt(byte[] value) {
+        ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
+        buffer.put(value);
+        buffer.rewind();
+        return buffer.getInt();
     }
 
     /**

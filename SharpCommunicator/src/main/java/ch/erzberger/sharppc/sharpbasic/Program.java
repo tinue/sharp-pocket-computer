@@ -108,7 +108,7 @@ public class Program extends Token {
         header[6] = sizeBytes[2]; // Size, middle byte
         header[7] = sizeBytes[1]; // Size, high byte
         header[14] = (byte) 0x00; // Reserved
-        header[15] = (byte) 0xF0; // Reserved
+        header[15] = (byte) 0x0F; // Reserved
         return header;
     }
 }

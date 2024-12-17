@@ -60,9 +60,9 @@ public class Ce158Header extends SerialHeader {
         } catch (UnsupportedEncodingException e) {
             throw new NoClassDefFoundError("Code page 437 is invalid on your system");
         }
-        this.startAddr = FileType.MACHINE.equals(type) ? makeInt(header, 0x15) : 0;
-        this.length = makeInt(header, 0x17);
-        this.runAddr = FileType.MACHINE.equals(type) ? makeInt(header, 0x19) : 0;
+        this.startAddr = FileType.MACHINE.equals(type) ? makeInt(header, 0x15, 2) : 0;
+        this.length = makeInt(header, 0x17, 2);
+        this.runAddr = FileType.MACHINE.equals(type) ? makeInt(header, 0x19, 2) : 0;
     }
 
     /**

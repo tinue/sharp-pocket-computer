@@ -70,6 +70,8 @@ class Ce158HeaderTest {
 
     @Test
     void makeInt() {
-        assertEquals(0x38c5, SerialHeader.makeInt(new byte[]{0x38, (byte)0xc5}, 0));
+        assertEquals(0xFF, SerialHeader.makeInt(new byte[]{(byte)0xFF}, 0, 1));
+        assertEquals(0x38c5, SerialHeader.makeInt(new byte[]{0x38, (byte)0xc5}, 0, 2));
+        assertEquals(0xde38c5, SerialHeader.makeInt(new byte[]{(byte)0xde, 0x38, (byte)0xc5}, 0, 3));
     }
 }
