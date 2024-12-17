@@ -23,9 +23,10 @@ public class BinaryFileAnalyzer {
             log.log(Level.INFO, "Serial header, type {0}", header == null ? "null" : header.getType());
             if (header instanceof Ce158Header) {
                 return switch (header.getType()) {
-                    case BASIC -> FileType.PC1500_BINARY_BASIC;
-                    case RESERVE -> FileType.PC1500_BINARY_RESERVE;
-                    case MACHINE -> FileType.PC1500_BINARY_MACHINE;
+                    case BASIC -> FileType.CE158_BINARY_BASIC;
+                    case RESERVE -> FileType.CE158_BINARY_RESERVE;
+                    case MACHINE -> FileType.CE158_BINARY_MACHINE;
+                    case VARIABLES -> FileType.CE158_BINARY_VARS;
                 };
             }
         } catch (IllegalArgumentException ex) {
@@ -34,7 +35,7 @@ public class BinaryFileAnalyzer {
         // Try to parse the file into a Basic Program
         Program program = new Program("Basic", data, PocketPcDevice.PC1500);
         if (program.isValid()) {
-            return FileType.PC1500_BASIC;
+            return FileType.ASCII_BASIC;
         } else {
             return FileType.UNKNOWN;
         }

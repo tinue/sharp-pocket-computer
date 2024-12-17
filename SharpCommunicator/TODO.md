@@ -15,9 +15,11 @@ from other people - that could fit to thie project.
   -Normalize the file when saving to PC (line breaks, EOF marker, leading / trailing blanks etc.)
   -also safe a binary loaded program (reverse-tokenize it, and remove the binary header)
 - Define an ASCII format for "Reserve Keys" and support to load these (maybe even save)
-    - This will also require tokenization support
-    - It also needs a special reserve key header
-    - Note: The reserve area can already be loaded and saved in binary format
+  - This will also require tokenization support
+  - It also needs a special reserve key header
+  - Note: The reserve area can already be loaded and saved in binary format
+- Define an ASCII format for variables (INPUT#)
+  - Note: PRINT# works in binary format, INPUT# should work, but has not been tested yet. 
 - Support a "terminal" mode, where input from the keyboard is sent to the Pocket Computer,
   and output is shown on the screen.
     - As part of the terminal mode, support both `MODE 0` and `MODE 1` codepages correctly.

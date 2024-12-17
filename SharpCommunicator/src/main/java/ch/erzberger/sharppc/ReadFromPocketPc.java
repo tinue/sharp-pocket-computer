@@ -20,7 +20,8 @@ public class ReadFromPocketPc implements ByteProcessor {
     public ReadFromPocketPc(PocketPcDevice device) {
         if (device.isPC1500()) {
             // Through trial and error, it looks line 3 Seconds is enough to write even a long line
-            timeout = 3000L;
+            // Then it turned out that writing variables (PRINT#) needs even more time, hence 5 seconds now.
+            timeout = 5000L;
         } else {
             // The PC-1600 is much faster. Even 0.5 Seconds is probably too much.
             timeout = 500L;

@@ -186,6 +186,6 @@ public abstract class SerialHeader {
      * - RESERVE: The reserve area
      */
     public enum FileType {
-        BASIC, MACHINE, RESERVE
+        BASIC, MACHINE, RESERVE, VARIABLES
     }
 }

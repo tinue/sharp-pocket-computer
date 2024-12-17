@@ -20,10 +20,11 @@ class BinaryFileAnalyzerTest {
 
     @Test
     void pc1500Basic() throws Exception {
-        assertEquals(FileType.PC1500_BINARY_BASIC, BinaryFileAnalyzer.analyze(readFile("typetest-basic-1500.bin")));
-        assertEquals(FileType.PC1500_BINARY_MACHINE, BinaryFileAnalyzer.analyze(readFile("typetest-memory-1500.bin")));
-        assertEquals(FileType.PC1500_BINARY_RESERVE, BinaryFileAnalyzer.analyze(readFile("typetest-reserve-1500.bin")));
-        assertEquals(FileType.PC1500_BASIC, BinaryFileAnalyzer.analyze(readFile("typetest-basic-1500.bas")));
+        assertEquals(FileType.CE158_BINARY_BASIC, BinaryFileAnalyzer.analyze(readFile("typetest-basic-ce158.bin")));
+        assertEquals(FileType.CE158_BINARY_MACHINE, BinaryFileAnalyzer.analyze(readFile("typetest-memory-ce158.bin")));
+        assertEquals(FileType.CE158_BINARY_RESERVE, BinaryFileAnalyzer.analyze(readFile("typetest-reserve-ce158.bin")));
+        assertEquals(FileType.ASCII_BASIC, BinaryFileAnalyzer.analyze(readFile("typetest-basic-ascii.bas")));
+        assertEquals(FileType.CE158_BINARY_VARS, BinaryFileAnalyzer.analyze(readFile("typetest-vars-ce158.bin")));
     }
 
     private byte[] readFile(String fileName) throws Exception {

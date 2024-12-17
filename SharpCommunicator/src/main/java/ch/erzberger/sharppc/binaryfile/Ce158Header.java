@@ -8,16 +8,24 @@ import java.util.Arrays;
 import java.util.logging.Level;
 
 /**
- * Represents a CE-158 header.
+ * Represents a CE-158 header. The header structure is taken from the CE-158 manual, page 29, section
+ * "CSAVE, CSAVEa, CSAVEr, PRINT # transmission format"
+ * There is no documentation available for machine language files, the below was found by trial and error.
  * The PC-1500 CE-158 header is 27 bytes long. This is its structure:
  * - 0x00 Magic marker: 0x01 + "xCOM" (5 bytes). "X" means:
- * - @COM is a Basic program
- * - ACOM is the reserve area
- * - BCOM is binary data
+ *   - @COM is a Basic program
+ *   - ACOM is the reserve area
+ *   - BCOM is binary data
+ *   - HCOM is PRINT# output (not currently supported)
  * - 0x05 Filename: 16 bytes, in Sharp ASCII
- * - 0x15 Binary start address (2 bytes, only for BCOM)
+ * - 0x15 Binary load start address (2 bytes, ignored except for BCOM)
  * - 0x17 Length of data (2 bytes)
- * - 0x19 Binary run address (2 bytes, only for BCOM)
+ * - 0x19 Binary autorun address (2 bytes, ignored except for BCOM)
+ * <br/>
+ * Note: When saving a tokenized Basic program, the PC-1500 saves the Basic start pointer to 0x15, and the
+ * Basic end pointer to 0x19. Because these values are ignored when loading a Basic program, it can still be loaded
+ * back into a PC-1500 with a different memory setup, e.g. a memory card installed.
+ * The SharpCommunicator writes zeroes into these fields.
  */
 @Log
 public class Ce158Header extends SerialHeader {
@@ -97,6 +105,7 @@ public class Ce158Header extends SerialHeader {
             case BASIC -> '@';
             case RESERVE -> 'A';
             case MACHINE -> 'B';
+            case VARIABLES -> 'H';
         };
     }
 
@@ -105,6 +114,7 @@ public class Ce158Header extends SerialHeader {
             case '@' -> FileType.BASIC;
             case 'A' -> FileType.RESERVE;
             case 'B' -> FileType.MACHINE;
+            case 'H' -> FileType.VARIABLES;
             default -> throw new IllegalArgumentException("Not a header, unknown file type: " + typeChar);
         };
     }
