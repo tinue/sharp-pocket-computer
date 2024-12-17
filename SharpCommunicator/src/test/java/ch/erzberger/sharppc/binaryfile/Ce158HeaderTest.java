@@ -67,4 +67,9 @@ class Ce158HeaderTest {
         // Special case: The reserveDoNotCare header has some "do not care" value set to non-zero. These should get removed.
         assertArrayEquals(reserve, new Ce158Header(reserveDoNotCare).getHeader());
     }
+
+    @Test
+    void makeInt() {
+        assertEquals(0x38c5, SerialHeader.makeInt(new byte[]{0x38, (byte)0xc5}, 0));
+    }
 }

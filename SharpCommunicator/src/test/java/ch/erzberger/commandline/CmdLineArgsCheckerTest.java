@@ -146,6 +146,22 @@ class CmdLineArgsCheckerTest {
     }
 
     @Test
+    void machine() {
+        CmdLineArgsChecker checker = new CmdLineArgsChecker();
+        CmdLineArgs cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "-i dummy.bin", "--start-addr", "0x38c5", "--autorun-addr", "&1234"});
+        assertEquals(0x38c5, cmdLineArgs.getStartAddr());
+        assertEquals(0x1234, cmdLineArgs.getRunAddr());
+        cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "-i dummy.bin", "--start-addr", "$38c5"});
+        assertEquals(0x38c5, cmdLineArgs.getStartAddr());
+        assertEquals(0xFFFF, cmdLineArgs.getRunAddr());
+        // Some invalid cases
+        cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "-o dummy.bin", "--start-addr", "0x38c5", "--autorun-addr", "&1234"});
+        assertNull(cmdLineArgs);
+        cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "-i dummy.bin", "--autorun-addr", "&1234"});
+        assertNull(cmdLineArgs);
+    }
+
+    @Test
     void input() {
         CmdLineArgsChecker checker = new CmdLineArgsChecker();
         CmdLineArgs cmdLineArgs = checker.checkArgs(new String[]{"SharpCommunicator", "--in-file", "theSaveFile.bas"});
@@ -168,5 +184,18 @@ class CmdLineArgsCheckerTest {
 
     private Level getCurrentLogLevel() {
         return log.getParent().getLevel();
+    }
+
+    @Test
+    void inputToInt() {
+        CmdLineArgsChecker checker = new CmdLineArgsChecker();
+        assertEquals(0x38c5, checker.inputToInt("0x38c5"));
+        assertEquals(0x38c5, checker.inputToInt("0x38C5"));
+        assertEquals(0x38c5, checker.inputToInt("$38c5"));
+        assertEquals(0x38c5, checker.inputToInt("&38c5"));
+        assertEquals(0x38c5, checker.inputToInt("14533"));
+        assertNull(checker.inputToInt("FFFF"));
+        assertNull(checker.inputToInt(null));
+        assertNull(checker.inputToInt("0xGFFF"));
     }
 }
