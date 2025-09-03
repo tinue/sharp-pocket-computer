@@ -9,7 +9,8 @@ for the PC-1500, so that it can keep up.
 
 ## Quick Start for the impatient
 
-See [Quickstart](Quickstart.md)
+See [Quickstart](Quickstart.md)  
+Thanks to Christian Becker, there is now an excellent guide available: [SharpCommunicatorUseCases](SharpCommunicatorUseCases.pdf). 
 
 ## SharpCommunicator User Guide
 

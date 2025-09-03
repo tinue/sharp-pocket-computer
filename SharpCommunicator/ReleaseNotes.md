@@ -2,6 +2,7 @@
 
 - 202x-xx-xx / 2.1.0 (pre-release)
     - Possibility to load machine language programs to a PocketPC device
+    - New user guide from Christian Becker (thanks Christian!)
 - 2024-12-16 / 2.0.1
     - Fix for not exiting after load from PocketPC
     - Fix for multiple tokenization errors
