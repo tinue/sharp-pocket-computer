@@ -1,2 +1,0 @@
-10 PRINT "Héllo"
-20 GOTO 10
