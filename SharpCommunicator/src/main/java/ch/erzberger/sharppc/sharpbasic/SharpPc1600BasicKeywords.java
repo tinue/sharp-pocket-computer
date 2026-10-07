@@ -127,7 +127,7 @@ public class SharpPc1600BasicKeywords {
         basicKeywords.add(new BasicKeyword("MERGE", 0xF08F));
         basicKeywords.add(new BasicKeyword("MID$", 0xF17B));
         basicKeywords.add(new BasicKeyword("MOD", 0xF250));
-        basicKeywords.add(new BasicKeyword("MOOE", 0xF2B3));
+        basicKeywords.add(new BasicKeyword("MODE", 0xF2B3));
         basicKeywords.add(new BasicKeyword("NAME", 0xF297));
         basicKeywords.add(new BasicKeyword("NEW", 0xF19B));
         basicKeywords.add(new BasicKeyword("NEXT", 0xF19A));
@@ -207,7 +207,6 @@ public class SharpPc1600BasicKeywords {
         basicKeywords.add(new BasicKeyword("VAL", 0xF162));
         basicKeywords.add(new BasicKeyword("WAIT", 0xF1B3));
         basicKeywords.add(new BasicKeyword("WAKE$", 0xF261));
-        basicKeywords.add(new BasicKeyword("WIDTH", 0xF087));
         basicKeywords.add(new BasicKeyword("XCALL", 0xF18A));
         basicKeywords.add(new BasicKeyword("XOR", 0xF251));
         basicKeywords.add(new BasicKeyword("XPEEK", 0xF16F));
